@@ -5,7 +5,10 @@
 # Copyright (c) 2023 TU Wien
 
 # Use an official PyTorch base image
-FROM pytorch/pytorch:1.10.0-cuda11.3-cudnn8-runtime
+# FROM pytorch/pytorch:1.10.0-cuda11.3-cudnn8-runtime
+
+# use ubuntu base image because work is done in conda environment anyway
+FROM ubuntu:20.04
 
 # Set the working directory in the container
 WORKDIR /cyws3d
@@ -26,6 +29,10 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86
     rm ~/miniconda.sh
 # Make non-activate conda commands available.
 ENV PATH=$CONDA_DIR/bin:$PATH
+# Make conda activate command available from /bin/bash --login shells.
+RUN echo ". $CONDA_DIR/etc/profile.d/conda.sh" >> ~/.profile
+# Make conda activate command available from /bin/bash --interative shells.
+RUN conda init bash
 
 # run updates
 RUN conda update -n base -c defaults conda
