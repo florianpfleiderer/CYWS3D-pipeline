@@ -1,14 +1,21 @@
+# Dockerfile
+#
+# Created on Tue Nov 14 2023 by Florian Pfleiderer
+#
+# Copyright (c) 2023 TU Wien
+
 # Use an official PyTorch base image
 FROM pytorch/pytorch:1.10.0-cuda11.3-cudnn8-runtime
 
 # Set the working directory in the container
-WORKDIR /app
+WORKDIR /cyws3d
 
 # Copy the current directory contents into the container at /app
 COPY . .
 
-# Install Conda
+# Install git and wget
 RUN apt-get update && \
+    apt-get install -y git && \
     apt-get install -y wget
 
 # Install miniconda.
@@ -19,6 +26,9 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86
     rm ~/miniconda.sh
 # Make non-activate conda commands available.
 ENV PATH=$CONDA_DIR/bin:$PATH
+
+# run updates
+RUN conda update -n base -c defaults conda
 
 # Create a Conda environment
 # RUN conda create -n cyws3d python=3.9 -y
