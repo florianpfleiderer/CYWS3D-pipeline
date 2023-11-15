@@ -21,7 +21,6 @@ dependencies:
   - pytorch3d=0.7.1
   - pip=23.1
   - pip:
-    # - mmcv-full==1.7.0 -f https://download.openmmlab.com/mmcv/dist/cu113/torch1.10/index.html
     - timm==0.6.12 
     - jsonargparse 
     - matplotlib 
@@ -35,3 +34,4 @@ dependencies:
     - etils 
     - mmdet==2.25.3
     - segmentation-models-pytorch@git+https://github.com/ragavsachdeva/segmentation_models.pytorch.git@2cde92e776b0a074d5e2f4f6a50c68754f948015
+    #- mmcv-full==1.7.0 -f https://download.openmmlab.com/mmcv/dist/cu113/torch1.10/index.html
