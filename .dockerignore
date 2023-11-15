@@ -1,0 +1,10 @@
+#.dockerignore
+#
+# Created on Wed Nov 15 2023 by Florian Pfleiderer
+#
+# Copyright (c) 2023 TU Wien
+
+LICENSE
+readme.md
+.gitignore
+.gitmodules

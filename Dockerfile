@@ -19,7 +19,9 @@ COPY . .
 # Install git and wget
 RUN apt-get update && \
     apt-get install -y git && \
-    apt-get install -y wget
+    apt-get install -y wget && \
+    apt-get install -y libgl1-mesa-glx && \
+    apt-get install libglib2.0-0
 
 # Install miniconda.
 ENV CONDA_DIR $HOME/miniconda3

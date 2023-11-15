@@ -19,6 +19,7 @@ dependencies:
   - fvcore 
   - iopath
   - pytorch3d=0.7.1
+  - shapely
   - pip=23.1
   - pip:
     - timm==0.6.12 
