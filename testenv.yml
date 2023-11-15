@@ -1,9 +1,0 @@
-name: cyws3d
-channels:
-  - conda-forge
-  - defaults
-dependencies:
-  - python=3.9
-  - pip=23.3
-  - pip:
-      - flask==2.0.2
