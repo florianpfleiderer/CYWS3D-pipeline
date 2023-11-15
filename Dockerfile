@@ -1,8 +1,6 @@
 # Dockerfile
-#
-# Created on Tue Nov 14 2023 by Florian Pfleiderer
-#
-# Copyright (c) 2023 TU Wien
+# Created on Wed Nov 15 2023 by Florian Pfleiderer
+# Copyright (c) MIT License
 
 # Use an official PyTorch base image
 # FROM pytorch/pytorch:1.10.0-cuda11.3-cudnn8-runtime
