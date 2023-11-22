@@ -2,11 +2,11 @@
 # Created on Wed Nov 15 2023 by Florian Pfleiderer
 # Copyright (c) MIT License
 
-# Use an official PyTorch base image
-# FROM pytorch/pytorch:1.10.0-cuda11.3-cudnn8-runtime
-
 # use ubuntu base image because work is done in conda environment anyway
-FROM ubuntu:20.04
+# FROM ubuntu:20.04
+
+# nvidia cuda base image
+FROM nvidia/cuda:11.6.1-base-ubuntu20.04
 
 # Set the working directory in the container
 WORKDIR /cyws3d
