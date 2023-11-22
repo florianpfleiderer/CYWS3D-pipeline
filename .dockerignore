@@ -1,8 +1,6 @@
-#.dockerignore
-#
+# .dockerignore
 # Created on Wed Nov 15 2023 by Florian Pfleiderer
-#
-# Copyright (c) 2023 TU Wien
+# Copyright (c) MIT License
 
 LICENSE
 readme.md

@@ -11,15 +11,20 @@ FROM ubuntu:20.04
 # Set the working directory in the container
 WORKDIR /cyws3d
 
+# Set noninteractive mode
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Copy the current directory contents into the container at /app
 COPY . .
 
 # Install git and wget
 RUN apt-get update && \
-    apt-get install -y git && \
-    apt-get install -y wget && \
-    apt-get install -y libgl1-mesa-glx && \
-    apt-get install libglib2.0-0
+    apt-get install -y git wget libgl1-mesa-glx libglib2.0-0 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Reset noninteractive mode
+ENV DEBIAN_FRONTEND=dialog
 
 # Install miniconda.
 ENV CONDA_DIR $HOME/miniconda3
@@ -40,12 +45,18 @@ SHELL ["/bin/bash", "--login", "-c"]
 # run updates
 RUN conda update -n base -c defaults conda
 
-# Create a Conda environment
-RUN conda env create -f environment.yml
+# # Create a Conda environment
+RUN conda create -n cyws3d python=3.9 -y
 
 # Install dependencies
-RUN conda activate cyws3d && \
-    pip install mmcv-full==1.7.0 -f https://download.openmmlab.com/mmcv/dist/cu113/torch1.10/index.html
+RUN conda install -n cyws3d -c pytorch pytorch=1.10.1 torchvision=0.11.2 cudatoolkit=11.3.1 -y
+RUN conda install -n cyws3d -c fvcore -c iopath -c conda-forge fvcore iopath -y
+RUN conda install -n cyws3d pytorch3d==0.7.1 -c pytorch3d --freeze-installed -y
+
+# install pip dependencies
+RUN conda activate cyws3d && pip install mmcv-full==1.7.0 -f https://download.openmmlab.com/mmcv/dist/cu113/torch1.10/index.html
+RUN conda activate cyws3d && pip install timm==0.6.12 jsonargparse matplotlib imageio loguru einops wandb easydict kornia==0.6.8 scipy etils mmdet==2.25.3 shapely==2.0.2
+RUN conda activate cyws3d && pip install segmentation-models-pytorch@git+https://github.com/ragavsachdeva/segmentation_models.pytorch.git@2cde92e776b0a074d5e2f4f6a50c68754f948015
 
 # start container in cyws3d env
 RUN touch ~/.bashrc && echo "conda activate cyws3d" >> ~/.bashrc
