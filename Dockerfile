@@ -58,8 +58,15 @@ RUN conda activate cyws3d && pip install segmentation-models-pytorch@git+https:/
 # start container in cyws3d env
 RUN touch ~/.bashrc && echo "conda activate cyws3d" >> ~/.bashrc
 
-# Copy the current directory contents into the container at /app
-COPY . .
+# Copy folders and files that wont change often
+COPY cyws-3d.ckpt ./
+COPY demo_data/ demo_data/
+COPY modules/ modules/
+COPY SuperGluePretrainedNetwork/ SuperGluePretrainedNetwork/
+# Copy folders and files that will change often
+COPY config.yml Dockerfile inference.py utils.py ./
+COPY my_data/ my_data/
+COPY predictions/ predictions/
 
 # Set the default command to run when the container starts
 CMD ["bash"]
