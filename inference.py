@@ -44,7 +44,7 @@ def main(
                 scores2,
                 minimum_confidence_threshold,
             )
-        visualise_predictions(undo_imagenet_normalization(batch["image1"][i]), undo_imagenet_normalization(batch["image2"][i]), image1_bboxes[:max_predictions_to_display], image2_bboxes[:max_predictions_to_display], save_path=f"/prediction_{i}.png")
+        visualise_predictions(undo_imagenet_normalization(batch["image1"][i]), undo_imagenet_normalization(batch["image2"][i]), image1_bboxes[:max_predictions_to_display], image2_bboxes[:max_predictions_to_display], save_path=f"predictions/prediction_{i}.png")
     
 def get_easy_dict_from_yaml_file(path_to_yaml_file):
     """
