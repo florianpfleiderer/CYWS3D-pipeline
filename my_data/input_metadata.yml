@@ -1,5 +1,5 @@
 batch:
   # 2x RGB images only (3D scene)
-  - image1: "demo_data/ship_0.jpg"
-    image2: "demo_data/ship_2.jpg"
+  - image1: "my_data/desk01.jpg"
+    image2: "my_data/desk02.jpg"
     registration_strategy: "3d"
