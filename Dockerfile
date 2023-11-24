@@ -14,9 +14,6 @@ WORKDIR /cyws3d
 # Set noninteractive mode
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Copy the current directory contents into the container at /app
-COPY . .
-
 # Install git and wget
 RUN apt-get update && \
     apt-get install -y git wget libgl1-mesa-glx libglib2.0-0 && \
@@ -60,6 +57,9 @@ RUN conda activate cyws3d && pip install segmentation-models-pytorch@git+https:/
 
 # start container in cyws3d env
 RUN touch ~/.bashrc && echo "conda activate cyws3d" >> ~/.bashrc
+
+# Copy the current directory contents into the container at /app
+COPY . .
 
 # Set the default command to run when the container starts
 CMD ["bash"]
