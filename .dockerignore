@@ -6,3 +6,6 @@ LICENSE
 readme.md
 .gitignore
 .gitmodules
+
+# predictions
+predictions/prediction*
