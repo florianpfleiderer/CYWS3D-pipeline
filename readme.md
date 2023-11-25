@@ -42,6 +42,7 @@ Please try running:
 `python inference.py --load_weights_from ./cyws-3d.ckpt`
 
 This should perform a batched inference on a set of example image pairs under various settings (see [this file](demo_data/input_metadata.yml)).
+If you want to use your own images, please use my_data folder and change lines 11 and 12 in inference.py.
 
 ## Citation
 
