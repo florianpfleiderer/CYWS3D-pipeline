@@ -191,6 +191,7 @@ pyrightconfig.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
 .DS_Store
+.devcontainer/
 
 # Local History for Visual Studio Code
 .history/

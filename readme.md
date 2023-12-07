@@ -13,13 +13,13 @@ In Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV
 **Clone the repository**
 
 ```
-git clone --recursive git@github.com:ragavsachdeva/CYWS-3D.git
+git clone --recursive git@github.com:florianpfleiderer/CYWS-3D.git
 ```
 
 **Install depedencies**
 
 ```
-docker build -t cyws3d .
+docker build -t cyws3d:latest .
 ```
 
 

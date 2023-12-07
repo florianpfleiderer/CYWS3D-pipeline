@@ -3,7 +3,3 @@ batch:
   - image1: "my_data/desk01.jpg"
     image2: "my_data/desk02.jpg"
     registration_strategy: "3d"
-  # 2x RGB images only, at home (3D scene)
-  - image1: "my_data/schreibtisch_01.jpg"
-    image2: "my_data/schreibtisch_02.jpg"
-    registration_strategy: "3d"
