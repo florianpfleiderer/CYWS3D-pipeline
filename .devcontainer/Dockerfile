@@ -59,8 +59,8 @@ RUN conda activate cyws3d && pip install segmentation-models-pytorch@git+https:/
 RUN touch ~/.bashrc && echo "conda activate cyws3d" >> ~/.bashrc
 
 # download pretrained models
-RUN wget https://thor.robots.ox.ac.uk/cyws-3d/cyws-3d.ckpt.gz
-RUN gzip -d cyws-3d.ckpt.gz
+# RUN wget https://thor.robots.ox.ac.uk/cyws-3d/cyws-3d.ckpt.gz
+# RUN gzip -d cyws-3d.ckpt.gz
 
 # Copy folders and files that wont change often
 COPY ../demo_data/ demo_data/
