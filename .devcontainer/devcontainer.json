@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
 {
-	"name": "CYWS3D",
+	"name": "cyws3d",
 	"build": {
 		// Sets the run context to one level up instead of the .devcontainer folder.
 		"context": "..",
@@ -17,7 +17,8 @@
 				"ms-azuretools.vscode-docker"
 			]
 		}
-	}
+	},
+	"postCreateCommand": "wget https://thor.robots.ox.ac.uk/cyws-3d/cyws-3d.ckpt.gz && gzip -d cyws-3d.ckpt.gz",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
