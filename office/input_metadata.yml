@@ -1,0 +1,17 @@
+batch:
+  # 2x RGB images only
+  - image1: "office/kasten_L_01_resized.png"
+    image2: "office/kasten_L_02_resized.png"
+    registration_strategy: "3d"
+  # 2x RGB images only
+  - image1: "office/table_L_01_resized.png"
+    image2: "office/table_L_02_resized.png"
+    registration_strategy: "3d"
+  # # 2x RGB images only
+  # - image1: "office/table_R_01_resized.png"
+  #   image2: "office/table_R_02_resized.png"
+  #   registration_strategy: "3d"
+  # # 2x RGB images only
+  # - image1: "office/desk_R_01_resized.png"
+  #   image2: "office/desk_R_02_resized.png"
+  #   registration_strategy: "3d"
