@@ -5,6 +5,9 @@
 # large files
 cyws-3d.ckpt
 
+# data
+office/*.png
+
 # predictions
 predictions/prediction*
 
