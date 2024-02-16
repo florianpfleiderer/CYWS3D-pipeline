@@ -1,13 +1,13 @@
 batch:
-- image1: s1_01.png
-  image2: s3_01.png
+# - image1: office/s1_01.png
+#   image2: office/s5_01.png
+#   registration_strategy: 2d
+# - image1: office/s1_02.png
+#   image2: office/s5_02.png
+#   registration_strategy: 2d
+- image1: office/s1_03.png
+  image2: office/s5_03.png
   registration_strategy: 3d
-- image1: s1_02.png
-  image2: s3_02.png
-  registration_strategy: 3d
-- image1: s1_03.png
-  image2: s3_03.png
-  registration_strategy: 3d
-- image1: s1_04.png
-  image2: s3_04.png
-  registration_strategy: 3d
+# - image1: office/s1_04.png
+#   image2: office/s5_04.png
+#   registration_strategy: 2d
