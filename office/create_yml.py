@@ -29,8 +29,10 @@ for _, group in grouped_images:
     group = list(group)
     for image1, image2 in zip_longest(group[::2], group[1::2]):
         if image1 and image2:
+            print(f"Processing {image1} and {image2}")
             # Überprüfen Sie, ob ein Tiefenbild mit demselben Namen existiert
-            if any(image1[:12] in depth_image for depth_image in depth_images) and any(image2[:12] in depth_image for depth_image in depth_images):
+            if any(image1[:11] in depth_image for depth_image in depth_images) and any(image2[:11] in depth_image for depth_image in depth_images):
+                print(f"Found depth images for {image1} and {image2}")
                 batch.append({
                     "image1": f"{folder}{image1}",
                     "image2": f"{folder}{image2}",

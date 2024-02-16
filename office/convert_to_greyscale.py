@@ -13,3 +13,4 @@ for filename in os.listdir('.'):
 
         # Graustufenbild speichern
         img_gray.save(filename)
+        print(f"Converted {filename} to greyscale")

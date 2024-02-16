@@ -1,9 +1,21 @@
 batch:
-- image1: office/img01_s1.png
-  image2: office/img01_s3.png
+- depth1: office/img01_s3_00_depth.png
+  depth2: office/img01_s4_00_depth.png
+  image1: office/img01_s3_00.png
+  image2: office/img01_s4_00.png
   registration_strategy: 3d
-- depth1: office/img02_s5_01_depth.png
-  depth2: office/img02_s6_01_depth.png
-  image1: office/img02_s5_01_rgb.png
-  image2: office/img02_s6_01_rgb.png
+- depth1: office/img02_s3_00_depth.png
+  depth2: office/img02_s4_00_depth.png
+  image1: office/img02_s3_00.png
+  image2: office/img02_s4_00.png
+  registration_strategy: 3d
+- depth1: office/img03_s3_00_depth.png
+  depth2: office/img03_s4_00_depth.png
+  image1: office/img03_s3_00.png
+  image2: office/img03_s4_00.png
+  registration_strategy: 3d
+- depth1: office/img04_s3_00_depth.png
+  depth2: office/img04_s4_00_depth.png
+  image1: office/img04_s3_00.png
+  image2: office/img04_s4_00.png
   registration_strategy: 3d
