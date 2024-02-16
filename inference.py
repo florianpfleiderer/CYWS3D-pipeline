@@ -9,7 +9,6 @@ from modules.geometry import remove_bboxes_with_area_less_than, suppress_overlap
 def main(
     config_file: str = "config.yml",
     # input_metadata: str = "demo_data/input_metadata.yml",
-    # input_metadata: str = "my_data/input_metadata.yml",
     input_metadata: str = "office/input_metadata.yml",
     load_weights_from: str = None,
     filter_predictions_with_area_under: int = 400,
@@ -29,7 +28,7 @@ def main(
     batch = prepare_batch_for_model(batch)
     batch_image1_predicted_bboxes, batch_image2_predicted_bboxes = model.predict(batch)
     for i, (image1_bboxes, image2_bboxes) in enumerate(zip(batch_image1_predicted_bboxes, batch_image2_predicted_bboxes)):
-        # plot_correspondences(batch["image1"][i], batch["image2"][i], batch["points1"][i], batch["points2"][i], save_path=f"correspondences_{i}.png")
+        # plot_correspondences(batch["image1"][i], batch["image2"][i], batch["points1"][i], batch["points2"][i], save_path=f"predictions/correspondences_{i}.png")
         image1_bboxes, image2_bboxes = image1_bboxes[0].cpu().numpy(), image2_bboxes[0].cpu().numpy()
         image1_bboxes = remove_bboxes_with_area_less_than(image1_bboxes, filter_predictions_with_area_under)
         image2_bboxes = remove_bboxes_with_area_less_than(image2_bboxes, filter_predictions_with_area_under)        
