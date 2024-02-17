@@ -31,13 +31,13 @@ for _, group in grouped_images:
         if image1 and image2:
             print(f"Processing {image1} and {image2}")
             # Überprüfen Sie, ob ein Tiefenbild mit demselben Namen existiert
-            if any(image1[:11] in depth_image for depth_image in depth_images) and any(image2[:11] in depth_image for depth_image in depth_images):
+            if any(image1[:-4] in depth_image for depth_image in depth_images) and any(image2[:-4] in depth_image for depth_image in depth_images):
                 print(f"Found depth images for {image1} and {image2}")
                 batch.append({
                     "image1": f"{folder}{image1}",
                     "image2": f"{folder}{image2}",
-                    "depth1": f"{folder}{image1[:11]}_depth.png",
-                    "depth2": f"{folder}{image2[:11]}_depth.png",
+                    "depth1": f"{folder}{image1[:-4]}_depth.png",
+                    "depth2": f"{folder}{image2[:-4]}_depth.png",
                     "registration_strategy": "3d"
                 })
             else:
