@@ -44,7 +44,7 @@ for _, group in grouped_images:
                 batch.append({
                     "image1": f"{folder}{image1}",
                     "image2": f"{folder}{image2}",
-                    "registration_strategy": "3d"
+                    "registration_strategy": "2d"
                 })
 
 # Schreiben Sie die batch-Liste in die YAML-Datei
