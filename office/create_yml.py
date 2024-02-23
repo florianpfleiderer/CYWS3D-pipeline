@@ -40,12 +40,12 @@ for _, group in grouped_images:
                     "depth2": f"{folder}{image2[:-4]}_depth.png",
                     "registration_strategy": "3d"
                 })
-            else:
-                batch.append({
-                    "image1": f"{folder}{image1}",
-                    "image2": f"{folder}{image2}",
-                    "registration_strategy": "2d"
-                })
+            # else:
+            batch.append({
+                "image1": f"{folder}{image1}",
+                "image2": f"{folder}{image2}",
+                "registration_strategy": "2d"
+            })
 
 # Schreiben Sie die batch-Liste in die YAML-Datei
 with open("input_metadata.yml", "w") as file:
