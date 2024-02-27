@@ -16,7 +16,7 @@
 		}
 	},
 	"postCreateCommand": "sh ${containerWorkspaceFolder}/.devcontainer/postCreateCommand.sh",
-	"runArgs": ["--gpus", "all"]
+	"runArgs": ["{{#if gpus}}--gpus all{{/if}}"]
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
