@@ -1,3 +1,4 @@
+from tracemalloc import start
 import yaml
 from easydict import EasyDict
 from modules.model import Model
@@ -5,6 +6,7 @@ from utils import create_batch_from_metadata, fill_in_the_missing_information, p
 from modules.correspondence_extractor import CorrespondenceExtractor
 import torch
 from modules.geometry import remove_bboxes_with_area_less_than, suppress_overlapping_bboxes, keep_matching_bboxes
+import time
 
 def main(
     config_file: str = "config.yml",
@@ -24,14 +26,22 @@ def main(
 
     batch_metadata = get_easy_dict_from_yaml_file(input_metadata)
     batch = create_batch_from_metadata(batch_metadata)
+    start_time = time.time()
     batch = fill_in_the_missing_information(batch, depth_predictor, correspondence_extractor)
+    print(f"Time taken to fill in the missing information: {time.time() - start_time:.2f} seconds")
+    start_time = time.time()
     batch = prepare_batch_for_model(batch)
+    print(f"Time taken to prepare the batch for the model: {time.time() - start_time:.2f} seconds")
+    start_time = time.time()
     batch_image1_predicted_bboxes, batch_image2_predicted_bboxes = model.predict(batch)
+    print(f"Time taken to predict: {time.time() - start_time:.2f} seconds")
     for i, (image1_bboxes, image2_bboxes) in enumerate(zip(batch_image1_predicted_bboxes, batch_image2_predicted_bboxes)):
         # plot_correspondences(batch["image1"][i], batch["image2"][i], batch["points1"][i], batch["points2"][i], save_path=f"predictions/correspondences_{i}.png")
         image1_bboxes, image2_bboxes = image1_bboxes[0].cpu().numpy(), image2_bboxes[0].cpu().numpy()
         image1_bboxes = remove_bboxes_with_area_less_than(image1_bboxes, filter_predictions_with_area_under)
-        image2_bboxes = remove_bboxes_with_area_less_than(image2_bboxes, filter_predictions_with_area_under)        
+        image2_bboxes = remove_bboxes_with_area_less_than(image2_bboxes, filter_predictions_with_area_under)
+        print(image1_bboxes)    
+        print(image1_bboxes[:, :4])
         image1_bboxes, scores1 = suppress_overlapping_bboxes(image1_bboxes[:, :4], image1_bboxes[:, 4])
         image2_bboxes, scores2 = suppress_overlapping_bboxes(image2_bboxes[:, :4], image2_bboxes[:, 4])
         if keep_matching_bboxes_only:
