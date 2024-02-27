@@ -1,61 +1,11 @@
 batch:
 - depth1: office/img01_s1_L_00_crop_depth.png
-  depth2: office/img01_s3_L_00_crop_depth.png
+  depth2: office/img01_s2_L_00_crop_depth.png
   image1: office/img01_s1_L_00_crop.png
-  image2: office/img01_s3_L_00_crop.png
-  registration_strategy: 3d
-- depth1: office/img01_s1_L_00_crop_depth.png
-  depth2: office/img01_s5_L_00_crop_depth.png
-  image1: office/img01_s1_L_00_crop.png
-  image2: office/img01_s5_L_00_crop.png
-  registration_strategy: 3d
-- depth1: office/img01_s3_L_00_crop_depth.png
-  depth2: office/img01_s5_L_00_crop_depth.png
-  image1: office/img01_s3_L_00_crop.png
-  image2: office/img01_s5_L_00_crop.png
+  image2: office/img01_s2_L_00_crop.png
   registration_strategy: 3d
 - depth1: office/img02_s1_L_00_crop_depth.png
-  depth2: office/img02_s3_L_00_crop_depth.png
+  depth2: office/img02_s2_L_00_crop_depth.png
   image1: office/img02_s1_L_00_crop.png
-  image2: office/img02_s3_L_00_crop.png
-  registration_strategy: 3d
-- depth1: office/img02_s1_L_00_crop_depth.png
-  depth2: office/img02_s5_L_00_crop_depth.png
-  image1: office/img02_s1_L_00_crop.png
-  image2: office/img02_s5_L_00_crop.png
-  registration_strategy: 3d
-- depth1: office/img02_s3_L_00_crop_depth.png
-  depth2: office/img02_s5_L_00_crop_depth.png
-  image1: office/img02_s3_L_00_crop.png
-  image2: office/img02_s5_L_00_crop.png
-  registration_strategy: 3d
-- depth1: office/img03_s1_L_00_crop_depth.png
-  depth2: office/img03_s3_L_00_crop_depth.png
-  image1: office/img03_s1_L_00_crop.png
-  image2: office/img03_s3_L_00_crop.png
-  registration_strategy: 3d
-- depth1: office/img03_s1_L_00_crop_depth.png
-  depth2: office/img03_s5_L_00_crop_depth.png
-  image1: office/img03_s1_L_00_crop.png
-  image2: office/img03_s5_L_00_crop.png
-  registration_strategy: 3d
-- depth1: office/img03_s3_L_00_crop_depth.png
-  depth2: office/img03_s5_L_00_crop_depth.png
-  image1: office/img03_s3_L_00_crop.png
-  image2: office/img03_s5_L_00_crop.png
-  registration_strategy: 3d
-- depth1: office/img04_s1_L_00_crop_depth.png
-  depth2: office/img04_s3_L_00_crop_depth.png
-  image1: office/img04_s1_L_00_crop.png
-  image2: office/img04_s3_L_00_crop.png
-  registration_strategy: 3d
-- depth1: office/img04_s1_L_00_crop_depth.png
-  depth2: office/img04_s5_L_00_crop_depth.png
-  image1: office/img04_s1_L_00_crop.png
-  image2: office/img04_s5_L_00_crop.png
-  registration_strategy: 3d
-- depth1: office/img04_s3_L_00_crop_depth.png
-  depth2: office/img04_s5_L_00_crop_depth.png
-  image1: office/img04_s3_L_00_crop.png
-  image2: office/img04_s5_L_00_crop.png
+  image2: office/img02_s2_L_00_crop.png
   registration_strategy: 3d
