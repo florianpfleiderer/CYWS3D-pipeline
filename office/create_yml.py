@@ -36,20 +36,44 @@ depth_images = [image for image in images if 'depth' in image]
 
 # Entfernen Sie die Tiefenbilder aus der images-Liste
 images = list(filter(lambda x: 'depth' not in x, images))
-left_images = [image for image in images if 'L' in image]
-right_images = [image for image in images if 'R' in image]
 
 # Gruppieren Sie die Bilder nach Bildnummer
 grouped_images = groupby(images, key=lambda x: x[4])
+
+cntr = 0 # prediction counter
 
 # Durchlaufen Sie die Gruppen und erstellen Sie Paare von Bildern mit unterschiedlichen Szenen
 for _, group in grouped_images:
     group = list(group)
     logging.info(f"########### Processing group {group} with {len(group)} images ###########")
-    if len(group) == 2:
-        for image1, image2 in zip_longest(group[::2], group[1::2]):
-            if image1[9] == "L" and image2[9] == "L":
-                logging.info(f"Fixed-Angle Pair: {image1} and {image2}")
+    for i in range(len(group)):
+        for j in range(i+1, len(group)):
+            image1 = group[i]
+            image2 = group[j]
+            if args.arg1[0] == "L" and image1[9] == "L" and image2[9] == "L":
+                # Überprüfen Sie, ob ein Tiefenbild mit demselben Namen existiert
+                if args.arg1[1] == "0" and any(image1[:-4] in depth_image for depth_image in depth_images) and any(image2[:-4] in depth_image for depth_image in depth_images):
+                    batch.append({
+                        "image1": f"{folder}{image1}",
+                        "image2": f"{folder}{image2}",
+                        "depth1": f"{folder}{image1[:-4]}_depth.png",
+                        "depth2": f"{folder}{image2[:-4]}_depth.png",
+                        "registration_strategy": "3d"
+                    })
+                    logging.info(f"Fixed-Angle Pair {cntr}: {image1} and {image2} with 3d registration")
+                    cntr += 1
+                elif args.arg1[1] == "1":
+                    batch.append({
+                        "image1": f"{folder}{image1}",
+                        "image2": f"{folder}{image2}",
+                        "registration_strategy": "2d"
+                    })
+                    logging.info(f"Fixed-Angle Pair {cntr}: {image1} and {image2} with 2d registration")
+                    cntr += 1
+                else:
+                    logging.warning(f"wrong args: L0 for 3d registration; L1 for 2d registration")
+                
+            elif args.arg1 == "R" and image1[9] == "L" and image2[9] == "R" and image1[7] != image2[7]:
                 # Überprüfen Sie, ob ein Tiefenbild mit demselben Namen existiert
                 if any(image1[:-4] in depth_image for depth_image in depth_images) and any(image2[:-4] in depth_image for depth_image in depth_images):
                     batch.append({
@@ -59,109 +83,13 @@ for _, group in grouped_images:
                         "depth2": f"{folder}{image2[:-4]}_depth.png",
                         "registration_strategy": "3d"
                     })
+                    logging.info(f"Varied-Angle Pair {cntr}: {image1} and {image2}")
+                    cntr += 1
                 else:
-                    batch.append({
-                        "image1": f"{folder}{image1}",
-                        "image2": f"{folder}{image2}",
-                        "registration_strategy": "2d"
-                    })
-                    
-    elif len(group) == 3:
-        for image1, image2, image3 in zip_longest(group[::3], group[1::3], group[2::3]):
-            if image1[9] == "L" and image2[9] == "L" and image3[9] == "L":
-                for i in range(len(group)):
-                    for j in range(i+1, len(group)):
-                        image1 = group[i]
-                        image2 = group[j]
-                        logging.info(f"Fixed-Angle Pair: {image1} and {image2}")
-                        # Überprüfen Sie, ob ein Tiefenbild mit demselben Namen existiert
-                        if any(image1[:-4] in depth_image for depth_image in depth_images) and any(image2[:-4] in depth_image for depth_image in depth_images):
-                            batch.append({
-                                "image1": f"{folder}{image1}",
-                                "image2": f"{folder}{image2}",
-                                "depth1": f"{folder}{image1[:-4]}_depth.png",
-                                "depth2": f"{folder}{image2[:-4]}_depth.png",
-                                "registration_strategy": "3d"
-                            })
-                        else:
-                            batch.append({
-                                "image1": f"{folder}{image1}",
-                                "image2": f"{folder}{image2}",
-                                "registration_strategy": "2d"
-                            })
-    elif len(group) == 4:
-        for image1, image2, image3, image4 in zip_longest(group[::4], group[1::4], group[2::4], group[3::4]):
-            if image1[9] == "L" and image2[9] == "L" and image3[9] == "L" and image4[9] == "L":
-                logging.info(f"Fixed-Angle Pair: {image1} and {image2} and {image3} and {image4}")
-                for i in range(len(group)):
-                    for j in range(i+1, len(group)):
-                        image1 = group[i]
-                        image2 = group[j]
-                        logging.info(f"Fixed-Angle Pair: {image1} and {image2}")
-                        # Überprüfen Sie, ob ein Tiefenbild mit demselben Namen existiert
-                        if any(image1[:-4] in depth_image for depth_image in depth_images) and any(image2[:-4] in depth_image for depth_image in depth_images):
-                            batch.append({
-                                "image1": f"{folder}{image1}",
-                                "image2": f"{folder}{image2}",
-                                "depth1": f"{folder}{image1[:-4]}_depth.png",
-                                "depth2": f"{folder}{image2[:-4]}_depth.png",
-                                "registration_strategy": "3d"
-                            })
-                        else:
-                            batch.append({
-                                "image1": f"{folder}{image1}",
-                                "image2": f"{folder}{image2}",
-                                "registration_strategy": "2d"
-                            })
-    elif len(group) == 5:
-        logging.info(f"{len(group)} images in group")
-        for image1, image2, image3, image4, image5 in zip_longest(group[::5], group[1::5], group[2::5], group[3::5], group[4::5]):
-            if image1[9] == "L" and image2[9] == "L" and image3[9] == "L" and image4[9] == "L" and image5[9] == "L":
-                for i in range(len(group)):
-                    for j in range(i+1, len(group)):
-                        image1 = group[i]
-                        image2 = group[j]
-                        logging.info(f"Fixed-Angle Pair: {image1} and {image2}")
-                        # Überprüfen Sie, ob ein Tiefenbild mit demselben Namen existiert
-                        if any(image1[:-4] in depth_image for depth_image in depth_images) and any(image2[:-4] in depth_image for depth_image in depth_images):
-                            batch.append({
-                                "image1": f"{folder}{image1}",
-                                "image2": f"{folder}{image2}",
-                                "depth1": f"{folder}{image1[:-4]}_depth.png",
-                                "depth2": f"{folder}{image2[:-4]}_depth.png",
-                                "registration_strategy": "3d"
-                            })
-                        else:
-                            batch.append({
-                                "image1": f"{folder}{image1}",
-                                "image2": f"{folder}{image2}",
-                                "registration_strategy": "2d"
-                            })
-    
-    elif len(group) == 6:
-        logging.info(f"{len(group)} images in group")
-        for image1, image2, image3, image4, image5, image6 in zip_longest(group[::6], group[1::6], group[2::6], group[3::6], group[4::6], group[5::6]):
-            if image1[9] == "L" and image2[9] == "L" and image3[9] == "L" and image4[9] == "L" and image5[9] == "L" and image6[9] == "L":
-                for i in range(len(group)):
-                    for j in range(i+1, len(group)):
-                        image1 = group[i]
-                        image2 = group[j]
-                        logging.info(f"Fixed-Angle Pair: {image1} and {image2}")
-                        # Überprüfen Sie, ob ein Tiefenbild mit demselben Namen existiert
-                        if any(image1[:-4] in depth_image for depth_image in depth_images) and any(image2[:-4] in depth_image for depth_image in depth_images):
-                            batch.append({
-                                "image1": f"{folder}{image1}",
-                                "image2": f"{folder}{image2}",
-                                "depth1": f"{folder}{image1[:-4]}_depth.png",
-                                "depth2": f"{folder}{image2[:-4]}_depth.png",
-                                "registration_strategy": "3d"
-                            })
-                        else:
-                            batch.append({
-                                "image1": f"{folder}{image1}",
-                                "image2": f"{folder}{image2}",
-                                "registration_strategy": "2d"
-                            })
+                    logging.warning(f"Depth image for {image1} or {image2} not found")
+            else:
+                # logging.info(f"Skipping {image1} and {image2}")
+                pass
 
 # Schreiben Sie die batch-Liste in die YAML-Datei
 with open("input_metadata.yml", "w") as file:
