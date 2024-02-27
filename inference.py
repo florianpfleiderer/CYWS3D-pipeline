@@ -40,7 +40,6 @@ def main(
         image1_bboxes, image2_bboxes = image1_bboxes[0].cpu().numpy(), image2_bboxes[0].cpu().numpy()
         image1_bboxes = remove_bboxes_with_area_less_than(image1_bboxes, filter_predictions_with_area_under)
         image2_bboxes = remove_bboxes_with_area_less_than(image2_bboxes, filter_predictions_with_area_under)
-        print(image1_bboxes)    
         print(image1_bboxes[:, :4])
         image1_bboxes, scores1 = suppress_overlapping_bboxes(image1_bboxes[:, :4], image1_bboxes[:, 4])
         image2_bboxes, scores2 = suppress_overlapping_bboxes(image2_bboxes[:, :4], image2_bboxes[:, 4])
