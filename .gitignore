@@ -11,6 +11,13 @@ data/inference/office/*.png
 # predictions
 data/predictions/prediction*
 
+# temporary image results in root folder
+/*.png
+
+# source video files
+*.mp4
+*.mov
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
