@@ -1,3 +1,16 @@
+''' This Module creates a YAML file with the image pairs for the registration process.
+
+The script reads the images from the specified directory, groups them by image number, 
+and creates pairs of images with different scenes. The script also checks if the depth 
+images exist for the corresponding images and adds them to the YAML file.
+
+Optional arguments:
+    arg1: Optional argument to specify the registration strategy. 
+          L0 for 3d registration
+          L1 for 2d registration.
+          R for varied-angle pair with 3d registration.
+
+'''
 import os
 from turtle import left
 from matplotlib.pylab import f
@@ -11,7 +24,7 @@ logging.basicConfig(level=logging.INFO)
 
 # Pfad zum Verzeichnis mit den Bildern
 image_dir = "."
-folder = "office/"
+folder = "data/office/"
 
 # Parse command line arguments
 parser = argparse.ArgumentParser()

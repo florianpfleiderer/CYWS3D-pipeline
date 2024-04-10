@@ -1,5 +1,0 @@
-batch:
-  # 2x RGB images only, at uni (3D scene)
-  - image1: "my_data/desk01.jpg"
-    image2: "my_data/desk02.jpg"
-    registration_strategy: "3d"
