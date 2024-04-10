@@ -46,8 +46,6 @@ extrinsics.from_json("./"+FOLDER+VIEWPOINT_INFO_JSON_PATH)
 # create mesh for showing the origin
 mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
 
-# create extrinsic matrix from 025_mug (1): 0.913546 -0.406737 0 1.66914 0.406737 0.913546 0 1.76407 0 0 1 0.74 0 0 0 1 
-# M = np.array([[0.913546, -0.406737, 0, 1.66914], [0.406737, 0.913546, 0, 1.76407], [0, 0, 1, 0.74], [0, 0, 0, 1]])
 # pcd.transform(M)
 pcd.transform(extrinsics.homogenous_matrix())
 points_pos = np.asarray(pcd.points)

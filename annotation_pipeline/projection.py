@@ -6,10 +6,6 @@ import xml.etree.ElementTree as ET
 import json
 import open3d as o3d
 import numpy as np
-import matplotlib
-import matplotlib.pyplot as plt
-
-matplotlib.use('TkAgg')  # or 'Qt5Agg', 'GTK3Agg', etc.
 
 class Intrinsic():
     ''' Class to store intrinsic parameters of a camera
@@ -169,6 +165,7 @@ def frustum_culling(points: np.array, fov: int) -> None:
     indices = [i for i, point in enumerate(points) if inside_frustum(point, fov, near, far)]
     return indices
 
+
 def project_to_2d(points_pos: np.array, K: np.array, width: int = 640, height: int = 480) \
                   -> (np.array, np.array):
     ''' use pinhole model to project a pointcloud onto 2d coordinates:
@@ -190,7 +187,6 @@ def project_to_2d(points_pos: np.array, K: np.array, width: int = 640, height: i
     assert K.shape == (3, 4), "K must be 3x4"
 
     # homogenous coordinates
-    # hom_coord = np.hstack(((points_pos / np.kron(points_pos[:, 2], np.ones((3, 1))).T), np.ones((points_pos.shape[0], 1))))
     hom_coord = np.hstack((points_pos, np.ones((points_pos.shape[0], 1))))
 
     # projection
@@ -218,4 +214,3 @@ if __name__ == "__main__":
     extrinsics.from_json("./testmodel/model1_viewpoint_00.json", scale = 10)
     M = extrinsics.homogenous_matrix()
     print(M)
-

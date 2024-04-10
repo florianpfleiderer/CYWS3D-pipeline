@@ -1,5 +1,4 @@
 import open3d as o3d
-import open3d.core as o3c
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt

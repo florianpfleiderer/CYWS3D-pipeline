@@ -1,4 +1,4 @@
-''' utility functions for point cloud processing and obchange dataset
+''' utility functions for point cloud annotation
 '''
 import copy
 import open3d as o3d
@@ -144,8 +144,8 @@ def draw_2d_bboxes_on_img(image_path: str, gt_u, gt_v):
 if __name__ == "__main__":
     PCD_NAME: str = "../data/annotation/office/scene4/merged_plane_clouds_ds002.pcd"
     # PCD_NAME: str = "./testmodel/model1.pcd"
-    ANNO_NAME: str = "../data/annotation/office/scene4/merged_plane_clouds_ds002_GT.anno"  
-        
+    ANNO_NAME: str = "../data/annotation/office/scene4/merged_plane_clouds_ds002_GT.anno"
+
     pcd = o3d.io.read_point_cloud(PCD_NAME)
     print(pcd)
     mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
