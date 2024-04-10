@@ -8,6 +8,5 @@ setup(
     author_email='florian@pfleiderer.at',
     license='MIT',
     packages=find_packages(),
-    scripts=['scripts/annotate.py']
-    # requires=['numpy', 'open3d', 'opencv-python', 'matplotlib']
+    scripts=['scripts/annotate.py', 'scripts/inference.py']
 )
