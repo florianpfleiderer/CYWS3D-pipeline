@@ -10,8 +10,8 @@ import time
 
 def main(
     config_file: str = "config.yml",
-    input_metadata: str = "demo_data/input_metadata.yml",
-    # input_metadata: str = "office/input_metadata.yml",
+    # input_metadata: str = "demo_data/input_metadata.yml",
+    input_metadata: str = "office/input_metadata.yml",
     load_weights_from: str = None,
     filter_predictions_with_area_under: int = 400,
     keep_matching_bboxes_only: bool = True,
