@@ -11,8 +11,9 @@ data/inference/office/*.png
 # predictions
 data/predictions/prediction*
 
-# temporary image results in root folder
-/*.png
+# temporary image results in scripts / root folder
+scripts/*png
+/*png
 
 # source video files
 *.mp4
