@@ -8,13 +8,16 @@
     - draw 2d bboxes
     - show image
 '''
+import logging
 import open3d as o3d
-import cv2
+# import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from annotation_pipeline.projection import Intrinsic, Extrinsic, project_to_2d, frustum_culling
-import annotation_pipeline.utils as utils
+from annotation_pipeline import utils
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 FOLDER = "data/annotation/office/"
 SCENE = "scene4/"
@@ -77,6 +80,7 @@ image = utils.draw_2d_bboxes((u_coords, v_coords), points_color, (gt_u, gt_v), i
 image = utils.draw_2d_bboxes_on_img("./data/annotation/office/scene4/img03_s4.png", gt_u, gt_v)
 
 plt.imsave("image.png", image)
+logger.info("image saved as image.png")
 # cv2.imshow("image", image)
 # cv2.waitKey(0)
 # cv2.destroyAllWindows()
