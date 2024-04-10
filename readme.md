@@ -53,7 +53,7 @@ gzip -d cyws-3d.ckpt.gz
 
 Please try running:
 
-`python inference.py --load_weights_from ./cyws-3d.ckpt`
+`inference.py --load_weights_from ./cyws-3d.ckpt`
 
 This should perform a batched inference on a set of example image pairs under various settings (see [this file](demo_data/input_metadata.yml)).
 
