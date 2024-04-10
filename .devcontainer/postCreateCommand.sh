@@ -1,6 +1,10 @@
 #!/bin/sh
 # created by Florian Pfleiderer
 
+# exception for ownership problems in git
+git config --global --add safe.directory /workspaces/CYWS3D-pipeline
+git config --global --add safe.directory /workspaces/CYWS3D-pipeline/SuperGluePretrainedNetwork
+
 # initialise submodule
 git submodule update --init --recursive
 
@@ -26,7 +30,7 @@ else
 fi
 
 # setup python environment
-pip install -e .. 
+pip install -e .
 
 # # download pretrained model
 # wget https://thor.robots.ox.ac.uk/cyws-3d/cyws-3d.ckpt.gz

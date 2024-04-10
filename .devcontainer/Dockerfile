@@ -66,7 +66,7 @@ RUN conda activate cyws3d-pipeline && pip install segmentation-models-pytorch@gi
 RUN conda activate cyws3d-pipeline && pip install open3d==0.16.0
 
 
-# start container in cyws3d-pipeline env
+# start container in cyws3d-pipeline environment
 RUN touch ~/.bashrc && echo "conda activate cyws3d-pipeline" >> ~/.bashrc
 
 # Set the default command to run when the container starts
