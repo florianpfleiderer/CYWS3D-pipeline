@@ -4,8 +4,6 @@
 # initialise submodule
 git submodule update --init --recursive
 
-#!/bin/bash
-
 base_name="cyws-3d.ckpt"
 gzipped_name="$base_name.gz"
 file_url="https://thor.robots.ox.ac.uk/cyws-3d/$gzipped_name"
@@ -26,6 +24,9 @@ else
         echo "Error: Unable to download the file."
     fi
 fi
+
+# setup python environment
+pip install -e .. 
 
 # # download pretrained model
 # wget https://thor.robots.ox.ac.uk/cyws-3d/cyws-3d.ckpt.gz
