@@ -6,13 +6,10 @@
 cyws-3d.ckpt
 
 # data
-office/*.png
+data/inference/office/*.png
 
 # predictions
-predictions/prediction*
-
-# Created by https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=python,visualstudiocode
+data/predictions/prediction*
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
