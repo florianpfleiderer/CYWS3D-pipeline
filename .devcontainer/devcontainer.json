@@ -11,7 +11,9 @@
 			"extensions": [
 				"GitHub.copilot",
 				"eamodio.gitlens",
-				"ms-python.python"
+				"ms-python.python",
+				"doi.fileheadercomment",
+				"ms-python.pylint"
 			]
 		}
 	},
