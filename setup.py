@@ -7,5 +7,7 @@ setup(
     author='Florian Pfleiderer',
     author_email='florian@pfleiderer.at',
     license='MIT',
-    packages=find_packages()
+    packages=find_packages(),
+    scripts=['scripts/annotate.py']
+    # requires=['numpy', 'open3d', 'opencv-python', 'matplotlib']
 )
