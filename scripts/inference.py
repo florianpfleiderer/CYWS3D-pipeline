@@ -2,7 +2,7 @@ from tracemalloc import start
 import yaml
 from easydict import EasyDict
 from modules.model import Model
-from utils import create_batch_from_metadata, fill_in_the_missing_information, prepare_batch_for_model, visualise_predictions, plot_correspondences, undo_imagenet_normalization
+from modules.utils import create_batch_from_metadata, fill_in_the_missing_information, prepare_batch_for_model, visualise_predictions, plot_correspondences, undo_imagenet_normalization
 from modules.correspondence_extractor import CorrespondenceExtractor
 import torch
 from modules.geometry import remove_bboxes_with_area_less_than, suppress_overlapping_bboxes, keep_matching_bboxes
@@ -12,7 +12,7 @@ def main(
     config_file: str = "config.yml",
     input_metadata: str = "data/inference/demo_data/input_metadata.yml",
     # input_metadata: str = "data/inference/office/input_metadata.yml",
-    load_weights_from: str = None,
+    load_weights_from: str = "./cyws-3d.ckpt",
     filter_predictions_with_area_under: int = 400,
     keep_matching_bboxes_only: bool = True,
     max_predictions_to_display: int = 5,
@@ -58,7 +58,9 @@ def main(
         visualise_predictions(undo_imagenet_normalization(batch["image1"][i]),
                               undo_imagenet_normalization(batch["image2"][i]),
                                 image1_bboxes[:max_predictions_to_display],
-                                    image2_bboxes[:max_predictions_to_display],
+                                image2_bboxes[:max_predictions_to_display],
+                                    scores1[:max_predictions_to_display],
+                                    scores2[:max_predictions_to_display],
                                         save_path=f"data/predictions/prediction_{i}.png")
     
 def get_easy_dict_from_yaml_file(path_to_yaml_file):
