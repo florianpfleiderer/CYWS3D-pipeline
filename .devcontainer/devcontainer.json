@@ -13,7 +13,7 @@
 				"eamodio.gitlens",
 				"ms-python.python",
 				"doi.fileheadercomment",
-				"ms-python.pylint"
+				"Gruntfuggly.todo-tree"
 			]
 		}
 	},
