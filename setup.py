@@ -8,5 +8,5 @@ setup(
     author_email='florian@pfleiderer.at',
     license='MIT',
     packages=find_packages(),
-    scripts=['scripts/annotate.py', 'scripts/inference.py']
+    scripts=['scripts/annotate.py', 'scripts/inference.py', 'scripts/run_tests.py']
 )
