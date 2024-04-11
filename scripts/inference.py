@@ -63,6 +63,14 @@ def main(
                                     scores2[:max_predictions_to_display],
                                         save_path=f"data/predictions/prediction_{i}.png")
     
+    # save the batches for calculating mAP
+    try: 
+        torch.save(batch_image1_predicted_bboxes, 'data/predictions/batch_image1_predicted_bboxes.pt')
+        torch.save(batch_image2_predicted_bboxes, 'data/predictions/batch_image2_predicted_bboxes.pt')
+    except:
+        print('Error saving the batches for calculating mAP as pt')
+    
+    
 def get_easy_dict_from_yaml_file(path_to_yaml_file):
     """
     Reads a yaml and returns it as an easy dict.
