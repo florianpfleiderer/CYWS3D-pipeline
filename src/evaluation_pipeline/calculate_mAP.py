@@ -11,7 +11,7 @@ first implementation just for 10 pictures and 10 annotations in a folder
 
 import torch
 from collections import Counter
-from iou import intersection_over_union
+# from iou import intersection_over_union7
 
 def calculate_mAP(pred_boxes: list, 
                     true_boxes:list, 
@@ -35,3 +35,11 @@ def calculate_mAP(pred_boxes: list,
         detections =[]
         ground_truths = []
         
+if __name__ == "__main__":
+    img01 = torch.load('annotated_testdata/batch_image1_predicted_bboxes.pt')
+    img02 = torch.load('annotated_testdata/batch_image2_predicted_bboxes.pt')
+    torch.save(img01[0], 'annotated_testdata/batch_image1_predicted_data.pt')
+    torch.save(img02[0], 'annotated_testdata/batch_image2_predicted_data.pt')
+    torch.save(img01[1], 'annotated_testdata/batch_image1_gt.pt')
+    torch.save(img02[1], 'annotated_testdata/batch_image2_gt.pt')
+ 
