@@ -5,41 +5,80 @@ What data do we need ?
 annotated images with confidence scores
 annotated ground truth images
 
-first implementation just for 10 pictures and 10 annotations in a folder
+first implementation just for 10 pictures and 10 targets in a folder
 
 '''
 
 import torch
-from collections import Counter
-# from iou import intersection_over_union7
+from torchmetrics.detection import MeanAveragePrecision
 
-def calculate_mAP(pred_boxes: list, 
-                    true_boxes:list, 
-                    iou_threshold=0.5,
-                    box_format='corners', 
-                    num_classes=20):
-    ''' used to calculate mAP on given bboxes.
+def prepare_batch(path_to_preds, path_to_gt):
+    ''' this function returns the batch prepared for the mAP function provided by pytorch
+
+    Format of Predictions:
+    list[tuple(Tensor, Tensor)] where each tuple corresponds to a single image. 
+    The first tensor contains the predicted bounding boxes and the second tensor contains the confidence scores. 
+    The predicted bounding boxes should be in the format (tl_x, tl_y, br_x, br_y) in absolute image coordinates. 
+    The confidence scores should be in the range [0, 1] where 0 means no object and 1 means full confidence that an object is present.
+    
+    Args:
+        path_to_preds (str): path to the predictions file
+        path_to_gt (str): path to the ground truth file
+
+    Returns:
+        batch (dict): dictionary containing the images and the targets
+    '''
+    predictions = torch.load(path_to_preds)
+    ground_truth = torch.load(path_to_gt)
+    
+    preds = []
+    targets = []
+
+    for i in range(len(ground_truth)):
+        preds.append(dict(
+            boxes = torch.tensor(predictions[i][0]), 
+            scores = torch.tensor(predictions[i][1][:len(predictions[i][0])]),
+            labels = torch.zeros(len(predictions[i][0]), dtype=torch.int64)
+        ))
+        targets.append(dict(
+            boxes = torch.tensor(ground_truth[i][0]),
+            labels = torch.zeros(len(ground_truth[i][0]), dtype=torch.int64)
+        ))
+    return targets, preds
+
+def calculate_mAP(targets, preds):
+    ''' this function calculates the mean average precision of the predictions made by the model
+
+    The input data should be in the following format:
+    A list consisting of dictionaries each containing the key-values (each dictionary corresponds to a single image). Parameters that should be provided per dict:
+        boxes (Tensor): float tensor of shape (num_boxes, 4) containing num_boxes detection boxes of the format specified in the constructor. By default, this method expects (xmin, ymin, xmax, ymax) in absolute image coordinates, but can be changed using the box_format parameter. Only required when iou_type=”bbox”.
+        scores (Tensor): float tensor of shape (num_boxes) containing detection scores for the boxes.
+        labels (Tensor): integer tensor of shape (num_boxes) containing 0-indexed detection classes for the boxes.
 
     Args:
-        pred_boxes (list): list of lists containing all bboxes with each bboxes
-        specified as [train_idx, class_prediction, prob_score, x1, y1, x2, y2]
-        true_boxes (list): Similar to pred_boxes except all the correct ones
-        iou_threshold (float, optional): Defaults to 0.5.
-        box_format (str, optional): Defaults to 'corners'.
-        num_classes (int, optional): Defaults to 20.
-    '''
-    average_precisions = []
-    epsilon = 1e-6
+        targets (list): list of dictionaries containing the ground truth bounding boxes
+        preds (list): list of dictionaries containing the predicted bounding boxes
 
-    for c in range(num_classes):
-        detections =[]
-        ground_truths = []
+    Returns:
+        mAP (float): mean average precision of the model
+    '''
+    metric = MeanAveragePrecision(box_format='xyxy', iou_type='bbox')
+    metric.update(preds, targets)
+    return metric.compute()
         
 if __name__ == "__main__":
-    img01 = torch.load('annotated_testdata/batch_image1_predicted_bboxes.pt')
-    img02 = torch.load('annotated_testdata/batch_image2_predicted_bboxes.pt')
-    torch.save(img01[0], 'annotated_testdata/batch_image1_predicted_data.pt')
-    torch.save(img02[0], 'annotated_testdata/batch_image2_predicted_data.pt')
-    torch.save(img01[1], 'annotated_testdata/batch_image1_gt.pt')
-    torch.save(img02[1], 'annotated_testdata/batch_image2_gt.pt')
- 
+    targets, preds = prepare_batch('annotated_testdata/batch_good_predictions.pt', 'annotated_testdata/batch_ground_truth.pt')
+    print(preds)
+    print(f'targets: {targets}')
+    
+    metric = MeanAveragePrecision(box_format='xyxy', iou_type='bbox')
+    metric.update(preds, targets)
+    print(metric.compute())
+    # image1 = torch.load('../../data/predictions/batch_image1_predicted_bboxes.pt')
+    # image2 = torch.load('../../data/predictions/batch_image2_predicted_bboxes.pt')
+
+    # print(image1)
+
+    # torch.save([image1[0], image2[0]], 'annotated_testdata/batch_bad_predictions.pt')
+    # torch.save([image1[1], image2[1]], 'annotated_testdata/batch_good_predictions.pt')
+    # torch.save([image1[2], image2[2]], 'annotated_testdata/batch_ground_truth.pt')
