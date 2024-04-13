@@ -12,6 +12,20 @@ first implementation just for 10 pictures and 10 targets in a folder
 import torch
 from torchmetrics.detection import MeanAveragePrecision
 
+def prepare_predictions(path_to_preds):
+    ''' This function returns the data stored in the .pt files saved after inference in th correct
+    format for the mAP function provided by pytorch
+    '''
+    predictions = torch.load(path_to_preds)
+    preds = []
+    for i in range(len(predictions)):
+        preds.append(dict(
+            boxes = torch.tensor(predictions[i][0]), 
+            scores = torch.tensor(predictions[i][1][:len(predictions[i][0])]),
+            labels = torch.zeros(len(predictions[i][0]), dtype=torch.int64)
+        ))
+    return preds
+
 def prepare_batch(path_to_preds, path_to_gt):
     ''' this function returns the batch prepared for the mAP function provided by pytorch
 
@@ -28,18 +42,12 @@ def prepare_batch(path_to_preds, path_to_gt):
     Returns:
         batch (dict): dictionary containing the images and the targets
     '''
-    predictions = torch.load(path_to_preds)
+    preds = prepare_predictions(path_to_preds)
     ground_truth = torch.load(path_to_gt)
     
-    preds = []
     targets = []
 
     for i in range(len(ground_truth)):
-        preds.append(dict(
-            boxes = torch.tensor(predictions[i][0]), 
-            scores = torch.tensor(predictions[i][1][:len(predictions[i][0])]),
-            labels = torch.zeros(len(predictions[i][0]), dtype=torch.int64)
-        ))
         targets.append(dict(
             boxes = torch.tensor(ground_truth[i][0]),
             labels = torch.zeros(len(ground_truth[i][0]), dtype=torch.int64)
@@ -74,11 +82,4 @@ if __name__ == "__main__":
     metric = MeanAveragePrecision(box_format='xyxy', iou_type='bbox')
     metric.update(preds, targets)
     print(metric.compute())
-    # image1 = torch.load('../../data/predictions/batch_image1_predicted_bboxes.pt')
-    # image2 = torch.load('../../data/predictions/batch_image2_predicted_bboxes.pt')
 
-    # print(image1)
-
-    # torch.save([image1[0], image2[0]], 'annotated_testdata/batch_bad_predictions.pt')
-    # torch.save([image1[1], image2[1]], 'annotated_testdata/batch_good_predictions.pt')
-    # torch.save([image1[2], image2[2]], 'annotated_testdata/batch_ground_truth.pt')
