@@ -4,6 +4,7 @@
 
 # large files
 cyws-3d.ckpt
+data/ObChange/
 
 # data
 data/inference/office/*.png
