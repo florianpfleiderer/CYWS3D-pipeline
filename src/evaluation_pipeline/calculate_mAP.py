@@ -21,8 +21,8 @@ def prepare_predictions(path_to_preds):
     preds = []
     for i in range(len(predictions)):
         preds.append(dict(
-            boxes = torch.tensor(predictions[i][0]), 
-            scores = torch.tensor(predictions[i][1][:len(predictions[i][0])]),
+            boxes = predictions[i][0], 
+            scores = predictions[i][1][:len(predictions[i][0])],
             labels = torch.zeros(len(predictions[i][0]), dtype=torch.int64)
         ))
     return preds
@@ -56,23 +56,27 @@ def prepare_batch(path_to_preds, path_to_gt):
     return targets, preds
 
 def load_roboflow_export(json_path):
-    ''' this function loads the json file exported from roboflow and returns the data in the correct format
+    ''' this function loads the json file exported from roboflow 
+    (COCO format = x_min, y_min, width, height) and returns the data in the 
+    correct format (x_min,y_min,x_max,y_max)
 
     Keep in mind that the resulting image should be 224x224 pixels
     '''
-    # TODO: convert to same format as cyws3d exports
     targets = []
 
     with open(json_path) as file:
         gt = json.load(file)
         for i in range(len(gt['images'])):
             targets.append(dict(
-                boxes = torch.tensor(gt['annotations'][i]['bbox']),
+                boxes = torch.tensor([gt['annotations'][i]['bbox'][0], \
+                    gt['annotations'][i]['bbox'][1], gt['annotations'][i]['bbox'][0] \
+                        + gt['annotations'][i]['bbox'][2], gt['annotations'][i]['bbox'][1] \
+                            + gt['annotations'][i]['bbox'][3]], dtype=torch.float32),
                 labels = torch.zeros(len(gt['annotations'][i]['bbox']), dtype=torch.int64)
             ))
     return targets
 
-def calculate_mAP(targets, preds):
+def calculate_mAP(preds, targets):
     ''' this function calculates the mean average precision of the predictions made by the model
 
     The input data should be in the following format:
@@ -93,14 +97,8 @@ def calculate_mAP(targets, preds):
     return metric.compute()
         
 if __name__ == "__main__":
-    # targets, preds = prepare_batch('annotated_testdata/batch_good_predictions.pt', 'annotated_testdata/batch_ground_truth.pt')
-    # print(preds)
-    # print(f'targets: {targets}')
-    
-    # metric = MeanAveragePrecision(box_format='xyxy', iou_type='bbox')
-    # metric.update(preds, targets)
-    # print(metric.compute())
     targets = load_roboflow_export('annotated_testdata/annotations_coco.json')
     print(targets)
     preds = prepare_predictions('annotated_testdata/batch_image2_predicted_bboxes.pt')
     print(preds)
+    print(calculate_mAP(preds, targets))
