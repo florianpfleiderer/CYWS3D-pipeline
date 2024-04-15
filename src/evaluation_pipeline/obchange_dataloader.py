@@ -4,7 +4,9 @@ naming scheme as follows:
 TODO: add naming scheme like in documents folder
 
 '''
+import os
 import json
+import xml.etree.ElementTree as ET
 import torch
 
 class ObchangeDataset():
@@ -61,4 +63,40 @@ def load_roboflow_export(json_path):
             ))
     # rearrang elist to have the same order as the predictions
     targets = [targets[i] for i in [0, 2, 1, 3]]
+    return targets
+
+def load_pascal_voc_export(folder_path):
+    ''' this function loads the xml file exported from pascal voc and returns the data in the 
+    correct format (x_min,y_min,x_max,y_max)
+
+    Keep in mind that the resulting image should be 224x224 pixels
+
+    the folder structure for the files should be as follows:
+    folder_path
+    ├── img01<name>.jpg
+    ├── img01<name>.xml
+    ├── img02<name>.jpg
+    ├── omg02<name>.xml
+    ...
+
+    where the xml file contains the infos about the image and bbox coordinates
+    '''
+    targets = []
+    files = os.listdir(folder_path)
+    files.sort()
+    for file in files:
+        if file.endswith('.xml'):
+            tree = ET.parse(os.path.join(folder_path, file))
+            root = tree.getroot()
+            bboxes = []
+            labels = []
+            for obj in root.findall('object'):
+                bbox = obj.find('bndbox')
+                bboxes.append([int(bbox.find('xmin').text), int(bbox.find('ymin').text), \
+                    int(bbox.find('xmax').text), int(bbox.find('ymax').text)])
+                labels.append(0)
+            targets.append(dict(
+                boxes = torch.tensor(bboxes, dtype=torch.float32),
+                labels = torch.tensor(labels, dtype=torch.int64)
+            ))
     return targets

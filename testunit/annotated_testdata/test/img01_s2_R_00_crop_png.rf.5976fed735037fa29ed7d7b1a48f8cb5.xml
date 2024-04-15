@@ -1,0 +1,27 @@
+<annotation>
+	<folder></folder>
+	<filename>img01_s2_R_00_crop_png.rf.5976fed735037fa29ed7d7b1a48f8cb5.jpg</filename>
+	<path>img01_s2_R_00_crop_png.rf.5976fed735037fa29ed7d7b1a48f8cb5.jpg</path>
+	<source>
+		<database>roboflow.com</database>
+	</source>
+	<size>
+		<width>224</width>
+		<height>224</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>YCB-Objects</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>115</xmin>
+			<xmax>166</xmax>
+			<ymin>130</ymin>
+			<ymax>174</ymax>
+		</bndbox>
+	</object>
+</annotation>
