@@ -17,7 +17,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install git and wget
 RUN apt-get update && \
     #cyws3d dependencies
-    apt-get install -y git wget libgl1-mesa-glx libglib2.0-0 \ 
+    apt-get install -y --no-install-recommends --no-install-suggests \
+    git wget libgl1-mesa-glx libglib2.0-0 \ 
     # pipelines dependencies
     libgomp1 && \
     apt-get clean && \
