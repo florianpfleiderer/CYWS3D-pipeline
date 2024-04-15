@@ -2,10 +2,12 @@ from tracemalloc import start
 import yaml
 from easydict import EasyDict
 from modules.model import Model
-from modules.utils import create_batch_from_metadata, fill_in_the_missing_information, prepare_batch_for_model, visualise_predictions, plot_correspondences, undo_imagenet_normalization
+from modules.utils import create_batch_from_metadata, fill_in_the_missing_information, \
+    prepare_batch_for_model, visualise_predictions, plot_correspondences, undo_imagenet_normalization
 from modules.correspondence_extractor import CorrespondenceExtractor
 import torch
-from modules.geometry import remove_bboxes_with_area_less_than, suppress_overlapping_bboxes, keep_matching_bboxes
+from modules.geometry import remove_bboxes_with_area_less_than, suppress_overlapping_bboxes, \
+    keep_matching_bboxes, filter_low_confidence_bboxes
 import time
 
 def main(
@@ -14,7 +16,7 @@ def main(
     input_metadata: str = "data/GH30_Office/input_metadata.yml",
     load_weights_from: str = "./cyws-3d.ckpt",
     filter_predictions_with_area_under: int = 400,
-    keep_matching_bboxes_only: bool = False,
+    keep_matching_bboxes_only: bool = True,
     max_predictions_to_display: int = 5,
     minimum_confidence_threshold: float = 0.1,
 ):
@@ -57,6 +59,11 @@ def main(
                 scores2,
                 minimum_confidence_threshold,
             )
+        image1_bboxes, scores1 = filter_low_confidence_bboxes(
+            image1_bboxes, scores1, minimum_confidence_threshold)
+        image2_bboxes, scores2 = filter_low_confidence_bboxes(
+            image2_bboxes, scores2, minimum_confidence_threshold)
+            
         visualise_predictions(undo_imagenet_normalization(batch["image1"][i]),
                               undo_imagenet_normalization(batch["image2"][i]),
                                 image1_bboxes[:max_predictions_to_display],

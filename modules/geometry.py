@@ -312,3 +312,14 @@ def keep_matching_bboxes(batch, image_index, left_predictions, right_predictions
             right_bboxes_to_keep.append(right_high_confidence_bboxes[j,:4].tolist())
 
     return np.array(left_bboxes_to_keep), np.array(right_bboxes_to_keep)
+
+def filter_low_confidence_bboxes(bboxes: np.array, scores: np.array, confidence_threshold=0.2):
+    ''' this function filters out the bboxes with a confidence score 
+    lower than the minimum confidence threshold specified'''
+    high_confidence_bboxes = []
+    high_confidence_scores = []
+    for box, score in zip(bboxes, scores):
+        if score > confidence_threshold:
+            high_confidence_bboxes.append(box)
+            high_confidence_scores.append(score)
+    return np.array(high_confidence_bboxes), np.array(high_confidence_scores)
