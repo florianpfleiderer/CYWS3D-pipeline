@@ -13,20 +13,6 @@ import json
 import torch
 from torchmetrics.detection import MeanAveragePrecision
 
-def prepare_predictions(path_to_preds):
-    ''' This function returns the data stored in the .pt files saved after inference in th correct
-    format for the mAP function provided by pytorch
-    '''
-    predictions = torch.load(path_to_preds)
-    preds = []
-    for i in range(len(predictions)):
-        preds.append(dict(
-            boxes = predictions[i][0], 
-            scores = predictions[i][1][:len(predictions[i][0])],
-            labels = torch.zeros(len(predictions[i][0]), dtype=torch.int64)
-        ))
-    return preds
-
 def prepare_batch(path_to_preds, path_to_gt):
     ''' this function returns the batch prepared for the mAP function provided by pytorch
 
@@ -96,9 +82,3 @@ def calculate_mAP(preds, targets):
     metric.update(preds, targets)
     return metric.compute()
         
-if __name__ == "__main__":
-    targets = load_roboflow_export('annotated_testdata/annotations_coco.json')
-    print(targets)
-    preds = prepare_predictions('annotated_testdata/batch_image2_predicted_bboxes.pt')
-    print(preds)
-    print(calculate_mAP(preds, targets))

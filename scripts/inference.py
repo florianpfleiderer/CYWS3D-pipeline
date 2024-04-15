@@ -14,7 +14,7 @@ def main(
     input_metadata: str = "data/GH30_Office/input_metadata.yml",
     load_weights_from: str = "./cyws-3d.ckpt",
     filter_predictions_with_area_under: int = 400,
-    keep_matching_bboxes_only: bool = True,
+    keep_matching_bboxes_only: bool = False,
     max_predictions_to_display: int = 5,
     minimum_confidence_threshold: float = 0.1,
 ):
@@ -64,8 +64,17 @@ def main(
                                     scores1[:max_predictions_to_display],
                                     scores2[:max_predictions_to_display],
                                         save_path=f"data/predictions/prediction_{i}.png")
-        image1_predictions.append((torch.tensor(image1_bboxes[:max_predictions_to_display]), torch.tensor(scores1[:max_predictions_to_display])))
-        image2_predictions.append((torch.tensor(image2_bboxes[:max_predictions_to_display]), torch.tensor(scores2[:max_predictions_to_display])))
+        
+        image1_predictions.append(dict(
+            boxes=torch.as_tensor(image1_bboxes[:max_predictions_to_display], dtype=torch.float32), 
+            scores=torch.as_tensor(scores1[:max_predictions_to_display], dtype=torch.float32),
+            labels=torch.zeros(len(image1_bboxes[:max_predictions_to_display]), dtype=torch.int64))
+            )
+        image2_predictions.append(dict(
+            boxes=torch.as_tensor(image2_bboxes[:max_predictions_to_display], dtype=torch.float32), 
+            scores=torch.as_tensor(scores2[:max_predictions_to_display], dtype=torch.float32),
+            labels=torch.zeros(len(image2_bboxes[:max_predictions_to_display]), dtype=torch.int64))
+            )
     
     # save the batches for calculating mAP
     try: 
