@@ -15,9 +15,12 @@ from loguru import logger as L
 from mmdet.models.dense_heads.centernet_head import CenterNetHead
 from segmentation_models_pytorch.unet.model import UnetDecoder
 from einops import rearrange
-
-from modules.building_blocks import DownSamplingBlock, FeatureFusionBlock, Sequence2SpatialBlock
-from modules.registeration_module import FeatureRegisterationModule
+try:
+    from src.modules.building_blocks import DownSamplingBlock, FeatureFusionBlock, Sequence2SpatialBlock
+    from src.modules.registeration_module import FeatureRegisterationModule
+except ImportError:
+    from building_blocks import DownSamplingBlock, FeatureFusionBlock, Sequence2SpatialBlock
+    from registeration_module import FeatureRegisterationModule
 
 class Model(nn.Module):
     def __init__(self, args, load_weights_from=None):

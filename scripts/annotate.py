@@ -79,6 +79,4 @@ image = utils.draw_2d_bboxes_on_img("./data/annotation/office/scene4/img03_s4.pn
 
 plt.imsave("image.png", image)
 logger.info("image saved as image.png")
-# cv2.imshow("image", image)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
+

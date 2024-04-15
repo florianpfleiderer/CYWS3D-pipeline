@@ -1,13 +1,23 @@
 from tracemalloc import start
 import yaml
 from easydict import EasyDict
-from modules.model import Model
-from modules.utils import create_batch_from_metadata, fill_in_the_missing_information, \
-    prepare_batch_for_model, visualise_predictions, plot_correspondences, undo_imagenet_normalization
-from modules.correspondence_extractor import CorrespondenceExtractor
+try:
+    from src.modules.model import Model
+    from src.modules.utils import create_batch_from_metadata, fill_in_the_missing_information, \
+         prepare_batch_for_model, visualise_predictions, plot_correspondences, undo_imagenet_normalization
+    from src.modules.correspondence_extractor import CorrespondenceExtractor
+except ImportError:
+    from model import Model
+    from utils import create_batch_from_metadata, fill_in_the_missing_information, \
+        prepare_batch_for_model, visualise_predictions, plot_correspondences, undo_imagenet_normalization
+    from correspondence_extractor import CorrespondenceExtractor
 import torch
-from modules.geometry import remove_bboxes_with_area_less_than, suppress_overlapping_bboxes, \
-    keep_matching_bboxes, filter_low_confidence_bboxes
+try:
+    from src.modules.geometry import remove_bboxes_with_area_less_than, suppress_overlapping_bboxes, \
+        keep_matching_bboxes, filter_low_confidence_bboxes
+except ImportError:
+    from geometry import remove_bboxes_with_area_less_than, suppress_overlapping_bboxes, \
+        keep_matching_bboxes, filter_low_confidence_bboxes
 import time
 
 def main(

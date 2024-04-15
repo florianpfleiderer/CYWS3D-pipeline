@@ -29,6 +29,6 @@ def calculate_mAP(preds, targets):
     Returns:
         mAP (float): mean average precision of the model
     '''
-    metric = MeanAveragePrecision(box_format='xyxy', iou_type='bbox')
+    metric = MeanAveragePrecision(box_format='xyxy', iou_type='bbox', extended_summary=True)
     metric.update(preds, targets)
     return metric.compute()

@@ -6,8 +6,10 @@ from einops import rearrange
 
 from pytorch3d.renderer import AlphaCompositor, PerspectiveCameras, PointsRasterizationSettings, PointsRasterizer, PointsRenderer
 from pytorch3d.structures import Pointclouds
-
-import modules.geometry
+try:
+    import src.modules.geometry as geometry
+except ImportError:
+    import geometry
 
 class FeatureRegisterationModule(nn.Module):
     def __init__(self, args):
@@ -62,10 +64,10 @@ class FeatureRegisterationModule(nn.Module):
 
         def transform_points_1_to_2(points, index_in_batch):
             points = points.unsqueeze(0)
-            return modules.geometry.convert_world_to_image_coordinates(
-                modules.geometry.convert_image_coordinates_to_world(
+            return geometry.convert_world_to_image_coordinates(
+                geometry.convert_image_coordinates_to_world(
                     image_coords=points,
-                    depth=modules.geometry.sample_depth_for_given_points(batch["depth1"][index_in_batch].unsqueeze(0), points),
+                    depth=geometry.sample_depth_for_given_points(batch["depth1"][index_in_batch].unsqueeze(0), points),
                     K_inv=K_inv_1[index_in_batch].unsqueeze(0),
                     Rt=Rt_1_to_2[index_in_batch].unsqueeze(0),
                 ),
@@ -76,10 +78,10 @@ class FeatureRegisterationModule(nn.Module):
 
         def transform_points_2_to_1(points, index_in_batch):
             points = points.unsqueeze(0)
-            return modules.geometry.convert_world_to_image_coordinates(
-                modules.geometry.convert_image_coordinates_to_world(
+            return geometry.convert_world_to_image_coordinates(
+                geometry.convert_image_coordinates_to_world(
                     image_coords=points,
-                    depth=modules.geometry.sample_depth_for_given_points(batch["depth2"][index_in_batch].unsqueeze(0), points),
+                    depth=geometry.sample_depth_for_given_points(batch["depth2"][index_in_batch].unsqueeze(0), points),
                     K_inv=K_inv_2[index_in_batch].unsqueeze(0),
                     Rt=Rt_2_to_1[index_in_batch].unsqueeze(0),
                 ),
@@ -96,8 +98,8 @@ class FeatureRegisterationModule(nn.Module):
         for i, (p1, p2) in enumerate(zip(batch["points1"], batch["points2"])):
             if p1 is not None:
                 p1, p2 = p1.unsqueeze(0), p2.unsqueeze(0)
-                M_1_to_2.append(modules.geometry.estimate_linear_warp(p1, p2).squeeze(0))
-                M_2_to_1.append(modules.geometry.estimate_linear_warp(p2, p1).squeeze(0))
+                M_1_to_2.append(geometry.estimate_linear_warp(p1, p2).squeeze(0))
+                M_2_to_1.append(geometry.estimate_linear_warp(p2, p1).squeeze(0))
             else:
                 M_1_to_2.append(batch["transfm2d_1_to_2"][i])
                 M_2_to_1.append(batch["transfm2d_2_to_1"][i])
@@ -107,28 +109,28 @@ class FeatureRegisterationModule(nn.Module):
 
         b, _, h, w = features1.shape
         image_coords = rearrange(
-            modules.geometry.get_index_grid(h, w, batch=b, type_as=features1),
+            geometry.get_index_grid(h, w, batch=b, type_as=features1),
             "b h w t -> b (h w) t",
         )
-        image1_points_warped = modules.geometry.transform_points(M_1_to_2, image_coords, keep_depth=True)
-        image2_points_warped = modules.geometry.transform_points(M_2_to_1, image_coords, keep_depth=True)
+        image1_points_warped = geometry.transform_points(M_1_to_2, image_coords, keep_depth=True)
+        image2_points_warped = geometry.transform_points(M_2_to_1, image_coords, keep_depth=True)
         image1_warped_onto_image2 = self.feature_warper.render_features_from_points(image1_points_warped, features1)
         image2_warped_onto_image1 = self.feature_warper.render_features_from_points(image2_points_warped, features2)
 
         def transform_points_1_to_2(points, index_in_batch):
             points = points.unsqueeze(0)
-            return modules.geometry.transform_points(M_1_to_2[index_in_batch].unsqueeze(0), points, keep_depth=False)[0]
+            return geometry.transform_points(M_1_to_2[index_in_batch].unsqueeze(0), points, keep_depth=False)[0]
 
         def transform_points_2_to_1(points, index_in_batch):
             points = points.unsqueeze(0)
-            return modules.geometry.transform_points(M_2_to_1[index_in_batch].unsqueeze(0), points, keep_depth=False)[0]
+            return geometry.transform_points(M_2_to_1[index_in_batch].unsqueeze(0), points, keep_depth=False)[0]
 
         return image1_warped_onto_image2, image2_warped_onto_image1, transform_points_1_to_2, transform_points_2_to_1
 
     def register_identity_features(self, batch, features1, features2):
         b, _, h, w = features1.shape
         image_coords = rearrange(
-            modules.geometry.get_index_grid(h, w, batch=b, type_as=features1),
+            geometry.get_index_grid(h, w, batch=b, type_as=features1),
             "b h w t -> b (h w) t",
         )
         image_coords = F.pad(image_coords, (0, 1), value=1)
@@ -240,7 +242,7 @@ class FeatureRegisterationModule(nn.Module):
 def estimate_Rt_using_camera_parameters(intrinsics1, intrinsics2, rotation1, rotation2, position1, position2):
     K_inv_1 = intrinsics1.inverse()
     K_inv_2 = intrinsics2.inverse()
-    Rt_1_to_2, Rt_2_to_1 = modules.geometry.get_relative_pose(
+    Rt_1_to_2, Rt_2_to_1 = geometry.get_relative_pose(
         rotation1,
         rotation2,
         position1,
@@ -250,26 +252,26 @@ def estimate_Rt_using_camera_parameters(intrinsics1, intrinsics2, rotation1, rot
     return K_inv_1, K_inv_2, Rt_1_to_2, Rt_2_to_1
 
 def estimate_Rt_using_points(points1, points2, depth1, depth2):
-    K_inv, Rt = modules.geometry.setup_canonical_cameras(len(points1), tensor_to_infer_type_from=points1[0])
+    K_inv, Rt = geometry.setup_canonical_cameras(len(points1), tensor_to_infer_type_from=points1[0])
     batch_points1_in_world_coordinates = []
     batch_points2_in_world_coordinates = []
     for i in range(len(points1)):
-        points1_in_world_coordinates = modules.geometry.convert_image_coordinates_to_world(
+        points1_in_world_coordinates = geometry.convert_image_coordinates_to_world(
             image_coords=points1[i].unsqueeze(0),
-            depth=modules.geometry.sample_depth_for_given_points(depth1[i].unsqueeze(0), points1[i].unsqueeze(0)),
+            depth=geometry.sample_depth_for_given_points(depth1[i].unsqueeze(0), points1[i].unsqueeze(0)),
             K_inv=K_inv[i].unsqueeze(0),
             Rt=Rt[i].unsqueeze(0),
         ).squeeze(0)
-        points2_in_world_coordinates = modules.geometry.convert_image_coordinates_to_world(
+        points2_in_world_coordinates = geometry.convert_image_coordinates_to_world(
             image_coords=points2[i].unsqueeze(0),
-            depth=modules.geometry.sample_depth_for_given_points(depth2[i].unsqueeze(0), points2[i].unsqueeze(0)),
+            depth=geometry.sample_depth_for_given_points(depth2[i].unsqueeze(0), points2[i].unsqueeze(0)),
             K_inv=K_inv[i].unsqueeze(0),
             Rt=Rt[i].unsqueeze(0),
         ).squeeze(0)
         batch_points1_in_world_coordinates.append(points1_in_world_coordinates)
         batch_points2_in_world_coordinates.append(points2_in_world_coordinates)
-    Rt_1_to_2 = modules.geometry.estimate_linear_warp(batch_points1_in_world_coordinates, batch_points2_in_world_coordinates)
-    Rt_2_to_1 = modules.geometry.estimate_linear_warp(batch_points2_in_world_coordinates, batch_points1_in_world_coordinates)
+    Rt_1_to_2 = geometry.estimate_linear_warp(batch_points1_in_world_coordinates, batch_points2_in_world_coordinates)
+    Rt_2_to_1 = geometry.estimate_linear_warp(batch_points2_in_world_coordinates, batch_points1_in_world_coordinates)
     return K_inv, K_inv, Rt_1_to_2, Rt_2_to_1
 
 def slice_batch_given_bool_array(batch, mask):
@@ -311,18 +313,18 @@ class DifferentiableFeatureWarper(nn.Module):
     def setup_given_cameras(self, batch):
         src_camera_K_inv = torch.linalg.inv(batch["intrinsics1"])
         dst_camera_K_inv = torch.linalg.inv(batch["intrinsics2"])
-        src_camera_Rt = modules.geometry.construct_Rt_matrix(batch["rotation1"], batch["position1"])
-        dst_camera_Rt = modules.geometry.construct_Rt_matrix(batch["rotation2"], batch["position2"])
+        src_camera_Rt = geometry.construct_Rt_matrix(batch["rotation1"], batch["position1"])
+        dst_camera_Rt = geometry.construct_Rt_matrix(batch["rotation2"], batch["position2"])
         return src_camera_K_inv, dst_camera_K_inv, src_camera_Rt, dst_camera_Rt
 
     def warp(self, features_src, depth_src, src_camera_K_inv, dst_camera_K_inv, Rt_src_to_dst):
         b, _, h, w = features_src.shape
         image_coords = rearrange(
-            modules.geometry.get_index_grid(h, w, batch=b, type_as=features_src),
+            geometry.get_index_grid(h, w, batch=b, type_as=features_src),
             "b h w t -> b (h w) t",
         )
-        src_points_in_dst_camera_coords = modules.geometry.convert_world_to_image_coordinates(
-            modules.geometry.convert_image_coordinates_to_world(
+        src_points_in_dst_camera_coords = geometry.convert_world_to_image_coordinates(
+            geometry.convert_image_coordinates_to_world(
                 image_coords=image_coords,
                 depth=rearrange(depth_src, "b h w -> b (h w)"),
                 K_inv=src_camera_K_inv,
@@ -337,7 +339,7 @@ class DifferentiableFeatureWarper(nn.Module):
     def render_features_from_points(self, points_in_3d, features):
         b, _, h, w = features.shape
         src_point_cloud = Pointclouds(
-            points=modules.geometry.convert_to_pytorch3d_coordinate_system(points_in_3d),
+            points=geometry.convert_to_pytorch3d_coordinate_system(points_in_3d),
             features=rearrange(features, "b c h w -> b (h w) c"),
         )
         return self.render(src_point_cloud, features.device, (h, w))
