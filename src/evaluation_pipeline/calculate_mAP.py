@@ -13,55 +13,6 @@ import json
 import torch
 from torchmetrics.detection import MeanAveragePrecision
 
-def prepare_batch(path_to_preds, path_to_gt):
-    ''' this function returns the batch prepared for the mAP function provided by pytorch
-
-    Format of Predictions:
-    list[tuple(Tensor, Tensor)] where each tuple corresponds to a single image. 
-    The first tensor contains the predicted bounding boxes and the second tensor contains the confidence scores. 
-    The predicted bounding boxes should be in the format (tl_x, tl_y, br_x, br_y) in absolute image coordinates. 
-    The confidence scores should be in the range [0, 1] where 0 means no object and 1 means full confidence that an object is present.
-    
-    Args:
-        path_to_preds (str): path to the predictions file
-        path_to_gt (str): path to the ground truth file
-
-    Returns:
-        batch (dict): dictionary containing the images and the targets
-    '''
-    preds = prepare_predictions(path_to_preds)
-    ground_truth = torch.load(path_to_gt)
-    
-    targets = []
-
-    for i in range(len(ground_truth)):
-        targets.append(dict(
-            boxes = torch.tensor(ground_truth[i][0]),
-            labels = torch.zeros(len(ground_truth[i][0]), dtype=torch.int64)
-        ))
-    return targets, preds
-
-def load_roboflow_export(json_path):
-    ''' this function loads the json file exported from roboflow 
-    (COCO format = x_min, y_min, width, height) and returns the data in the 
-    correct format (x_min,y_min,x_max,y_max)
-
-    Keep in mind that the resulting image should be 224x224 pixels
-    '''
-    targets = []
-
-    with open(json_path) as file:
-        gt = json.load(file)
-        for i in range(len(gt['images'])):
-            targets.append(dict(
-                boxes = torch.tensor([gt['annotations'][i]['bbox'][0], \
-                    gt['annotations'][i]['bbox'][1], gt['annotations'][i]['bbox'][0] \
-                        + gt['annotations'][i]['bbox'][2], gt['annotations'][i]['bbox'][1] \
-                            + gt['annotations'][i]['bbox'][3]], dtype=torch.float32),
-                labels = torch.zeros(len(gt['annotations'][i]['bbox']), dtype=torch.int64)
-            ))
-    return targets
-
 def calculate_mAP(preds, targets):
     ''' this function calculates the mean average precision of the predictions made by the model
 
@@ -81,4 +32,3 @@ def calculate_mAP(preds, targets):
     metric = MeanAveragePrecision(box_format='xyxy', iou_type='bbox')
     metric.update(preds, targets)
     return metric.compute()
-        
