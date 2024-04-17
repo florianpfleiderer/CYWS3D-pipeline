@@ -20,11 +20,12 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 FOLDER = "data/annotation/office/"
-SCENE = "scene4/"
+SCENE = "scene2/planes/0/"
 PCD_PATH = "merged_plane_clouds_ds002.pcd"
 ANNO_PATH = "merged_plane_clouds_ds002_GT.anno"
 CAMERA_INFO_JSON_PATH = "camera_info.json"
 VIEWPOINT_INFO_JSON_PATH = "viewpoint_info.json"
+VIEWPOINT_INFO_YAML_PATH = "transformation.yaml"
 gt_colour = np.array([0.1, 0.90, 0.1])
 
 # load pcd file
@@ -41,7 +42,8 @@ intrinsics.from_json("./"+FOLDER+CAMERA_INFO_JSON_PATH)
 
 # extrinsic matrix
 extrinsics = Extrinsic()
-extrinsics.from_json("./"+FOLDER+VIEWPOINT_INFO_JSON_PATH)
+# extrinsics.from_json("./"+FOLDER+VIEWPOINT_INFO_JSON_PATH)
+extrinsics.from_yaml("./"+FOLDER+SCENE+VIEWPOINT_INFO_YAML_PATH)
 
 # create mesh for showing the origin
 mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
@@ -50,9 +52,15 @@ mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0
 pcd.transform(extrinsics.homogenous_matrix())
 points_pos = np.asarray(pcd.points)
 points_color = np.asarray(pcd.colors)
+# o3d.visualization.draw_geometries([pcd, mesh_frame])
+
+# if True:
+#     exit()
+
 
 # indices change after "select by index" (new pcd is created)
-gt_pcd = pcd.select_by_index(anno_dict['077_rubiks_cube'])
+# gt_pcd = pcd.select_by_index(anno_dict['077_rubiks_cube'])
+gt_pcd = pcd.select_by_index(anno_dict['025_mug'])
 gt_points_pos = np.asarray(gt_pcd.points)
 gt_points_color = np.asarray(gt_pcd.colors)
 
@@ -68,14 +76,14 @@ gt_points_color = np.asarray(gt_pcd.colors)
 # project and draw bboxes
 u_coords, v_coords = project_to_2d(points_pos, \
                                     intrinsics.homogenous_matrix(), \
-                                    480, \
+                                    intrinsics.width, \
                                     intrinsics.height)
 
-gt_u, gt_v = project_to_2d(gt_points_pos, intrinsics.homogenous_matrix(), 480, intrinsics.height)
+gt_u, gt_v = project_to_2d(gt_points_pos, intrinsics.homogenous_matrix(), intrinsics.width, intrinsics.height)
 
 image = utils.draw_2d_bboxes((u_coords, v_coords), points_color, (gt_u, gt_v), intrinsics)
 
-image = utils.draw_2d_bboxes_on_img("./data/annotation/office/scene4/img03_s4.png", gt_u, gt_v)
+# image = utils.draw_2d_bboxes_on_img("./data/annotation/office/scene4/img03_s4.png", gt_u, gt_v)
 
 plt.imsave("image.png", image)
 logger.info("image saved as image.png")

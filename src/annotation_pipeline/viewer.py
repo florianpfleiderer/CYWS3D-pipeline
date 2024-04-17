@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import json
 
 
-folder = "../data/annotation/office/"
-scene = "scene4/"
+folder = "../../data/annotation/office/"
+scene = "scene2/planes/0/"
 pcd_path = "merged_plane_clouds_ds002.pcd"
 anno_path = "merged_plane_clouds_ds002_GT.anno"
 camera_info_json_path = "camera_info.json" 

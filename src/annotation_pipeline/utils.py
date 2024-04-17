@@ -98,8 +98,8 @@ def draw_2d_bboxes(pixel_coordinates: tuple, \
     for u, v, color in zip(u_coords, v_coords, points_color):
         image[int(v), int(u)] = color
 
-    if image.shape[2] == 3:  # Convert RGB to BGR for OpenCV if necessary
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    # if image.shape[2] == 3:  # Convert RGB to BGR for OpenCV if necessary
+    #     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
     top_left = (min(gt_u), min(gt_v))
     bottom_right = (max(gt_u), max(gt_v))

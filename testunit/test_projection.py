@@ -1,5 +1,12 @@
 import unittest
+import logging
 from src.annotation_pipeline.projection import Intrinsic, Extrinsic
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# toggle logging level for different levels of verbosity
+logger.setLevel(logging.WARNING)
 
 class TestIntrinsic(unittest.TestCase):
     @classmethod
@@ -45,3 +52,25 @@ class TestExtrinsic(unittest.TestCase):
         self.assertAlmostEqual(self.extrinsics.extrinsic_matrix[3][1], 0)
         self.assertAlmostEqual(self.extrinsics.extrinsic_matrix[3][2], 0)
         self.assertAlmostEqual(self.extrinsics.extrinsic_matrix[3][3], 1)
+
+    def test_from_yaml(self):
+        ''' Output Rotation Matrix should have the following values:
+            [  0.9554766,  0.1900868, -0.2256798;
+               0.2950667, -0.6155338,  0.7307898;
+              -0.0000000, -0.7648432, -0.6442165  ]
+
+        Output Translation Matrix should have the following values:
+            x: 1.4447786607505417
+            y: 0.8557686332280523
+            z: 0.8960933323483593
+        '''
+        self.extrinsics.from_yaml('testunit/testmodel/transformation.yaml')#
+        logger.info(f'position={self.extrinsics.position}')
+        logger.info(f'rotation={self.extrinsics.rotation}')
+        self.assertAlmostEqual(self.extrinsics.rotation[0][0], 0.95547, places=3)
+        self.assertAlmostEqual(self.extrinsics.rotation[1][1], -0.61553, places=3)
+        self.assertAlmostEqual(self.extrinsics.rotation[2][2], -0.64421, places=3)
+        self.assertAlmostEqual(self.extrinsics.position[0], 1.44477, places=3)
+        
+        self.assertAlmostEqual(self.extrinsics.homogenous_matrix()[0][0], 0.95547, places=3)
+        self.assertAlmostEqual(self.extrinsics.homogenous_matrix()[3][3], 1.0, places=3)

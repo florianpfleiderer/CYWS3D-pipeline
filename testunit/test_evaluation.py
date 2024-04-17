@@ -1,7 +1,14 @@
 import unittest
+import logging
 import torch
 from src.evaluation_pipeline.calculate_mAP import calculate_mAP
 from src.evaluation_pipeline.obchange_dataloader import load_pascal_voc_export
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# toggle logging level for different levels of verbosity
+logger.setLevel(logging.WARNING)
 
 class TestCalculate_mAP(unittest.TestCase):
     @classmethod
@@ -12,9 +19,9 @@ class TestCalculate_mAP(unittest.TestCase):
     def test_calculate_mAP(self):
         ''' test if the mAP is calculated correctly
         '''
-        print(f'predicted bboxes: {self.predictions}')
-        print(f'target bboxes: {self.targets}')
+        logger.info(f'predicted bboxes: {self.predictions}')
+        logger.info(f'target bboxes: {self.targets}')
         self.map = calculate_mAP(self.predictions, self.targets)
-        # print(f'mAP: {self.map}')
+        logger.debug(f'mAP: {self.map}')
         self.assertGreaterEqual(self.map['map'], 0.5)
 
