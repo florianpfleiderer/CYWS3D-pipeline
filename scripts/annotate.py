@@ -19,14 +19,20 @@ from src.annotation_pipeline import utils
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
+DATASET_FOLDER = "data/ObChange/"
 FOLDER = "data/annotation/office/"
 SCENE = "scene2/planes/0/"
 PCD_PATH = "merged_plane_clouds_ds002.pcd"
 ANNO_PATH = "merged_plane_clouds_ds002_GT.anno"
 CAMERA_INFO_JSON_PATH = "camera_info.json"
 VIEWPOINT_INFO_JSON_PATH = "viewpoint_info.json"
-VIEWPOINT_INFO_YAML_PATH = "transformation.yaml"
+VIEWPOINT_INFO_YAML_PATH = "transformations.yaml"
 gt_colour = np.array([0.1, 0.90, 0.1])
+
+# TODO: traverse dataset
+# for root, dirnames, files in os.walk(DATASET_FOLDER):
+    # loop over dataset to extract ground truth for every scene containing a 
+    # transformations.yaml file
 
 # load pcd file
 pcd = o3d.io.read_point_cloud("./" + FOLDER + SCENE + PCD_PATH)
