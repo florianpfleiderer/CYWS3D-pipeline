@@ -24,10 +24,10 @@ class Intrinsic():
     def __init__(self, cx=None, cy=None, f=None, width=None, height=None):
         self.cx = cx
         self.cy = cy
-        self.f = f
+        self.fx = f
+        self.fy = f
         self.width = width
         self.height = height
-        self.distortion = None
 
     def from_xml(self, xml_file: str):
         ''' Load the intrinsic parameters from an xml file
@@ -39,7 +39,8 @@ class Intrinsic():
         calibration = root.find(".//calibration")
         self.cx = float(calibration.find('cx').text)
         self.cy = float(calibration.find('cy').text)
-        self.f = float(calibration.find('f').text)
+        self.fx = float(calibration.find('f').text)
+        self.fy = float(calibration.find('f').text)
         self.width = int(root.find(".//resolution").attrib['width'])
         self.height = int(root.find(".//resolution").attrib['height'])
 
@@ -56,7 +57,6 @@ class Intrinsic():
             self.cy = data[1][2]
             self.fx = data[0][0]
             self.fy = data[1][1]
-            self.distortion = np.array(temp['D'])
             self.height = temp['height']
             self.width = temp['width']
 
@@ -132,7 +132,7 @@ class Extrinsic():
 
         self.extrinsic_matrix[:3, :4] = np.column_stack((self.rotation, self.position))
         self.extrinsic_matrix = np.linalg.inv(self.extrinsic_matrix)
-    
+
     def from_yaml(self, yaml_file: str):
         ''' load the transformation from the yaml file containing the transformation from 
         map origin to camera_center_frame in tf tree at a specific timestamp.
@@ -150,7 +150,7 @@ class Extrinsic():
                 y: 0.0
                 z: 0.0
         '''
-        with open(yaml_file, 'r') as f:
+        with open(yaml_file, 'r', encoding="utf-8") as f:
             data = yaml.safe_load(f)
             rotation = data['transformation']['rotation']
             self.rotation = self.quat_to_rot(rotation)
@@ -187,7 +187,7 @@ class Extrinsic():
 
         self.extrinsic_matrix[:3, :4] = np.column_stack((self.rotation, self.position))
         self.extrinsic_matrix = np.linalg.inv(self.extrinsic_matrix)
-    
+
     def quat_to_rot(self, Q):
         '''
         Covert a quaternion into a full three-dimensional rotation matrix.
@@ -205,26 +205,26 @@ class Extrinsic():
         q1 = Q['x']
         q2 = Q['y']
         q3 = Q['z']
-        
+
         # First row of the rotation matrix
         r00 = 2 * (q0 * q0 + q1 * q1) - 1
         r01 = 2 * (q1 * q2 - q0 * q3)
         r02 = 2 * (q1 * q3 + q0 * q2)
-        
+
         # Second row of the rotation matrix
         r10 = 2 * (q1 * q2 + q0 * q3)
         r11 = 2 * (q0 * q0 + q2 * q2) - 1
         r12 = 2 * (q2 * q3 - q0 * q1)
-        
+
         # Third row of the rotation matrix
         r20 = 2 * (q1 * q3 - q0 * q2)
         r21 = 2 * (q2 * q3 + q0 * q1)
         r22 = 2 * (q0 * q0 + q3 * q3) - 1
-        
+
         # 3x3 rotation matrix
         rot_matrix = np.array([[r00, r01, r02],
                             [r10, r11, r12],
-                            [r20, r21, r22]])        
+                            [r20, r21, r22]])
         return rot_matrix
 
     def matrix(self):
@@ -236,7 +236,7 @@ class Extrinsic():
         return self.extrinsic_matrix
 
 
-def inside_frustum(point, fov, near, far):
+def inside_frustum(point, fov, near, far) -> bool:
     ''' Check if point is inside frustum '''
     x, y, z = point
     if z > near or z < far:
@@ -248,7 +248,7 @@ def inside_frustum(point, fov, near, far):
     return True
 
 
-def frustum_culling(points: np.array, fov: int) -> None:
+def frustum_culling(points: np.array, fov: int) -> list:
     ''' Filter points based on frustum culling 
     
     Args:

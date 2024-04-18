@@ -156,7 +156,7 @@ def load_transformations(yaml_path: str) -> dict:
 
     The yaml file contains a transformation for each image taken for a specific scene.
     The format is as follows:
-    -   id: 0
+    -   image_id: 0
         origin_frame: /map
         rotation:
             w: 0.45350259463085363
@@ -169,21 +169,24 @@ def load_transformations(yaml_path: str) -> dict:
             x: -0.18408279805772904
             y: 1.0671824290226986
             z: 1.0897595086114673
-    -   id: 1
+    -   image_id: 1
         ...
 
     The function returns a dict with rotation, translation and timestamp for each entry.
     """
-    with open(yaml_path, "r") as stream:
+    with open(yaml_path, "r", encoding="utf-8") as stream:
         try:
             data = yaml.safe_load(stream)
             transformations = {}
             for entry in data:
-                id = entry["id"]
+                image_id = entry["id"]
                 rotation = entry["rotation"]
                 translation = entry["translation"]
                 timestamp = entry["timestamp"]
-                transformations[id] = {"rotation": rotation, "translation": translation, "timestamp": timestamp}
+                transformations[id] = {
+                    "rotation": rotation, 
+                    "translation": translation,
+                    "timestamp": timestamp}
             return transformations
         except yaml.YAMLError as exc:
             print(exc)

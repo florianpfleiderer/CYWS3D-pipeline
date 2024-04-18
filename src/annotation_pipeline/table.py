@@ -8,12 +8,14 @@ import yaml
 import numpy as np
 
 class Plane:
+    """ Represents a recreated plane from the table.txt file. 
+    """
     def __init__(self, plane: dict):
         self.center = np.array(list(plane['center'].values()))
         self.height = np.array(plane['height'])
         self.points = np.array([list(point.values()) for point in plane['points']])
         self.coeffs = np.array(list(plane['plane'].values()))
-    
+
     def __str__(self):
         return f'center={self.center},\
             \nheight={self.height},\
@@ -21,10 +23,14 @@ class Plane:
             \ncoeffs={self.coeffs}'
 
 class Table:
+    """ Represents the table.txt file.
+    """
     def __init__(self, planes: list):
         self.planes = [Plane(plane) for plane in planes]
 
 def read_table_file(file_path):
+    """ Reads the table.txt file and returns a Table object.
+    """
     with open(file_path, 'r', encoding='utf-8') as file:
         content = file.read()
         planes = []

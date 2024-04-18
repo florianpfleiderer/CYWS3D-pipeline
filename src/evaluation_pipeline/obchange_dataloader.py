@@ -29,20 +29,20 @@ class ObchangeDataset():
         ''' Returns the length of the dataset
         '''
         return len(os.listdir(self.root_dir))
-    
+
     def __getitem__(self, idx):
         ''' Returns the rgb frame at the given index
         '''
         if torch.is_tensor(idx):
             idx = idx.tolist()
-        
+
         img_name = os.path.join(self.root_dir, f'{idx}.png')
         image = io.imread(img_name)
         sample = {'image': image}
 
         if self.transform:
             sample = self.transform(sample)
-        
+
         return sample
 
 def load_roboflow_export(json_path):

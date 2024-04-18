@@ -1,3 +1,8 @@
+# Created on Thu Apr 18 2024 by Florian Pfleiderer
+# Copyright (c) 2024 TU Wien
+"""
+Module for testing the projection module functions.
+"""
 import unittest
 import logging
 from src.annotation_pipeline.projection import Intrinsic, Extrinsic
@@ -9,8 +14,10 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.WARNING)
 
 class TestIntrinsic(unittest.TestCase):
+    """ Test the Intrinsic class
+    """
     @classmethod
-    def setUpClass(self):
+    def setUpClass(self): #TODO; this should say cls instead of self
         self.intrinsics = Intrinsic(0,0,0,0,0)
 
     def test_from_xml(self):
@@ -22,8 +29,10 @@ class TestIntrinsic(unittest.TestCase):
         self.assertAlmostEqual(self.intrinsics.f, 1658.5404555376736)
         self.assertAlmostEqual(self.intrinsics.width, 1920)
         self.assertAlmostEqual(self.intrinsics.height, 1080)
-    
+
 class TestExtrinsic(unittest.TestCase):
+    """ Test the Extrinsic class
+    """
     @classmethod
     def setUpClass(self):
         self.extrinsics = Extrinsic(0,0)
