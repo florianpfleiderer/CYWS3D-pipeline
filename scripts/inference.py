@@ -1,18 +1,35 @@
+# Credits to Ragav Sachdeva
+# MIT License
+"""
+Contains the Code for running an inference with cyws3d.
+"""
 from tracemalloc import start
 import yaml
 from easydict import EasyDict
-from modules.model import Model
-from utils import create_batch_from_metadata, fill_in_the_missing_information, prepare_batch_for_model, visualise_predictions, plot_correspondences, undo_imagenet_normalization
-from modules.correspondence_extractor import CorrespondenceExtractor
+try:
+    from src.modules.model import Model
+    from src.modules.utils import create_batch_from_metadata, fill_in_the_missing_information, \
+         prepare_batch_for_model, visualise_predictions, plot_correspondences, undo_imagenet_normalization
+    from src.modules.correspondence_extractor import CorrespondenceExtractor
+except ImportError:
+    from model import Model
+    from utils import create_batch_from_metadata, fill_in_the_missing_information, \
+        prepare_batch_for_model, visualise_predictions, plot_correspondences, undo_imagenet_normalization
+    from correspondence_extractor import CorrespondenceExtractor
 import torch
-from modules.geometry import remove_bboxes_with_area_less_than, suppress_overlapping_bboxes, keep_matching_bboxes
+try:
+    from src.modules.geometry import remove_bboxes_with_area_less_than, suppress_overlapping_bboxes, \
+        keep_matching_bboxes, filter_low_confidence_bboxes
+except ImportError:
+    from geometry import remove_bboxes_with_area_less_than, suppress_overlapping_bboxes, \
+        keep_matching_bboxes, filter_low_confidence_bboxes
 import time
 
 def main(
     config_file: str = "config.yml",
-    input_metadata: str = "data/inference/demo_data/input_metadata.yml",
-    # input_metadata: str = "data/inference/office/input_metadata.yml",
-    load_weights_from: str = None,
+    # input_metadata: str = "data/inference/demo_data/input_metadata.yml",
+    input_metadata: str = "data/GH30_Office/input_metadata.yml",
+    load_weights_from: str = "./cyws-3d.ckpt",
     filter_predictions_with_area_under: int = 400,
     keep_matching_bboxes_only: bool = True,
     max_predictions_to_display: int = 5,
@@ -34,6 +51,8 @@ def main(
     print(f"Time taken to prepare the batch for the model: {time.time() - start_time:.2f} seconds")
     start_time = time.time()
     batch_image1_predicted_bboxes, batch_image2_predicted_bboxes = model.predict(batch)
+    image1_predictions = []
+    image2_predictions = []
     print(f"Time taken to predict: {time.time() - start_time:.2f} seconds")
     for i, (image1_bboxes, image2_bboxes) in enumerate(zip(batch_image1_predicted_bboxes,
                                                            batch_image2_predicted_bboxes)):
@@ -55,11 +74,37 @@ def main(
                 scores2,
                 minimum_confidence_threshold,
             )
+        image1_bboxes, scores1 = filter_low_confidence_bboxes(
+            image1_bboxes, scores1, minimum_confidence_threshold)
+        image2_bboxes, scores2 = filter_low_confidence_bboxes(
+            image2_bboxes, scores2, minimum_confidence_threshold)
+            
         visualise_predictions(undo_imagenet_normalization(batch["image1"][i]),
                               undo_imagenet_normalization(batch["image2"][i]),
                                 image1_bboxes[:max_predictions_to_display],
-                                    image2_bboxes[:max_predictions_to_display],
+                                image2_bboxes[:max_predictions_to_display],
+                                    scores1[:max_predictions_to_display],
+                                    scores2[:max_predictions_to_display],
                                         save_path=f"data/predictions/prediction_{i}.png")
+        
+        image1_predictions.append(dict(
+            boxes=torch.as_tensor(image1_bboxes[:max_predictions_to_display], dtype=torch.float32), 
+            scores=torch.as_tensor(scores1[:max_predictions_to_display], dtype=torch.float32),
+            labels=torch.zeros(len(image1_bboxes[:max_predictions_to_display]), dtype=torch.int64))
+            )
+        image2_predictions.append(dict(
+            boxes=torch.as_tensor(image2_bboxes[:max_predictions_to_display], dtype=torch.float32), 
+            scores=torch.as_tensor(scores2[:max_predictions_to_display], dtype=torch.float32),
+            labels=torch.zeros(len(image2_bboxes[:max_predictions_to_display]), dtype=torch.int64))
+            )
+    
+    # save the batches for calculating mAP
+    try: 
+        torch.save(image1_predictions, 'data/predictions/batch_image1_predicted_bboxes.pt')
+        torch.save(image2_predictions, 'data/predictions/batch_image2_predicted_bboxes.pt')
+    except:
+        print('Error saving the batches for calculating mAP as pt')
+    
     
 def get_easy_dict_from_yaml_file(path_to_yaml_file):
     """

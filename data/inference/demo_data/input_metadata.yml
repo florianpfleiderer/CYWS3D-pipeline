@@ -1,14 +1,18 @@
 batch:
-  # 2x RGB images only (3D scene)
+    # 2x RGB images only (3D scene)
+  - image1: "data/inference/demo_data/ship_0.jpg"
+    image2: "data/inference/demo_data/ship_2.jpg"
+    registration_strategy: "2d"
+    # 2x RGB images only (3D scene)
   - image1: "data/inference/demo_data/ship_0.jpg"
     image2: "data/inference/demo_data/ship_2.jpg"
     registration_strategy: "3d"
-  # # 2x RGB images, with GT depth (3D scene)
-  # - image1: "data/inference/demo_data/ship_0.jpg"
-  #   image2: "data/inference/demo_data/ship_2.jpg"
-  #   depth1: "data/inference/demo_data/depth_ship_0.png"
-  #   depth2: "data/inference/demo_data/depth_ship_2.png"
-  #   registration_strategy: "3d"
+  # 2x RGB images, with GT depth (3D scene)
+  - image1: "data/inference/demo_data/ship_0.jpg"
+    image2: "data/inference/demo_data/ship_2.jpg"
+    depth1: "data/inference/demo_data/depth_ship_0.png"
+    depth2: "data/inference/demo_data/depth_ship_2.png"
+    registration_strategy: "3d"
   # # 2x RGB images, with GT depth and camera parameters (3D scene)
   # - image1: "data/inference/demo_data/24478_831_2_0.png"
   #   image2: "data/inference/demo_data/24478_831_2_1.png"

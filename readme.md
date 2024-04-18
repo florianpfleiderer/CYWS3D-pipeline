@@ -6,8 +6,6 @@ In Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV
 
 [Ragav Sachdeva](https://ragavsachdeva.github.io/), [Andrew Zisserman](https://scholar.google.com/citations?hl=en&user=UZ5wscMAAAAJ)
 
-![results](demo_data/pred.gif)
-
 ## Installation
 
 **Clone the repository**
@@ -21,6 +19,8 @@ git clone --recursive git@github.com:ragavsachdeva/CYWS-3D.git
 ```
 docker build -t cyws3d:latest .
 ```
+
+Or start the .devcontainer using visual studio mcode (recommended way due to the postCreateCommand that is also run)
 
 **Notes**
 
@@ -37,10 +37,7 @@ Aborted (core dumped)
 
 ## Datasets
 
-KC-3D: `wget https://thor.robots.ox.ac.uk/cyws-3d/kc3d.tar`
-
-RC-3D: `wget https://thor.robots.ox.ac.uk/cyws-3d/rc3d.tar`
-
+The Frames taken from the ObChange Dataset are found in data/inference/obchange/...
 
 ## Pre-trained model
 
@@ -53,9 +50,10 @@ gzip -d cyws-3d.ckpt.gz
 
 Please try running:
 
-`inference.py --load_weights_from ./cyws-3d.ckpt`
+`inference.py`
 
 This should perform a batched inference on a set of example image pairs under various settings (see [this file](demo_data/input_metadata.yml)).
+
 
 For the annotation pipeline try:
 

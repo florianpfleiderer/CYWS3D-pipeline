@@ -17,7 +17,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install git and wget
 RUN apt-get update && \
     #cyws3d dependencies
-    apt-get install -y git wget libgl1-mesa-glx libglib2.0-0 \ 
+    apt-get install -y --no-install-recommends --no-install-suggests \
+    git wget openssh-client \
+    # cyws3d dependencies
+    libgl1-mesa-glx libglib2.0-0 \ 
     # pipelines dependencies
     libgomp1 && \
     apt-get clean && \
@@ -63,7 +66,7 @@ RUN conda activate cyws3d-pipeline && pip install mmcv-full==1.7.0 -f https://do
 RUN conda activate cyws3d-pipeline && pip install timm==0.6.12 jsonargparse matplotlib imageio loguru einops wandb easydict kornia==0.6.8 scipy etils mmdet==2.25.3 shapely==2.0.2
 RUN conda activate cyws3d-pipeline && pip install segmentation-models-pytorch@git+https://github.com/ragavsachdeva/segmentation_models.pytorch.git@2cde92e776b0a074d5e2f4f6a50c68754f948015
 # pipeline
-RUN conda activate cyws3d-pipeline && pip install open3d==0.16.0
+RUN conda activate cyws3d-pipeline && pip install open3d==0.16.0 torchmetrics==1.3.2
 
 
 # start container in cyws3d-pipeline environment

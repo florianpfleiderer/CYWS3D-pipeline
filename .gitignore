@@ -4,12 +4,14 @@
 
 # large files
 cyws-3d.ckpt
+data/ObChange/
 
 # data
 data/inference/office/*.png
 
 # predictions
 data/predictions/prediction*
+data/predictions/*.pt
 
 # temporary image results in scripts / root folder
 scripts/*png

@@ -1,0 +1,21 @@
+batch:
+- depth1: data/GH30_Office/img01_s1_L_00_crop_depth.png
+  depth2: data/GH30_Office/img01_s2_R_00_crop_depth.png
+  image1: data/GH30_Office/img01_s1_L_00_crop.png
+  image2: data/GH30_Office/img01_s2_R_00_crop.png
+  registration_strategy: 3d
+- depth1: data/GH30_Office/img02_s1_L_00_crop_depth.png
+  depth2: data/GH30_Office/img02_s2_R_00_crop_depth.png
+  image1: data/GH30_Office/img02_s1_L_00_crop.png
+  image2: data/GH30_Office/img02_s2_R_00_crop.png
+  registration_strategy: 3d
+- depth1: data/GH30_Office/img03_s1_L_00_crop_depth.png
+  depth2: data/GH30_Office/img03_s2_R_00_crop_depth.png
+  image1: data/GH30_Office/img03_s1_L_00_crop.png
+  image2: data/GH30_Office/img03_s2_R_00_crop.png
+  registration_strategy: 3d
+- depth1: data/GH30_Office/img04_s1_L_00_crop_depth.png
+  depth2: data/GH30_Office/img04_s2_R_00_crop_depth.png
+  image1: data/GH30_Office/img04_s1_L_00_crop.png
+  image2: data/GH30_Office/img04_s2_R_00_crop.png
+  registration_strategy: 3d

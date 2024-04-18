@@ -1,5 +1,9 @@
-''' This module reads the data from table.txt and saves into classes.
-'''
+# Created on Thu Apr 18 2024 by Florian Pfleiderer
+# Copyright (c) 2024 TU Wien
+"""
+This module reads the data from table.txt and saves into classes.
+"""
+
 import yaml
 import numpy as np
 
