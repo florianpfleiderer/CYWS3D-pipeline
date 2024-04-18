@@ -1,7 +1,11 @@
-''' This script contains classes to store intrinsic and extrinsic parameters of a camera and a
+# Created on Thu Apr 18 2024 by Florian Pfleiderer
+# Copyright (c) 2024 TU Wien
+"""
+This script contains classes to store intrinsic and extrinsic parameters of a camera and a
 function to project a pointcloud onto 2d coordinates given the intrinsics and extrinsics according
 to the classes defined below.
-'''
+"""
+
 import xml.etree.ElementTree as ET
 import json
 import yaml

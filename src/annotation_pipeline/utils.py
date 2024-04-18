@@ -1,5 +1,9 @@
-''' utility functions for point cloud annotation
-'''
+# Created on Thu Apr 18 2024 by Florian Pfleiderer
+# Copyright (c) 2024 TU Wien
+"""
+utility function for pointcloud annotation
+"""
+
 import copy
 import open3d as o3d
 import cv2

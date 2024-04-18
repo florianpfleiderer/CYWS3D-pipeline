@@ -1,4 +1,7 @@
-''' This modules provides for calculating the mean average precision (mAP) of the predictions
+# Created on Thu Apr 18 2024 by Florian Pfleiderer
+# Copyright (c) 2024 TU Wien
+"""
+This modules provides for calculating the mean average precision (mAP) of the predictions
 made by the cyws3d on th eobchange dataset (specifically on the selected RGB Frames). 
 
 What data do we need ?
@@ -6,8 +9,7 @@ annotated images with confidence scores
 annotated ground truth images
 
 first implementation just for 10 pictures and 10 targets in a folder
-
-'''
+"""
 
 import json
 import torch

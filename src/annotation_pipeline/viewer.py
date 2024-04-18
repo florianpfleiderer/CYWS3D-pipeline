@@ -1,20 +1,22 @@
+# Created on Thu Apr 18 2024 by Florian Pfleiderer
+# Copyright (c) 2024 TU Wien
+"""
+used to View pointclouds and annotations from ObChange dataset
+"""
 import open3d as o3d
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import json
-
-
-folder = "../../data/annotation/office/"
-scene = "scene2/planes/0/"
-pcd_path = "merged_plane_clouds_ds002.pcd"
-anno_path = "merged_plane_clouds_ds002_GT.anno"
-camera_info_json_path = "camera_info.json" 
-viewpoint_info_json_path = "viewpoint_info.json"
-gt_colour = np.array([0.1, 0.90, 0.1])
+try:
+    from src.globals import DATASET_FOLDER, ROOM, SCENE, PCD_PATH 
+    PREFIX = "../../"
+except ImportError:
+    from ..globals import DATASET_FOLDER, ROOM, SCENE, PCD_PATH
+    PREFIX = "../../"
 
 # load pcd file
-pcd = o3d.io.read_point_cloud("./" + folder + scene + pcd_path)
+pcd = o3d.io.read_point_cloud(PREFIX + DATASET_FOLDER + ROOM + SCENE + PCD_PATH)
 # create mesh for showing the origin
 mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
 

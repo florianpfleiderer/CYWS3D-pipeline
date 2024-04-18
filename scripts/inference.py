@@ -1,3 +1,8 @@
+# Credits to Ragav Sachdeva
+# MIT License
+"""
+Contains the Code for running an inference with cyws3d.
+"""
 from tracemalloc import start
 import yaml
 from easydict import EasyDict

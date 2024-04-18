@@ -1,4 +1,7 @@
-''' module for office dataset 
+# Created on Thu Apr 18 2024 by Florian Pfleiderer
+# Copyright (c) 2024 TU Wien
+"""
+module for office dataset 
 
     - load point cloud
     - load annotation
@@ -7,27 +10,17 @@
     - project to 2d
     - draw 2d bboxes
     - show image
-'''
+"""
 import logging
 import open3d as o3d
-# import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from src.annotation_pipeline.projection import Intrinsic, Extrinsic, project_to_2d, frustum_culling
 from src.annotation_pipeline import utils
+from src.globals import DATASET_FOLDER, ROOM, SCENE, PLANE, PCD_PATH, ANNO_PATH, CAMERA_INFO_JSON_PATH, VIEWPOINT_INFO_JSON_PATH, VIEWPOINT_INFO_YAML_PATH, GT_COLOR
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
-
-DATASET_FOLDER = "data/ObChange/"
-FOLDER = "data/annotation/office/"
-SCENE = "scene2/planes/0/"
-PCD_PATH = "merged_plane_clouds_ds002.pcd"
-ANNO_PATH = "merged_plane_clouds_ds002_GT.anno"
-CAMERA_INFO_JSON_PATH = "camera_info.json"
-VIEWPOINT_INFO_JSON_PATH = "viewpoint_info.json"
-VIEWPOINT_INFO_YAML_PATH = "transformations.yaml"
-gt_colour = np.array([0.1, 0.90, 0.1])
 
 # TODO: traverse dataset
 # for root, dirnames, files in os.walk(DATASET_FOLDER):
@@ -35,21 +28,22 @@ gt_colour = np.array([0.1, 0.90, 0.1])
     # transformations.yaml file
 
 # load pcd file
-pcd = o3d.io.read_point_cloud("./" + FOLDER + SCENE + PCD_PATH)
+pcd = o3d.io.read_point_cloud("./" + DATASET_FOLDER + ROOM + SCENE + PLANE + PCD_PATH)
 
 # ground truth
-_, anno_dict = utils.annotate_pcd(pcd, "./" + FOLDER + SCENE + ANNO_PATH, gt_colour)
+_, anno_dict = utils.annotate_pcd(pcd, "./" + DATASET_FOLDER + ROOM + SCENE + PLANE + ANNO_PATH, GT_COLOR)
 # bboxes = utils.extract_3d_bboxes(pcd, anno_dict, result=False)
 # o3d.visualization.draw_geometries([pcd, bboxes[0], bboxes[1], bboxes[2]])
+# if True:
+#     exit()
 
 # intrinsic matrix
 intrinsics = Intrinsic()
-intrinsics.from_json("./"+FOLDER+CAMERA_INFO_JSON_PATH)
+intrinsics.from_json("./" + DATASET_FOLDER + CAMERA_INFO_JSON_PATH)
 
 # extrinsic matrix
 extrinsics = Extrinsic()
-# extrinsics.from_json("./"+FOLDER+VIEWPOINT_INFO_JSON_PATH)
-extrinsics.from_yaml("./"+FOLDER+SCENE+VIEWPOINT_INFO_YAML_PATH)
+extrinsics.from_yaml("./" + DATASET_FOLDER + ROOM + SCENE + VIEWPOINT_INFO_YAML_PATH)
 
 # create mesh for showing the origin
 mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
@@ -58,10 +52,9 @@ mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0
 pcd.transform(extrinsics.homogenous_matrix())
 points_pos = np.asarray(pcd.points)
 points_color = np.asarray(pcd.colors)
-# o3d.visualization.draw_geometries([pcd, mesh_frame])
-
-# if True:
-#     exit()
+o3d.visualization.draw_geometries([pcd, mesh_frame])
+if True:
+    exit()
 
 
 # indices change after "select by index" (new pcd is created)

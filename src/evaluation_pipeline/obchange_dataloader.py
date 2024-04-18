@@ -1,9 +1,12 @@
-''' this module provides a class and functions for loading the obchange dataset with
+# Created on Thu Apr 18 2024 by Florian Pfleiderer
+# Copyright (c) 2024 TU Wien
+"""
+this module provides a class and functions for loading the obchange dataset with
 naming scheme as follows:
 
 TODO: add naming scheme like in documents folder
+"""
 
-'''
 import os
 import json
 import xml.etree.ElementTree as ET
