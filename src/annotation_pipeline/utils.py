@@ -8,6 +8,7 @@ import copy
 import open3d as o3d
 import cv2
 import numpy as np
+import yaml
 try:
     from src.annotation_pipeline.projection import Intrinsic  
 except ImportError:
@@ -75,7 +76,7 @@ def extract_3d_bboxes(input_pcd: o3d.geometry.PointCloud, \
     return bboxes
 
 
-def draw_2d_bboxes(pixel_coordinates: tuple, \
+def draw_image(pixel_coordinates: tuple, \
                    points_color: np.array, \
                    gt_coordinates: tuple, intrinsics: Intrinsic):
     ''' Draw 2D bounding boxes on image 
@@ -102,22 +103,19 @@ def draw_2d_bboxes(pixel_coordinates: tuple, \
     for u, v, color in zip(u_coords, v_coords, points_color):
         image[int(v), int(u)] = color
 
-    # if image.shape[2] == 3:  # Convert RGB to BGR for OpenCV if necessary
-    #     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    # top_left = (min(gt_u), min(gt_v))
+    # bottom_right = (max(gt_u), max(gt_v))
 
-    top_left = (min(gt_u), min(gt_v))
-    bottom_right = (max(gt_u), max(gt_v))
+    # # Define the color and thickness of the bounding box
+    # color = (0, 255, 0)
+    # thickness = 2
 
-    # Define the color and thickness of the bounding box
-    color = (0, 255, 0)
-    thickness = 2
+    # cv2.rectangle(image, top_left, bottom_right, color, thickness)
 
-    cv2.rectangle(image, top_left, bottom_right, color, thickness)
-
-    return cv2.flip(image, 1)
+    return image
 
 
-def draw_2d_bboxes_on_img(image_path: str, gt_u, gt_v):
+def draw_2d_bboxes_on_img(image_file, gt_u, gt_v):
     ''' Draw 2D bounding boxes on image
 
     Args:
@@ -128,10 +126,15 @@ def draw_2d_bboxes_on_img(image_path: str, gt_u, gt_v):
     Returns:
         image with bounding boxes
     '''
+    if isinstance(image_file, str):
+        image = cv2.imread(image_file)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    elif isinstance(image_file, np.ndarray):
+        image = image_file
+    else:
+        raise ValueError("image_file must be a path to an image or a numpy array")
 
-    image = cv2.imread(image_path)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    image = cv2.flip(image, 1)
+    # image = cv2.flip(image, 1)
 
     min_u, max_u = min(gt_u), max(gt_u)
     min_v, max_v = min(gt_v), max(gt_v)
@@ -147,6 +150,44 @@ def draw_2d_bboxes_on_img(image_path: str, gt_u, gt_v):
     cv2.rectangle(image, top_left, bottom_right, color, thickness)
 
     return cv2.flip(image, 1)
+
+def load_transformations(yaml_path: str) -> dict:
+    """ Load transformations from yaml file.
+
+    The yaml file contains a transformation for each image taken for a specific scene.
+    The format is as follows:
+    -   id: 0
+        origin_frame: /map
+        rotation:
+            w: 0.45350259463085363
+            x: -0.8848484052531372
+            y: 0.09218946856836649
+            z: -0.053663751910806724
+        target_frame: /head_rgbd_sensor_rgb_frame
+        timestamp: 1567880058.4000113
+        translation:
+            x: -0.18408279805772904
+            y: 1.0671824290226986
+            z: 1.0897595086114673
+    -   id: 1
+        ...
+
+    The function returns a dict with rotation, translation and timestamp for each entry.
+    """
+    with open(yaml_path, "r") as stream:
+        try:
+            data = yaml.safe_load(stream)
+            transformations = {}
+            for entry in data:
+                id = entry["id"]
+                rotation = entry["rotation"]
+                translation = entry["translation"]
+                timestamp = entry["timestamp"]
+                transformations[id] = {"rotation": rotation, "translation": translation, "timestamp": timestamp}
+            return transformations
+        except yaml.YAMLError as exc:
+            print(exc)
+    return None
 
 
 if __name__ == "__main__":

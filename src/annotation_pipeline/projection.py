@@ -11,6 +11,7 @@ import json
 import yaml
 import open3d as o3d
 import numpy as np
+from scipy.spatial.transform import Rotation as R
 
 class Intrinsic():
     ''' Class to store intrinsic parameters of a camera
@@ -58,7 +59,6 @@ class Intrinsic():
             self.distortion = np.array(temp['D'])
             self.height = temp['height']
             self.width = temp['width']
-
 
     def matrix(self):
         ''' Return the intrinsic matrix of the camera '''
@@ -154,12 +154,38 @@ class Extrinsic():
             data = yaml.safe_load(f)
             rotation = data['transformation']['rotation']
             self.rotation = self.quat_to_rot(rotation)
-            rotation['z'] *= -1
             translation = data['transformation']['translation']
             self.position = np.array([translation['x'], translation['y'], translation['z']])
 
         self.extrinsic_matrix[:3, :4] = np.column_stack((self.rotation, self.position))
+        self.extrinsic_matrix = np.linalg.inv(self.extrinsic_matrix)
 
+    def from_dict(self, data: dict):
+        """load the transformation from a dictionary containing the transformation from 
+        map origin to camera_center_frame in tf tree at a specific timestamp.
+
+        dict format:
+        {'id': 0, 
+        'origin_frame': '/map', 
+        'rotation': {
+            'w': 0.45350259463085363, 
+            'x': -0.8848484052531372, 
+            'y': 0.09218946856836649, 
+            'z': -0.053663751910806724}, 
+        'target_frame': '/head_rgbd_sensor_rgb_frame', 
+        'timestamp': 1567880058.4000113, 
+        'translation': {
+            'x': -0.18408279805772904, 
+            'y': 1.0671824290226986, 
+            'z': 1.0897595086114673}
+        }
+        """
+        rotation = data['rotation']
+        self.rotation = self.quat_to_rot(rotation)
+        translation = data['translation']
+        self.position = np.array([translation['x'], translation['y'], translation['z']])
+
+        self.extrinsic_matrix[:3, :4] = np.column_stack((self.rotation, self.position))
         self.extrinsic_matrix = np.linalg.inv(self.extrinsic_matrix)
     
     def quat_to_rot(self, Q):
@@ -198,10 +224,8 @@ class Extrinsic():
         # 3x3 rotation matrix
         rot_matrix = np.array([[r00, r01, r02],
                             [r10, r11, r12],
-                            [r20, r21, r22]])
-                                
+                            [r20, r21, r22]])        
         return rot_matrix
-
 
     def matrix(self):
         ''' Return the extrinsic matrix of the camera '''
@@ -239,6 +263,8 @@ def frustum_culling(points: np.array, fov: int) -> None:
     near = max(points[:, 2])
 
     indices = [i for i, point in enumerate(points) if inside_frustum(point, fov, near, far)]
+    if len(indices) == 0:
+        raise ValueError("No points in frustum")
     return indices
 
 
