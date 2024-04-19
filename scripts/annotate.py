@@ -17,11 +17,13 @@ import copy
 import open3d as o3d
 import numpy as np
 import matplotlib.pyplot as plt
+import cv2
 from src.annotation_pipeline.projection \
     import Intrinsic, Extrinsic, project_to_2d, frustum_culling
 from src.annotation_pipeline import utils
 from src.globals \
-    import DATASET_FOLDER, ROOM, SCENE, PLANE, PCD_PATH, ANNO_PATH, CAMERA_INFO_JSON_PATH, GT_COLOR
+    import DATASET_FOLDER, IMAGE_FOLDER, ROOM, SCENE, PLANE, PCD_PATH, ANNO_PATH, \
+        CAMERA_INFO_JSON_PATH, GT_COLOR
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -43,8 +45,6 @@ _, base_anno_dict = utils.annotate_pcd(base_pcd, "./" + DATASET_FOLDER + ROOM + 
 intrinsics = Intrinsic()
 intrinsics.from_json("./" + DATASET_FOLDER + CAMERA_INFO_JSON_PATH)
 
-final_image = np.zeros((intrinsics.height, intrinsics.width, 3), dtype=np.uint8)
-
 # create mesh for showing the origin
 mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
 if logger.level == logging.DEBUG:
@@ -56,6 +56,8 @@ for key, value in transformations.items():
     # extrinsic matrix
     extrinsics = Extrinsic()
     extrinsics.from_dict(value)
+
+    final_image = np.zeros((intrinsics.height, intrinsics.width, 3), dtype=np.uint8)
 
     for anno_key, anno_value in anno_dict.items():
         logger.info("Annotating object: %s", anno_key)
@@ -91,18 +93,26 @@ for key, value in transformations.items():
                                             intrinsics.homogenous_matrix(), \
                                             intrinsics.width, \
                                             intrinsics.height)
+        u_coords, v_coords = utils.squeeze_coordinates((u_coords, v_coords), intrinsics, 0.0005)
 
         gt_u, gt_v = project_to_2d(gt_points_pos, intrinsics.homogenous_matrix(), \
             intrinsics.width, intrinsics.height)
+        gt_u, gt_v = utils.squeeze_coordinates((gt_u, gt_v), intrinsics, 0.0005)
 
-        final_image = utils.draw_image((u_coords, v_coords), points_color, (gt_u, gt_v), intrinsics)
+        if np.array_equal(final_image, np.zeros(
+                (intrinsics.height, intrinsics.width, 3), dtype=np.uint8)):
+            logger.info("Initializing image")
+            final_image = utils.draw_image((u_coords, v_coords), points_color, intrinsics)
+            plt.imsave("temp_img.png", final_image)
+        else:
+            logger.info("Final image is set")
+        
         final_image = utils.draw_2d_bboxes_on_img(final_image, gt_u, gt_v)
+        original_image = utils.draw_2d_bboxes_on_img("./"+IMAGE_FOLDER+SCENE+"ground_truth/"
+            +value["file_name"], gt_u, gt_v)
+        plt.imsave("./"+IMAGE_FOLDER+SCENE+"ground_truth/"+value["file_name"], original_image)
 
-        # image = utils.draw_2d_bboxes_on_img(\
-        #   "./data/annotation/office/scene4/img03_s4.png", gt_u, gt_v)
-    # except AssertionError:
-    #     logger.error("No object found in frustum")
-    #     continue
-
-    plt.imsave(f"image_{key}.png", final_image)
-    logger.info("image_%f saved as image_%f.png", key, key)
+    # Remap the image
+    squeezed_img = utils.squeeze_img(final_image, intrinsics, 0.0005)
+    plt.imsave("./"+IMAGE_FOLDER+SCENE+"ground_truth/image_"+key.__str__()+".png", final_image)
+    logger.info("image_%s saved as image_%s.png", key, key)
