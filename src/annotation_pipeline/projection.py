@@ -28,6 +28,7 @@ class Intrinsic():
         self.fy = f
         self.width = width
         self.height = height
+        self.distortion = None
 
     def from_xml(self, xml_file: str):
         ''' Load the intrinsic parameters from an xml file
@@ -59,6 +60,7 @@ class Intrinsic():
             self.fy = data[1][1]
             self.height = temp['height']
             self.width = temp['width']
+            self.distortion = temp['D']
 
     def matrix(self):
         ''' Return the intrinsic matrix of the camera '''
@@ -71,6 +73,11 @@ class Intrinsic():
         return np.array([[self.fx, 0, self.cx, 0],
                         [0, self.fy, self.cy, 0],
                         [0, 0, 1, 0]])
+
+    def distortion_coeffs(self) -> np.array:
+        """ return distortion as np.array
+        """
+        return np.asarray(self.distortion)
 
 
 class Extrinsic():

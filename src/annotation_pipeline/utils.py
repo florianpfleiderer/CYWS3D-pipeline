@@ -78,22 +78,19 @@ def extract_3d_bboxes(input_pcd: o3d.geometry.PointCloud, \
 
 def draw_image(pixel_coordinates: tuple, \
                    points_color: np.array, \
-                   gt_coordinates: tuple, intrinsics: Intrinsic):
-    ''' Draw 2D bounding boxes on image 
+                   intrinsics: Intrinsic):
+    ''' Draw image 
     
     Args:
         pixel_coordinates: tuple of u, v coordinates
         points_color: np.array of colors
-        gt_coordinates: tuple of gt_u, gt_v coordinates
         intrinsics: object of instance Intrinsic
         
     Returns:
         cv2 image with bounding boxes
     '''
     u_coords, v_coords = pixel_coordinates
-    gt_u, gt_v = gt_coordinates
 
-    assert len(gt_u) == len(gt_v) != 0, "gt_object not in fov"
     assert isinstance(intrinsics ,Intrinsic), f"intrinsics must be instance of Intrinsic Class,\
                                                 but is {type(intrinsics)}"
 
@@ -102,15 +99,6 @@ def draw_image(pixel_coordinates: tuple, \
     # Fill the image array with your colors at the corresponding u, v coordinates
     for u, v, color in zip(u_coords, v_coords, points_color):
         image[int(v), int(u)] = color
-
-    # top_left = (min(gt_u), min(gt_v))
-    # bottom_right = (max(gt_u), max(gt_v))
-
-    # # Define the color and thickness of the bounding box
-    # color = (0, 255, 0)
-    # thickness = 2
-
-    # cv2.rectangle(image, top_left, bottom_right, color, thickness)
 
     return image
 
@@ -133,6 +121,8 @@ def draw_2d_bboxes_on_img(image_file, gt_u, gt_v):
         image = image_file
     else:
         raise ValueError("image_file must be a path to an image or a numpy array")
+    
+    assert len(gt_u) == len(gt_v) != 0, "gt_object not in fov"
 
     # image = cv2.flip(image, 1)
 
@@ -149,7 +139,7 @@ def draw_2d_bboxes_on_img(image_file, gt_u, gt_v):
     # Draw the rectangle
     cv2.rectangle(image, top_left, bottom_right, color, thickness)
 
-    return cv2.flip(image, 1)
+    return image
 
 def load_transformations(yaml_path: str) -> dict:
     """ Load transformations from yaml file.
@@ -179,18 +169,91 @@ def load_transformations(yaml_path: str) -> dict:
             data = yaml.safe_load(stream)
             transformations = {}
             for entry in data:
-                image_id = entry["id"]
+                id = entry["id"]
                 rotation = entry["rotation"]
                 translation = entry["translation"]
                 timestamp = entry["timestamp"]
+                file_name = entry["file_name"]
                 transformations[id] = {
                     "rotation": rotation, 
                     "translation": translation,
-                    "timestamp": timestamp}
+                    "timestamp": timestamp,
+                    "file_name": file_name}
             return transformations
         except yaml.YAMLError as exc:
             print(exc)
     return None
+
+def squeeze_img(image: np.array, intrinsics: Intrinsic, strength: float = 0.0005) -> np.array:
+    """ Squeeze image with non-linear transformation.
+
+    Args:
+        image: image to squeeze
+        intrinsics: object of instance Intrinsic
+        strength: strength of the squeezing effect
+
+    Returns:
+        squeezed image
+    """
+    assert isinstance(intrinsics, Intrinsic), f"intrinsics must be instance of Intrinsic Class,\
+                                                but is {type(intrinsics)}"
+    assert isinstance(strength, float), f"strength must be float, but is {type(strength)}"
+
+    # Create the maps for remapping
+    map_x = np.zeros((intrinsics.height, intrinsics.width), dtype=np.float32)
+    map_y = np.zeros((intrinsics.height, intrinsics.width), dtype=np.float32)
+
+    # Define the center of the image
+    center_x = intrinsics.width / 2
+
+    for j in range(intrinsics.height):
+        for i in range(intrinsics.width):
+            # Offset from the center
+            offset = (i - center_x)
+            
+            # Calculate the stretched position with a non-linear transformation
+            stretched_position = center_x + offset * (1 + strength * abs(offset))
+            
+            # Ensure that the stretched position does not go out of the image bounds
+            stretched_position = max(0, min(intrinsics.width - 1, stretched_position))
+            
+            # Assign the stretched position to the map
+            map_x[j, i] = stretched_position
+            map_y[j, i] = j
+
+    # Remap the image
+    squeezed_img = cv2.remap(image, map_x, map_y, cv2.INTER_LINEAR)
+    return squeezed_img
+
+def squeeze_coordinates(coords: tuple, intrinsics: Intrinsic, strength: float = 0.0005) -> np.array:
+    """ Squeeze image coordinates with non-linear transformation.
+
+    Args:
+        u_coords: u coordinates
+        strength: strength of the squeezing effect
+
+    Returns:
+        squeezed u coordinates as integers
+    """
+    u_coords, v_coords = coords
+    assert isinstance(u_coords, np.ndarray), f"u_coords must be numpy array, but is {type(u_coords)}"
+    assert isinstance(strength, float), f"strength must be float, but is {type(strength)}"
+
+      # Create the maps for remapping
+    map_x = np.zeros((intrinsics.height, intrinsics.width), dtype=np.float32)
+    map_y = np.zeros((intrinsics.height, intrinsics.width), dtype=np.float32)
+    
+    # Define the center of the image
+    center_x = intrinsics.width / 2
+
+    # Offset from the center
+    offset = u_coords - center_x
+
+    # Calculate the stretched position with a non-linear transformation
+    stretched_position = center_x + offset * (1 - strength * abs(offset))
+    stretched_position = np.clip(stretched_position, 0, intrinsics.width - 1)
+
+    return stretched_position.astype(int), v_coords
 
 
 if __name__ == "__main__":

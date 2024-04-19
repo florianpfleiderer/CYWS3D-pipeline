@@ -8,8 +8,9 @@ Dataset_Folder is relative to the project root.
 import numpy as np
 
 # annotate.py
-DATASET_FOLDER = "data/ObChange/"
-ROOM = "Office/"
+DATASET_FOLDER = "data/annotation/"
+IMAGE_FOLDER = "data/GH30_Office/"
+ROOM = "office/"
 SCENE = "scene2/"
 PLANE = "planes/0/"
 PCD_PATH = "merged_plane_clouds_ds002.pcd"
