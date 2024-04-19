@@ -132,6 +132,100 @@ class Extrinsic():
 
         self.extrinsic_matrix[:3, :4] = np.column_stack((self.rotation, self.position))
         self.extrinsic_matrix = np.linalg.inv(self.extrinsic_matrix)
+    
+    def from_yaml(self, yaml_file: str):
+        ''' load the transformation from the yaml file containing the transformation from 
+        map origin to camera_center_frame in tf tree at a specific timestamp.
+
+        File format:
+        timestamp:
+        transformation:
+            rotation:
+                x: 0.0
+                y: 0.0
+                z: 0.0
+                w: 1.0
+            translation:
+                x: 0.0
+                y: 0.0
+                z: 0.0
+        '''
+        with open(yaml_file, 'r') as f:
+            data = yaml.safe_load(f)
+            rotation = data['transformation']['rotation']
+            self.rotation = self.quat_to_rot(rotation)
+            translation = data['transformation']['translation']
+            self.position = np.array([translation['x'], translation['y'], translation['z']])
+
+        self.extrinsic_matrix[:3, :4] = np.column_stack((self.rotation, self.position))
+        self.extrinsic_matrix = np.linalg.inv(self.extrinsic_matrix)
+
+    def from_dict(self, data: dict):
+        """load the transformation from a dictionary containing the transformation from 
+        map origin to camera_center_frame in tf tree at a specific timestamp.
+
+        dict format:
+        {'id': 0, 
+        'origin_frame': '/map', 
+        'rotation': {
+            'w': 0.45350259463085363, 
+            'x': -0.8848484052531372, 
+            'y': 0.09218946856836649, 
+            'z': -0.053663751910806724}, 
+        'target_frame': '/head_rgbd_sensor_rgb_frame', 
+        'timestamp': 1567880058.4000113, 
+        'translation': {
+            'x': -0.18408279805772904, 
+            'y': 1.0671824290226986, 
+            'z': 1.0897595086114673}
+        }
+        """
+        rotation = data['rotation']
+        self.rotation = self.quat_to_rot(rotation)
+        translation = data['translation']
+        self.position = np.array([translation['x'], translation['y'], translation['z']])
+
+        self.extrinsic_matrix[:3, :4] = np.column_stack((self.rotation, self.position))
+        self.extrinsic_matrix = np.linalg.inv(self.extrinsic_matrix)
+    
+    def quat_to_rot(self, Q):
+        '''
+        Covert a quaternion into a full three-dimensional rotation matrix.
+    
+        Input
+        :param Q: a dictionary with four keys: x, y, z, w 
+    
+        Output
+        :return: A 3x3 element matrix representing the full 3D rotation matrix. 
+                This rotation matrix converts a point in the local reference 
+                frame to a point in the global reference frame.
+        '''
+        # Extract the values from Q
+        q0 = Q['w']
+        q1 = Q['x']
+        q2 = Q['y']
+        q3 = Q['z']
+        
+        # First row of the rotation matrix
+        r00 = 2 * (q0 * q0 + q1 * q1) - 1
+        r01 = 2 * (q1 * q2 - q0 * q3)
+        r02 = 2 * (q1 * q3 + q0 * q2)
+        
+        # Second row of the rotation matrix
+        r10 = 2 * (q1 * q2 + q0 * q3)
+        r11 = 2 * (q0 * q0 + q2 * q2) - 1
+        r12 = 2 * (q2 * q3 - q0 * q1)
+        
+        # Third row of the rotation matrix
+        r20 = 2 * (q1 * q3 - q0 * q2)
+        r21 = 2 * (q2 * q3 + q0 * q1)
+        r22 = 2 * (q0 * q0 + q3 * q3) - 1
+        
+        # 3x3 rotation matrix
+        rot_matrix = np.array([[r00, r01, r02],
+                            [r10, r11, r12],
+                            [r20, r21, r22]])        
+        return rot_matrix
 
     def from_yaml(self, yaml_file: str):
         ''' load the transformation from the yaml file containing the transformation from 

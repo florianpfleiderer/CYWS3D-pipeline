@@ -89,7 +89,6 @@ def main(
             image1_bboxes, scores1, minimum_confidence_threshold)
         image2_bboxes, scores2 = filter_low_confidence_bboxes(
             image2_bboxes, scores2, minimum_confidence_threshold)
-
         visualise_predictions(undo_imagenet_normalization(batch["image1"][i]),
                               undo_imagenet_normalization(batch["image2"][i]),
                                 image1_bboxes[:max_predictions_to_display],

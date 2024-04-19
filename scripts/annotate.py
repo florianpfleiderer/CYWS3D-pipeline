@@ -67,7 +67,6 @@ for key, value in transformations.items():
         points_color = np.asarray(pcd.colors)
         if logger.level == logging.DEBUG:
             o3d.visualization.draw_geometries([pcd, mesh_frame])
-
         gt_pcd = pcd.select_by_index(anno_value)
         if logger.level == logging.DEBUG:
             o3d.visualization.draw_geometries([gt_pcd])
