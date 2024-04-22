@@ -11,6 +11,7 @@ import numpy as np
 import yaml
 try:
     from src.annotation_pipeline.projection import Intrinsic  
+    from src.globals import GT_COLOR
 except ImportError:
     from projection import Intrinsic  # fallback for direct script execution
 
@@ -124,8 +125,6 @@ def draw_2d_bboxes_on_img(image_file, gt_u, gt_v):
     
     assert len(gt_u) == len(gt_v) != 0, "gt_object not in fov"
 
-    # image = cv2.flip(image, 1)
-
     min_u, max_u = min(gt_u), max(gt_u)
     min_v, max_v = min(gt_v), max(gt_v)
 
@@ -133,10 +132,9 @@ def draw_2d_bboxes_on_img(image_file, gt_u, gt_v):
     bottom_right = (max_u, max_v)
 
     # Define the color and thickness of the bounding box
-    color = (0, 255, 0)  # Green for visibility
-    thickness = 2  # Thickness of the box lines
+    color = GT_COLOR * 255 
+    thickness = 2 
 
-    # Draw the rectangle
     cv2.rectangle(image, top_left, bottom_right, color, thickness)
 
     return image
