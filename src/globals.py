@@ -19,4 +19,4 @@ ANNO_PATH = "merged_plane_clouds_ds002_GT.anno"
 CAMERA_INFO_JSON_PATH = "camera_info.json"
 VIEWPOINT_INFO_JSON_PATH = "viewpoint_info.json"
 VIEWPOINT_INFO_YAML_PATH = "transformations.yaml"
-GT_COLOR = np.array([0.1, 0.1, 0.9])
+GT_COLOR = np.array([0.1, 0.9, 0.1])

@@ -104,13 +104,12 @@ def draw_image(pixel_coordinates: tuple, \
     return image
 
 
-def draw_2d_bboxes_on_img(image_file, gt_u, gt_v):
+def draw_2d_bboxes_on_img(image_file, bboxes: list):
     ''' Draw 2D bounding boxes on image
 
     Args:
         image_path: path to image
-        gt_u: list of x coordinates for ground truth
-        gt_v: list of y coordinates for ground truth
+        bboxes: list of bounding boxes
 
     Returns:
         image with bounding boxes
@@ -122,22 +121,25 @@ def draw_2d_bboxes_on_img(image_file, gt_u, gt_v):
         image = image_file
     else:
         raise ValueError("image_file must be a path to an image or a numpy array")
-    
-    assert len(gt_u) == len(gt_v) != 0, "gt_object not in fov"
 
-    min_u, max_u = min(gt_u), max(gt_u)
-    min_v, max_v = min(gt_v), max(gt_v)
-
-    top_left = (min_u, min_v)
-    bottom_right = (max_u, max_v)
-
-    # Define the color and thickness of the bounding box
-    color = GT_COLOR * 255 
-    thickness = 2 
-
-    cv2.rectangle(image, top_left, bottom_right, color, thickness)
+    bbox_color = GT_COLOR * 255
+    bbox_thickness = 2 
+    for box in bboxes:
+        cv2.rectangle(image, (box[:2]), (box[2:4]), bbox_color, bbox_thickness)
 
     return image
+
+def extract_bboxes(u_coords, v_coords) -> list:
+    """ Extract bounding boxes from pixel coordinates
+
+    Returns:
+        tl_x, tl_y, br_x, br_y
+    """
+    min_u, max_u = min(u_coords), max(u_coords)
+    min_v, max_v = min(v_coords), max(v_coords)
+
+    return [min_u, min_v, max_u, max_v]
+
 
 def load_transformations(yaml_path: str) -> dict:
     """ Load transformations from yaml file.
@@ -180,7 +182,6 @@ def load_transformations(yaml_path: str) -> dict:
             return transformations
         except yaml.YAMLError as exc:
             print(exc)
-    return None
 
 def squeeze_img(image: np.array, intrinsics: Intrinsic, strength: float = 0.0005) -> np.array:
     """ Squeeze image with non-linear transformation.
