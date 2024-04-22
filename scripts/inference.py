@@ -64,7 +64,7 @@ def main(
         print(f"Processing image pair {i}")
         # plot_correspondences(batch["image1"][i], batch["image2"][i], 
         #                      batch["points1"][i], batch["points2"][i], 
-#                              save_path=f"predictions/correspondences_{i}.png")
+        #                      save_path=f"predictions/correspondences_{i}.png")
         image1_bboxes, image2_bboxes = \
             image1_bboxes[0].cpu().numpy(), image2_bboxes[0].cpu().numpy()
         image1_bboxes = remove_bboxes_with_area_less_than(
@@ -89,7 +89,6 @@ def main(
             image1_bboxes, scores1, minimum_confidence_threshold)
         image2_bboxes, scores2 = filter_low_confidence_bboxes(
             image2_bboxes, scores2, minimum_confidence_threshold)
-
         visualise_predictions(undo_imagenet_normalization(batch["image1"][i]),
                               undo_imagenet_normalization(batch["image2"][i]),
                                 image1_bboxes[:max_predictions_to_display],

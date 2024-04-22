@@ -1,10 +1,14 @@
-# [The Change You Want to See (Now in 3D)](#)
+# CYWS3D Evaluation Pipeline on ObChange Dataset
+The Goal is to perform a batched inference (one Batch per Room) on selected RGB-D
+Frames taken from the original Input Data in the ObChange Dataset. The Pipeline is split into
+3 Modules: 
+1. Inference: takes the input images from data/GH30_\<roomname\> performs an inference and saves the images and bboxes in data/Gh30_\<roomname\>/predictions
+2. Annotation: split into 2 Parts: 
+    1. Extracting Transformations for selected images from the rosbag files
+    2. Exract ground truth bounding boxes from data/ObChange/...
+3. Evaluation: calculating the mAP
 
-[[Project Page]](#) [[arXiv]](https://arxiv.org/abs/2308.10417)
 
-In Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV) 2023
-
-[Ragav Sachdeva](https://ragavsachdeva.github.io/), [Andrew Zisserman](https://scholar.google.com/citations?hl=en&user=UZ5wscMAAAAJ)
 
 ## Installation
 
@@ -37,7 +41,7 @@ Aborted (core dumped)
 
 ## Datasets
 
-The Frames taken from the ObChange Dataset are found in data/inference/obchange/...
+The Frames taken from the ObChange Dataset are found in data/GH30_\<roomname\>/...
 
 ## Pre-trained model
 
@@ -60,14 +64,3 @@ For the annotation pipeline try:
 `annotate.py`
 
 This should run scripts/annotate.py as the script gets installed through setup.py.
-
-## Citation
-
-```
-@InProceedings{Sachdeva_ICCVW_2023,
-    title = {The Change You Want to See (Now in 3D)},
-    author = {Sachdeva, Ragav and Zisserman, Andrew},
-    booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
-    year = {2023},
-}
-```

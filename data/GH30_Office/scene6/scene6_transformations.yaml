@@ -1,0 +1,28 @@
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1567881358-942744724.png
+  id: 0
+  origin_frame: /map
+  rotation:
+    w: 0.45461650239645923
+    x: -0.8867340395950659
+    y: 0.07182159436654972
+    z: -0.04322311135111516
+  target_frame: /head_rgbd_sensor_rgb_frame
+  timestamp: 1567881358.9427447
+  translation:
+    x: -0.18216941221350064
+    y: 1.0676140457279941
+    z: 1.089759508611466
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1567881411-527930490.png
+  id: 1
+  origin_frame: /map
+  rotation:
+    w: 0.4552864797538768
+    x: -0.8858908269908287
+    y: -0.08155372282293649
+    z: 0.03550569391726123
+  target_frame: /head_rgbd_sensor_rgb_frame
+  timestamp: 1567881411.5279305
+  translation:
+    x: 1.7357592471778414
+    y: 0.9871698389875565
+    z: 1.0897601908510766
