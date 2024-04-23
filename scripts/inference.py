@@ -113,6 +113,7 @@ def main(
             labels=torch.zeros(len(image1_bboxes[:max_predictions_to_display]), dtype=torch.int64))
             )
         image2_predictions.append(dict(
+            image=f"prediction_{i}", #TODO: comment out
             boxes=torch.as_tensor(image2_bboxes[:max_predictions_to_display], dtype=torch.float32),
             scores=torch.as_tensor(scores2[:max_predictions_to_display], dtype=torch.float32),
             labels=torch.zeros(len(image2_bboxes[:max_predictions_to_display]), dtype=torch.int64))
