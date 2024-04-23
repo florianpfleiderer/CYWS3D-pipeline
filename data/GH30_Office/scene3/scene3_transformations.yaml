@@ -26,17 +26,3 @@
     x: 1.662565982007332
     y: 0.9503269822456869
     z: 1.0897598979638004
-- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1567880491-42530529.png
-  id: 2
-  origin_frame: /map
-  rotation:
-    w: 0.4557766489021251
-    x: -0.8870418652005339
-    y: -0.06791412058987936
-    z: 0.028496454544557424
-  target_frame: /head_rgbd_sensor_rgb_frame
-  timestamp: 1567880491.0425305
-  translation:
-    x: 1.8422018203087132
-    y: 1.0458427055439858
-    z: 1.089759508611468

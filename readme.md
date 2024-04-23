@@ -7,6 +7,7 @@ Frames taken from the original Input Data in the ObChange Dataset. The Pipeline 
     1. Extracting Transformations for selected images from the rosbag files
     2. Exract ground truth bounding boxes from data/ObChange/...
 3. Evaluation: calculating the mAP
+    1. note that the boundingboxes from the inference are in one file per room, sorted in rising order following scenename and timestamp in each scene (see input_metadata.yaml for the order)
 
 
 
