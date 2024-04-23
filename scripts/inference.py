@@ -3,9 +3,11 @@
 """
 Contains the Code for running an inference with cyws3d.
 """
+import os
 from tracemalloc import start
 import time
 import yaml
+from importlib.metadata import version
 from easydict import EasyDict
 try:
     from src.modules.model import Model
@@ -27,10 +29,15 @@ except ImportError:
     from geometry import remove_bboxes_with_area_less_than, suppress_overlapping_bboxes, \
         keep_matching_bboxes, filter_low_confidence_bboxes
 
+# check required version of cyws3d-pipeline (defined in setup.py)
+required_version = '0.7'
+if version('cyws3d-pipeline') != required_version:
+    raise ImportError(f"cyws3d-pipeline must be version {required_version}")
+
 def main(
     config_file: str = "config.yml",
     # input_metadata: str = "data/inference/demo_data/input_metadata.yml",
-    input_metadata: str = "data/GH30_Office/input_metadata.yml",
+    input_metadata: str = "data/GH30_Office/input_metadata.yaml",
     load_weights_from: str = "./cyws-3d.ckpt",
     filter_predictions_with_area_under: int = 400,
     keep_matching_bboxes_only: bool = True,
@@ -40,6 +47,9 @@ def main(
     """ 
     runs the inference with cyws3d.
     """
+    save_path = os.path.join(input_metadata.split("/")[0], input_metadata.split("/")[1], "predictions")
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
 
     configs = get_easy_dict_from_yaml_file(config_file)
     model = Model(configs, load_weights_from=load_weights_from)
@@ -95,7 +105,7 @@ def main(
                                 image2_bboxes[:max_predictions_to_display],
                                     scores1[:max_predictions_to_display],
                                     scores2[:max_predictions_to_display],
-                                        save_path=f"data/predictions/prediction_{i}.png")
+                                        save_path=f"{save_path}/prediction_{i}.png")
 
         image1_predictions.append(dict(
             boxes=torch.as_tensor(image1_bboxes[:max_predictions_to_display], dtype=torch.float32),
@@ -109,8 +119,8 @@ def main(
             )
 
     # save the batches for calculating mAP
-    torch.save(image1_predictions, 'data/predictions/batch_image1_predicted_bboxes.pt')
-    torch.save(image2_predictions, 'data/predictions/batch_image2_predicted_bboxes.pt')
+    torch.save(image1_predictions, f'{save_path}/batch_image1_predicted_bboxes.pt')
+    torch.save(image2_predictions, f'{save_path}/batch_image2_predicted_bboxes.pt')
 
 def get_easy_dict_from_yaml_file(path_to_yaml_file):
     """

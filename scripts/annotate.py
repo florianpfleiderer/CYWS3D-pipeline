@@ -38,9 +38,10 @@ intrinsics.from_json("./" + DATASET_FOLDER + CAMERA_INFO_JSON_PATH)
 
 # create mesh for showing the origin
 mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
-
+all_target_bboxes = []
+tfs_temp = "BigRoom"
 # traverse dataset by scene
-for root, dirnames, files in os.walk(DATASET_FOLDER+ROOM+SCENE):
+for root, dirnames, files in sorted(os.walk(DATASET_FOLDER)):
     if not 'planes/0' in root:
         continue
     logger.info("Processing folder: %s", root)
@@ -51,6 +52,8 @@ for root, dirnames, files in os.walk(DATASET_FOLDER+ROOM+SCENE):
         transformations = utils.load_transformations(f"{img_path}{tfs[3]}_transformations.yaml")
     except FileNotFoundError:
         logger.warning("No transformation file found in %s", img_path)
+        tfs_temp = tfs[2]
+        logger.info("Updating tfs_temp to %s", tfs_temp)
         continue
     # load pcd file
     base_pcd = o3d.io.read_point_cloud(f"./{root}/{PCD_PATH}")
@@ -148,4 +151,16 @@ for root, dirnames, files in os.walk(DATASET_FOLDER+ROOM+SCENE):
         logger.info("image_%s saved as image_%s.png", key, key)
 
     torch.save(target_bboxes, f"{img_path}ground_truth/target_bboxes.pt")
+    if tfs[2] == tfs_temp:
+        all_target_bboxes.append(target_bboxes)
+    else:
+        # check if all_target_bboxes is empty
+        if len(all_target_bboxes) != 0:
+            torch.save(all_target_bboxes, f"data/GH30_{tfs_temp}/all_target_bboxes.pt")
+            logger.info("all_target_bboxes.pt saved in data/GH30_%s/", tfs_temp)
+        # TODO: target bboxes are not saved for office when running the script?
+        all_target_bboxes = []
+        all_target_bboxes.append(target_bboxes)
+    tfs_temp = tfs[2]
     logger.info("target_bboxes.pt saved in %s", img_path)
+
