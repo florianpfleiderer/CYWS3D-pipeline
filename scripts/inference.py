@@ -30,8 +30,8 @@ except ImportError:
         keep_matching_bboxes, filter_low_confidence_bboxes
 
 # check required version of cyws3d-pipeline (defined in setup.py)
-required_version = '0.7'
-if version('cyws3d-pipeline') != required_version:
+required_version = '1.0'
+if version('cyws3d-pipeline') < required_version:
     raise ImportError(f"cyws3d-pipeline must be version {required_version}")
 
 def main(
@@ -106,17 +106,17 @@ def main(
                                     scores1[:max_predictions_to_display],
                                     scores2[:max_predictions_to_display],
                                         save_path=f"{save_path}/prediction_{i}.png")
-
+        
         image1_predictions.append(dict(
-            boxes=torch.as_tensor(image1_bboxes[:max_predictions_to_display], dtype=torch.float32),
+            boxes=torch.round(torch.as_tensor(image1_bboxes[:max_predictions_to_display], dtype=torch.float32)),
             scores=torch.as_tensor(scores1[:max_predictions_to_display], dtype=torch.float32),
-            labels=torch.zeros(len(image1_bboxes[:max_predictions_to_display]), dtype=torch.int64))
+            labels=torch.zeros(len(image1_bboxes[:max_predictions_to_display]), dtype=torch.int32))
             )
         image2_predictions.append(dict(
-            image=f"prediction_{i}", #TODO: comment out
-            boxes=torch.as_tensor(image2_bboxes[:max_predictions_to_display], dtype=torch.float32),
+            # image=f"prediction_{i}", 
+            boxes=torch.round(torch.as_tensor(image2_bboxes[:max_predictions_to_display], dtype=torch.float32)),
             scores=torch.as_tensor(scores2[:max_predictions_to_display], dtype=torch.float32),
-            labels=torch.zeros(len(image2_bboxes[:max_predictions_to_display]), dtype=torch.int64))
+            labels=torch.zeros(len(image2_bboxes[:max_predictions_to_display]), dtype=torch.int32))
             )
 
     # save the batches for calculating mAP

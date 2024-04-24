@@ -123,12 +123,14 @@ for folder in sorted(os.listdir(DATASET_FOLDER)):
             all_target_bboxes.append(dict(
                 image_name=img_path+value['file_name'],
                 boxes=torch.as_tensor(img_bboxes, dtype=torch.float32),
-                labels=torch.zeros((len(img_bboxes),), dtype=torch.int64)
+                labels=torch.zeros((len(img_bboxes),), dtype=torch.int32)
             ))
 
             final_image = utils.draw_2d_bboxes_on_img(final_image, img_bboxes)
             original_image = utils.draw_2d_bboxes_on_img(
                     f"{img_path}{value['file_name']}", img_bboxes)
+            if not path.exists(f"{img_path}ground_truth"):
+                os.makedirs(f"{img_path}ground_truth")
             plt.imsave(f"{img_path}ground_truth/{value['file_name']}", original_image)
             plt.imsave(f"{img_path}ground_truth/image_"+key.__str__()+".png", final_image)
             logger.info("image_%s saved as image_%s.png", key, key)
@@ -140,5 +142,3 @@ for folder in sorted(os.listdir(DATASET_FOLDER)):
         continue
     torch.save(all_target_bboxes, f"./data/GH30_{folder}/all_target_bboxes.pt")
     logger.info("all_target_bboxes.pt saved in %s", f"./data/GH30_{folder}/all_target_bboxes.pt")
-        
-

@@ -69,20 +69,22 @@ for scene in sorted(os.listdir(ROOM_DIR)):
             continue
         scene_buffer.append(img)
     scene_buffer.sort()
-    batch.append({
-        "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
-        "image2": os.path.join(ROOM_DIR, scene, scene_buffer[2]),
-        "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
-        "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[0]),
-        "registration_strategy": "3d"
-    })
-    batch.append({
-        "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[3]),
-        "image2": os.path.join(ROOM_DIR, scene, scene_buffer[3]),
-        "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[1]),
-        "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[1]),
-        "registration_strategy": "3d"
-    })
+    spacer = len(scene_buffer)//2
+    for i in range(spacer//2):
+        batch.append({
+            "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
+            "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i]),
+            "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
+            "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[i]),
+            "registration_strategy": "3d"
+        })
+        batch.append({
+            "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
+            "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i]),
+            "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
+            "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2+i]),
+            "registration_strategy": "3d"
+        })
 
 with open(os.path.join(ROOM_DIR, "input_metadata.yaml"), "w") as f:
     yaml.safe_dump({"batch": batch}, f)
