@@ -8,6 +8,11 @@ try:
 except ImportError:
     from geometry import transform_points, convert_image_coordinates_to_world, sample_depth_for_given_points
 import torch.nn.functional as F
+import logging
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 class CorrespondenceExtractor(nn.Module):
     def __init__(self, nms_radius=4, keypoint_threshold=0.005, max_keypoints=1024, superglue="indoor", sinkhorn_iterations=20, match_threshold=0.2, resize=640):
@@ -33,7 +38,7 @@ class CorrespondenceExtractor(nn.Module):
         batch_points2 = []
         for i in range(len(batch["image1"])):
             if batch["registration_strategy"][i] == "identity" or batch["intrinsics1"][i] is not None or batch["transfm2d_1_to_2"][i] is not None:
-                # No need to compute correspondences
+                logger.debug("Skipping correspondence extraction for image pair %d", i)
                 batch_points1.append(None)
                 batch_points2.append(None)
                 continue

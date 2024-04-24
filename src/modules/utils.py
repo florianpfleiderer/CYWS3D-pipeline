@@ -9,6 +9,11 @@ from einops import rearrange
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.patches import ConnectionPatch
+import logging
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 def create_batch_from_metadata(metadata):
     list_of_items = metadata["batch"]
@@ -66,8 +71,11 @@ def fill_in_the_missing_information(batch, depth_predictor, correspondence_extra
         if batch["registration_strategy"][i] == "3d":
             assert (batch["depth1"][i] is None) == (batch["depth2"][i] is None)
             if batch["depth1"][i] is None and batch["depth2"][i] is None:
+                logger.debug("Predicting depth for both images.")
                 batch["depth1"][i] = depth_predictor.infer(batch["image1"][i].unsqueeze(0)).squeeze()
                 batch["depth2"][i] = depth_predictor.infer(batch["image2"][i].unsqueeze(0)).squeeze()
+            else:
+                logger.debug("Skipping depth prediction for pair %s", i)
     batch = correspondence_extractor(batch)
     return batch
 
@@ -87,11 +95,13 @@ def prepare_batch_for_model(batch):
             batch["depth2"][i] = nearest_resize(batch["depth2"][i])
         if batch["intrinsics1"][i] is not None:
             assert original_hw1 == original_depth_hw1
+            logger.debug("Transforming intrinsics for image 1.")
             transformation = nearest_resize.transform_matrix.squeeze()
             transformation = convert_kornia_transformation_matrix_to_normalised_coordinates(transformation, original_hw1, (224, 224))
             batch["intrinsics1"][i] = transformation @ batch["intrinsics1"][i]
         if batch["intrinsics2"][i] is not None:
             assert original_hw2 == original_depth_hw2
+            logger.debug("Transforming intrinsics for image 2.")
             transformation = nearest_resize.transform_matrix.squeeze()
             transformation = convert_kornia_transformation_matrix_to_normalised_coordinates(transformation, original_hw2, (224, 224))
             batch["intrinsics2"][i] = transformation @ batch["intrinsics2"][i]
