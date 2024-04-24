@@ -121,7 +121,7 @@ for folder in sorted(os.listdir(DATASET_FOLDER)):
                 img_bboxes.append(utils.extract_bboxes(gt_u, gt_v))
 
             all_target_bboxes.append(dict(
-                image_name=img_path+value['file_name'],
+                # image_name=img_path+value['file_name'],
                 boxes=torch.as_tensor(img_bboxes, dtype=torch.float32),
                 labels=torch.zeros((len(img_bboxes),), dtype=torch.int32)
             ))
