@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 logger.setLevel(logging.DEBUG)
 
-def create_batch_from_metadata(metadata):
+def create_batch_from_metadata(metadata, device="cpu"):
     list_of_items = metadata["batch"]
     batch = {}
     all_keys = [
@@ -42,9 +42,9 @@ def create_batch_from_metadata(metadata):
                 batch[key].append(None)
                 continue
             if "image" in key:
-                value = read_image_as_tensor(value)
+                value = read_image_as_tensor(value).to(device)
             if "depth" in key:
-                value = read_depth_as_tensor(value)
+                value = read_depth_as_tensor(value).to(device)
             for k in ["position","rotation","intrinsics","transfm2d"]:
                 if k in key:
                     value = torch.tensor(np.load(value))
@@ -66,7 +66,7 @@ def read_depth_as_tensor(path_to_depth):
     return _read_depth_from_png(path_to_depth)
 
 @torch.no_grad()
-def fill_in_the_missing_information(batch, depth_predictor, correspondence_extractor):
+def fill_in_the_missing_information(batch, depth_predictor, correspondence_extractor, device="cpu"):
     for i in range(len(batch["image1"])):
         if batch["registration_strategy"][i] == "3d":
             assert (batch["depth1"][i] is None) == (batch["depth2"][i] is None)
@@ -76,7 +76,7 @@ def fill_in_the_missing_information(batch, depth_predictor, correspondence_extra
                 batch["depth2"][i] = depth_predictor.infer(batch["image2"][i].unsqueeze(0)).squeeze()
             else:
                 logger.debug("Skipping depth prediction for pair %s", i)
-    batch = correspondence_extractor(batch)
+    batch = correspondence_extractor(batch, device)
     return batch
 
 def prepare_batch_for_model(batch):
@@ -205,6 +205,7 @@ def plot_correspondences(source_image, target_image, source_points, target_point
     """
     Helper function to plot correspondences.
     """
+    
     fig, axarr = plt.subplots(1,2)
     if torch.is_tensor(source_image):
         source_image = K.tensor_to_image(source_image)
@@ -212,7 +213,7 @@ def plot_correspondences(source_image, target_image, source_points, target_point
         target_image = K.tensor_to_image(target_image)
     axarr[0].imshow(source_image)
     axarr[1].imshow(target_image)
-
+    
     source_points = source_points * torch.tensor([source_image.shape[1], source_image.shape[0]])
     target_points = target_points * torch.tensor([target_image.shape[1], target_image.shape[0]])
 

@@ -47,19 +47,22 @@ def main(
     """ 
     runs the inference with cyws3d.
     """
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    torch.cuda.empty_cache()
+    
     save_path = os.path.join(input_metadata.split("/")[0], input_metadata.split("/")[1], "predictions")
     if not os.path.exists(save_path):
         os.makedirs(save_path)
 
     configs = get_easy_dict_from_yaml_file(config_file)
-    model = Model(configs, load_weights_from=load_weights_from)
-    correspondence_extractor = CorrespondenceExtractor()
-    depth_predictor = torch.hub.load("isl-org/ZoeDepth", "ZoeD_NK", pretrained=True).eval()
+    model = Model(configs, load_weights_from=load_weights_from).to(device)
+    correspondence_extractor = CorrespondenceExtractor(device=device)
+    depth_predictor = torch.hub.load("isl-org/ZoeDepth", "ZoeD_NK", pretrained=True).eval().to(device)
 
     batch_metadata = get_easy_dict_from_yaml_file(input_metadata)
-    batch = create_batch_from_metadata(batch_metadata)
+    batch = create_batch_from_metadata(batch_metadata, device)
     start_time = time.time()
-    batch = fill_in_the_missing_information(batch, depth_predictor, correspondence_extractor)
+    batch = fill_in_the_missing_information(batch, depth_predictor, correspondence_extractor, device=device)
     print(f"Time taken to fill in the missing information: {time.time() - start_time:.2f} seconds")
     start_time = time.time()
     batch = prepare_batch_for_model(batch)
@@ -69,12 +72,24 @@ def main(
     image1_predictions = []
     image2_predictions = []
     print(f"Time taken to predict: {time.time() - start_time:.2f} seconds")
+
+    # move batch to cpu
+    for i in range(len(batch["image1"])):
+        batch["image1"][i] = batch["image1"][i].to("cpu")
+        batch["image2"][i] = batch["image2"][i].to("cpu")
+        batch["depth1"][i] = batch["depth1"][i].to("cpu")
+        batch["depth2"][i] = batch["depth2"][i].to("cpu")
+    
+    for i in range(len(batch["points1"])):
+        batch["points1"][i] = batch["points1"][i].to("cpu")
+        batch["points2"][i] = batch["points2"][i].to("cpu")
+    
     for i, (image1_bboxes, image2_bboxes) in enumerate(zip(batch_image1_predicted_bboxes,
                                                            batch_image2_predicted_bboxes)):
         print(f"Processing image pair {i}")
-        # plot_correspondences(batch["image1"][i], batch["image2"][i], 
-        #                      batch["points1"][i], batch["points2"][i], 
-        #                      save_path=f"predictions/correspondences_{i}.png")
+        plot_correspondences(batch["image1"][i], batch["image2"][i], 
+                            batch["points1"][i], batch["points2"][i], 
+                            save_path=f"{save_path}/correspondences_{i}.png")
         image1_bboxes, image2_bboxes = \
             image1_bboxes[0].cpu().numpy(), image2_bboxes[0].cpu().numpy()
         image1_bboxes = remove_bboxes_with_area_less_than(
@@ -85,6 +100,7 @@ def main(
             suppress_overlapping_bboxes(image1_bboxes[:, :4], image1_bboxes[:, 4])
         image2_bboxes, scores2 = \
             suppress_overlapping_bboxes(image2_bboxes[:, :4], image2_bboxes[:, 4])
+
         if keep_matching_bboxes_only:
             image1_bboxes, image2_bboxes = keep_matching_bboxes(
                 batch,
@@ -94,13 +110,14 @@ def main(
                 scores1,
                 scores2,
                 minimum_confidence_threshold,
+                device=device
             )
         image1_bboxes, scores1 = filter_low_confidence_bboxes(
             image1_bboxes, scores1, minimum_confidence_threshold)
         image2_bboxes, scores2 = filter_low_confidence_bboxes(
             image2_bboxes, scores2, minimum_confidence_threshold)
-        visualise_predictions(undo_imagenet_normalization(batch["image1"][i]),
-                              undo_imagenet_normalization(batch["image2"][i]),
+        visualise_predictions(undo_imagenet_normalization(batch["image1"][i].cpu()),
+                              undo_imagenet_normalization(batch["image2"][i].cpu()),
                                 image1_bboxes[:max_predictions_to_display],
                                 image2_bboxes[:max_predictions_to_display],
                                     scores1[:max_predictions_to_display],

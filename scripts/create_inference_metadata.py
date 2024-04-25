@@ -57,7 +57,7 @@ scene1_buffer = sorted([f for f in os.listdir(os.path.join(ROOM_DIR, "scene1")) 
     if (".yaml" not in f and "ground_truth" not in f)])
 
 for scene in sorted(os.listdir(ROOM_DIR)):
-    if "predictions" in scene or "scene1" in scene or "yaml" in scene:
+    if "predictions" in scene or "scene1" in scene or "yaml" in scene or ".pt" in scene:
         continue
     scene_buffer = []
     # TODO: safe transformations as numpy array in ros_playground
@@ -65,7 +65,7 @@ for scene in sorted(os.listdir(ROOM_DIR)):
     # logger.debug("Transformations: %s", transformations)
 
     for img in os.listdir(os.path.join(ROOM_DIR, scene)):
-        if ".yaml" in img or "ground_truth" in img: 
+        if ".yaml" in img or "ground_truth" in img:
             continue
         scene_buffer.append(img)
     scene_buffer.sort()
@@ -74,15 +74,15 @@ for scene in sorted(os.listdir(ROOM_DIR)):
         batch.append({
             "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
             "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i]),
-            "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
-            "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[i]),
+            # "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
+            # "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[i]),
             "registration_strategy": "3d"
         })
         batch.append({
             "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
             "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i]),
-            "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
-            "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2+i]),
+            # "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
+            # "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2+i]),
             "registration_strategy": "3d"
         })
 
