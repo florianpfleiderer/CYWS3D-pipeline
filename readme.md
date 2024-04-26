@@ -57,7 +57,7 @@ Please try running:
 
 `inference.py`
 
-This should perform a batched inference on a set of example image pairs under various settings (see [this file](data/demo_data/input_metadata.yml)).
+This should perform a batched inference on a set of example image pairs under various settings (see [this file](data/inference/demo_data/input_metadata.yml)).
 
 
 For the annotation pipeline try:
