@@ -28,11 +28,17 @@ import os
 import argparse
 import yaml
 import logging
+import numpy as np
 from PIL import Image
+from src.annotation_pipeline import utils
+from src.annotation_pipeline.projection import Intrinsic, Extrinsic
+from src.globals \
+    import DATASET_FOLDER, IMAGE_FOLDER, ROOM, SCENE, PLANE, PCD_PATH, ANNO_PATH, \
+        CAMERA_INFO_JSON_PATH, GT_COLOR
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--room", required=True, help = "name of room (e.g. Office)")
@@ -54,6 +60,24 @@ for root, dirnames, files in os.walk(ROOM_DIR):
             img_gray = img.convert('L')
             img_gray.save(os.path.join(root, filename))
             logger.info("Converted %s in %s to greyscale", filename, root)
+
+for root, dirnames, files in os.walk(ROOM_DIR):
+    if "scene" not in root:
+        logger.debug("Skipping %s", root)
+        continue
+    logger.debug(f"root: {root}")
+    transformations = utils.load_transformations(f"{root}/{root.split('/')[-1]}_transformations.yaml")
+    logger.debug(f"transformations: {transformations}")
+    for key, value in transformations.items():
+        logger.debug("dict value %s", value)
+        extrinsics = Extrinsic()
+        extrinsics.from_dict(value)
+        logger.debug(f"extrinsics: {extrinsics}")
+        np.save(f"{root}/{value['file_name'][:-4]}_position.npy", extrinsics.position)
+        np.save(f"{root}/{value['file_name'][:-4]}_rotation.npy", extrinsics.rotation)
+    if True:
+        exit()
+
 
 scene1_buffer = sorted([f for f in os.listdir(os.path.join(ROOM_DIR, "scene1")) \
     if (".yaml" not in f and "ground_truth" not in f)])
