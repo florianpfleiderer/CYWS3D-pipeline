@@ -29,7 +29,7 @@ Or start the .devcontainer using visual studio code (recommended way due to the 
 
 **Notes**
 
-Showing images with cv2 inside docker currently does not work due to the following error:
+Showing images with cv2 inside docker currently does not work and produces the following error:
 ```
 qt.qpa.plugin: Could not load the Qt platform plugin "xcb" in "/miniconda3/envs/cyws3d-pipeline/lib/python3.9/site-packages/cv2/qt/plugins" even though it was found.
 This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem.
