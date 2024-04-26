@@ -213,7 +213,7 @@ def plot_correspondences(source_image, target_image, source_points, target_point
         target_image = K.tensor_to_image(target_image)
     axarr[0].imshow(source_image)
     axarr[1].imshow(target_image)
-    
+
     source_points = source_points * torch.tensor([source_image.shape[1], source_image.shape[0]])
     target_points = target_points * torch.tensor([target_image.shape[1], target_image.shape[0]])
 
