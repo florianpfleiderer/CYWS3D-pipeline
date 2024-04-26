@@ -32,10 +32,12 @@ from PIL import Image
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--room", required=True, help = "name of room (e.g. Office)")
+parser.add_argument("--depth", required=False, help = "add depth images to metadata")
+parser.add_argument("--transformations", required=False, help = "add transformations to metadata")
 args = vars(parser.parse_args())
 ROOM_DIR = f"data/GH30_{args['room']}"
 
@@ -60,9 +62,6 @@ for scene in sorted(os.listdir(ROOM_DIR)):
     if "predictions" in scene or "scene1" in scene or "yaml" in scene or ".pt" in scene:
         continue
     scene_buffer = []
-    # TODO: safe transformations as numpy array in ros_playground
-    # transformations = yaml.safe_load(open(os.path.join(ROOM_DIR, scene, f"{scene}_transformations.yaml")))
-    # logger.debug("Transformations: %s", transformations)
 
     for img in os.listdir(os.path.join(ROOM_DIR, scene)):
         if ".yaml" in img or "ground_truth" in img:
@@ -70,21 +69,53 @@ for scene in sorted(os.listdir(ROOM_DIR)):
         scene_buffer.append(img)
     scene_buffer.sort()
     spacer = len(scene_buffer)//2
-    for i in range(spacer//2):
-        batch.append({
-            "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
-            "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i]),
-            # "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
-            # "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[i]),
-            "registration_strategy": "3d"
-        })
-        batch.append({
-            "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
-            "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i]),
-            # "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
-            # "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2+i]),
-            "registration_strategy": "3d"
-        })
+    if args["depth"] is not None:
+        for i in range(spacer//2):
+            batch.append({
+                "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
+                "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i]),
+                "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
+                "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[i]),
+                "registration_strategy": "3d"
+            })
+        for i in range(spacer//2):
+            batch.append({
+                "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
+                "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i]),
+                "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
+                "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2+i]),
+                "registration_strategy": "3d"
+            })
+    elif args["transformations"] is not None:
+        for i in range(spacer//2):
+            batch.append({
+                "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
+                "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i]),
+                "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
+                "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[i]),
+                "registration_strategy": "3d"
+            })
+        for i in range(spacer//2):
+            batch.append({
+                "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
+                "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i]),
+                "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
+                "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2+i]),
+                "registration_strategy": "3d"
+            })
+    else:
+        for i in range(spacer//2):
+            batch.append({
+                "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
+                "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i]),
+                "registration_strategy": "3d"
+            })
+        for i in range(spacer//2):
+            batch.append({
+                "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
+                "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i]),
+                "registration_strategy": "3d"
+            })
 
 with open(os.path.join(ROOM_DIR, "input_metadata.yaml"), "w") as f:
     yaml.safe_dump({"batch": batch}, f)
