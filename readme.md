@@ -25,7 +25,7 @@ git clone --recursive git@github.com:ragavsachdeva/CYWS-3D.git
 docker build -t cyws3d:latest .
 ```
 
-Or start the .devcontainer using visual studio mcode (recommended way due to the postCreateCommand that is also run)
+Or start the .devcontainer using visual studio code (recommended way due to the postCreateCommand that is also run)
 
 **Notes**
 
