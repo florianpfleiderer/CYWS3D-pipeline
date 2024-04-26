@@ -21,6 +21,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 import torch
+
 from src.annotation_pipeline.projection \
     import Intrinsic, Extrinsic, project_to_2d, frustum_culling
 from src.annotation_pipeline import utils
@@ -135,9 +136,6 @@ for folder in sorted(os.listdir(DATASET_FOLDER)):
             plt.imsave(f"{img_path}ground_truth/image_"+key.__str__()+".png", final_image)
             logger.info("image_%s saved as image_%s.png", key, key)
 
-        # torch.save(target_bboxes, f"{img_path}ground_truth/target_bboxes.pt")
-        # logger.info("target_bboxes.pt saved in %s", img_path)
-        # all_target_bboxes.append(target_bboxes)
     if len(all_target_bboxes) == 0:
         continue
     torch.save(all_target_bboxes, f"./data/GH30_{folder}/all_target_bboxes.pt")
