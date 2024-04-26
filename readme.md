@@ -4,7 +4,7 @@ Frames taken from the original Input Data in the ObChange Dataset. The Pipeline 
 3 Modules: 
 1. Inference: takes the input images from data/GH30_\<roomname\> performs an inference and saves the images and bboxes in data/Gh30_\<roomname\>/predictions
 2. Annotation: split into 2 Parts: 
-    1. Extracting Transformations for selected images from the rosbag files
+    1. Extracting Transformations for selected images from the rosbag files (separate repo)
     2. Exract ground truth bounding boxes from data/ObChange/...
 3. Evaluation: calculating the mAP
     1. note that the boundingboxes from the inference are in one file per room, sorted in rising order following scenename and timestamp in each scene (see input_metadata.yaml for the order)
