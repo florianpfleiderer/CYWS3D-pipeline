@@ -69,6 +69,7 @@ class Model(nn.Module):
         self.load_state_dict(checkpoint_state_dict, strict=False)
 
     def forward(self, batch):
+        print("predicting...")
         image1_dino_features = self.feature_backbone(batch["image1"])
         image2_dino_features = self.feature_backbone(batch["image2"])
         image1_last_layer = self.bicubic_resize(image1_dino_features[-1])

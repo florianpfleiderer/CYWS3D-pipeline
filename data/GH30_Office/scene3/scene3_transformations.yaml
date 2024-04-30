@@ -1,28 +1,56 @@
-- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1567880437-888575308.png
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1567880440-401866428.png
   id: 0
   origin_frame: /map
   rotation:
-    w: 0.44928705582356643
-    x: -0.8774017225008017
-    y: 0.14704358451345018
-    z: -0.08176517030773195
+    w: 0.43885841030570394
+    x: -0.8582992421738703
+    y: 0.2340470236463129
+    z: -0.12628419263712806
   target_frame: /head_rgbd_sensor_rgb_frame
-  timestamp: 1567880437.8885753
+  timestamp: 1567880440.4018664
   translation:
-    x: -0.16988965259488223
-    y: 1.064435654151823
-    z: 1.0897595086114669
-- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1567880486-551619761.png
+    x: -0.16149469297045035
+    y: 1.059939147675944
+    z: 1.089759508611467
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1567880443-987939589.png
   id: 1
   origin_frame: /map
   rotation:
-    w: 0.454694331221194
-    x: -0.8845517865969648
-    y: -0.09498724095383043
-    z: 0.04241021149920734
+    w: 0.44421654229950014
+    x: -0.8681767317878416
+    y: 0.19422340084283804
+    z: -0.10591551583550005
   target_frame: /head_rgbd_sensor_rgb_frame
-  timestamp: 1567880486.5516198
+  timestamp: 1567880443.9879396
   translation:
-    x: 1.662565982007332
-    y: 0.9503269822456869
-    z: 1.0897598979638004
+    x: -0.05959845881062198
+    y: 0.9448283519786598
+    z: 1.0897597687410774
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1567880481-625181906.png
+  id: 2
+  origin_frame: /map
+  rotation:
+    w: 0.45215463744325657
+    x: -0.8790191649212118
+    y: -0.13704344601312995
+    z: 0.06403581376556558
+  target_frame: /head_rgbd_sensor_rgb_frame
+  timestamp: 1567880481.625182
+  translation:
+    x: 1.4129876584506833
+    y: 0.8486090348857984
+    z: 1.0897595086114673
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1567880485-814556829.png
+  id: 3
+  origin_frame: /map
+  rotation:
+    w: 0.45442072328432764
+    x: -0.8839450401598042
+    y: -0.10048265706489151
+    z: 0.04523502907934943
+  target_frame: /head_rgbd_sensor_rgb_frame
+  timestamp: 1567880485.8145568
+  translation:
+    x: 1.6285093434531879
+    y: 0.9341036664576456
+    z: 1.0897595087193925

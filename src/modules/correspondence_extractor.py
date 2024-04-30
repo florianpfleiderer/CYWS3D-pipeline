@@ -8,9 +8,14 @@ try:
 except ImportError:
     from geometry import transform_points, convert_image_coordinates_to_world, sample_depth_for_given_points
 import torch.nn.functional as F
+import logging
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 class CorrespondenceExtractor(nn.Module):
-    def __init__(self, nms_radius=4, keypoint_threshold=0.005, max_keypoints=1024, superglue="indoor", sinkhorn_iterations=20, match_threshold=0.2, resize=640):
+    def __init__(self, nms_radius=4, keypoint_threshold=0.005, max_keypoints=1024, superglue="indoor", sinkhorn_iterations=20, match_threshold=0.2, resize=640, device="cpu"):
         super().__init__()
         config = {
             'superpoint': {
@@ -24,26 +29,27 @@ class CorrespondenceExtractor(nn.Module):
                 'match_threshold': match_threshold,
             }
         }
-        self._matching = Matching(config).eval()
+        self._matching = Matching(config).eval().to(device)
+        logger.debug('Running correspondance extractor on device \"{}\"'.format(device))
         self._resize = K.augmentation.Resize(resize, side="long")
 
     @torch.no_grad()
-    def forward(self, batch):
+    def forward(self, batch, device="cpu"):
         batch_points1 = []
         batch_points2 = []
         for i in range(len(batch["image1"])):
             if batch["registration_strategy"][i] == "identity" or batch["intrinsics1"][i] is not None or batch["transfm2d_1_to_2"][i] is not None:
-                # No need to compute correspondences
+                logger.debug("Skipping correspondence extraction for image pair %d", i)
                 batch_points1.append(None)
                 batch_points2.append(None)
                 continue
             inp1 = K.color.rgb_to_grayscale(batch["image1"][i]).unsqueeze(0)
             inp2 = K.color.rgb_to_grayscale(batch["image2"][i]).unsqueeze(0)
-            inp1 = self._resize(inp1)
-            inp2 = self._resize(inp2)
+            inp1 = self._resize(inp1).to(device)
+            inp2 = self._resize(inp2).to(device)
             pred = self._matching({'image0': inp1, 'image1': inp2})
-            kpts1, kpts2 = pred['keypoints0'][0], pred['keypoints1'][0]
-            matches, conf = pred['matches0'][0], pred['matching_scores0'][0]
+            kpts1, kpts2 = pred['keypoints0'][0].cpu().numpy(), pred['keypoints1'][0].cpu().numpy()
+            matches, conf = pred['matches0'][0].cpu().numpy(), pred['matching_scores0'][0]
             scale_1 = torch.tensor(inp1.shape[-2:]).flip(dims=(0,))
             scale_2 = torch.tensor(inp2.shape[-2:]).flip(dims=(0,))
             kpts1 /= scale_1
@@ -55,7 +61,7 @@ class CorrespondenceExtractor(nn.Module):
             conf, sort_idx = conf.sort(descending=True)
             kpts1 = kpts1[sort_idx]
             kpts2 = kpts2[sort_idx]
-            kpts1, kpts2 = filter_out_bad_correspondences_using_ransac(batch["registration_strategy"][i], kpts1, kpts2, batch["depth1"][i], batch["depth2"][i])
+            kpts1, kpts2 = filter_out_bad_correspondences_using_ransac(batch["registration_strategy"][i], kpts1.to(device), kpts2.to(device), batch["depth1"][i], batch["depth2"][i])
             batch_points1.append(kpts1)
             batch_points2.append(kpts2)
         batch["points1"] = batch_points1

@@ -14,5 +14,5 @@ setup(
     license='MIT',
     packages=find_packages(),
     scripts=['scripts/annotate.py', 'scripts/inference.py', 'scripts/run_tests.py', \
-        'scripts/create_inference_metadata.py', 'scripts/view_pt.py']
+        'scripts/create_inference_metadata.py', 'scripts/evaluate.py', 'scripts/view_pt.py']
 )

@@ -259,33 +259,33 @@ def remove_bboxes_with_area_less_than(bboxes_as_np_array, threshold):
     bboxes = np.array(bboxes)
     return bboxes
 
-def keep_matching_bboxes(batch, image_index, left_predictions, right_predictions, left_scores, right_scores, confidence_threshold=0.2):
+def keep_matching_bboxes(batch, image_index, left_predictions, right_predictions, left_scores, right_scores, confidence_threshold=0.2, device="cpu"):
     """
     The idea is that each change bbox must have a corresponding bbox in the other image.
     However, the model itself doesn't enforce this directly. In this post-processing function
     we can filter out bboxes that don't have a corresponding bbox in the other image.
     The process of finding "corresponding bounding boxes" is a bit naive for now.
     """
+    
     left_high_confidence_bboxes = left_predictions[left_scores > confidence_threshold]
     right_high_confidence_bboxes = right_predictions[right_scores > confidence_threshold]
     left_centers = torch.tensor((left_high_confidence_bboxes[:, :2] + left_high_confidence_bboxes[:, 2:4]) / 2) / 224
     right_centers = torch.tensor((right_high_confidence_bboxes[:, :2] + right_high_confidence_bboxes[:, 2:4]) / 2) / 224
-
-    left_centers_in_right = batch["transform_points_1_to_2"](left_centers, image_index) * 224
-    right_centers_in_left = batch["transform_points_2_to_1"](right_centers, image_index) * 224
+    left_centers_in_right = batch["transform_points_1_to_2"](left_centers.to(device), image_index) * 224
+    right_centers_in_left = batch["transform_points_2_to_1"](right_centers.to(device), image_index) * 224
     
     left_bboxes_to_keep = []
     right_bboxes_to_keep = []
-    for j, left_in_right in enumerate(left_centers_in_right):
+    for j, left_in_right in enumerate(left_centers_in_right.cpu()):
         candidate_bbox = None
         minimum_dist = None
         for right_bbox in right_predictions[:,:4]:
             if shapely.geometry.box(*right_bbox).contains(shapely.geometry.Point(*left_in_right)):
                 if candidate_bbox is None:
                     candidate_bbox = right_bbox
-                    minimum_dist = torch.norm(left_in_right - torch.tensor((right_bbox[:2] + right_bbox[2:4]) / 2))
+                    minimum_dist = torch.norm(left_in_right - torch.tensor((right_bbox[:2] + right_bbox[2:4]) / 2).cpu())
                     continue
-                dist = torch.norm(left_in_right - torch.tensor((right_bbox[:2] + right_bbox[2:4]) / 2))
+                dist = torch.norm(left_in_right - torch.tensor((right_bbox[:2] + right_bbox[2:4]) / 2).cpu())
                 if dist < minimum_dist:
                     candidate_bbox = right_bbox
                     minimum_dist = dist
@@ -293,16 +293,16 @@ def keep_matching_bboxes(batch, image_index, left_predictions, right_predictions
             right_bboxes_to_keep.append(candidate_bbox[:4].tolist())
             left_bboxes_to_keep.append(left_high_confidence_bboxes[j,:4].tolist())
 
-    for j, right_in_left in enumerate(right_centers_in_left):
+    for j, right_in_left in enumerate(right_centers_in_left.cpu()):
         candidate_bbox = None
         minimum_dist = None
         for left_bbox in left_predictions[:,:4]:
             if shapely.geometry.box(*left_bbox).contains(shapely.geometry.Point(*right_in_left)):
                 if candidate_bbox is None:
                     candidate_bbox = left_bbox
-                    minimum_dist = torch.norm(right_in_left - torch.tensor((left_bbox[:2] + left_bbox[2:4]) / 2))
+                    minimum_dist = torch.norm(right_in_left - torch.tensor((left_bbox[:2] + left_bbox[2:4]) / 2).cpu())
                     continue
-                dist = torch.norm(right_in_left - torch.tensor((left_bbox[:2] + left_bbox[2:4]) / 2))
+                dist = torch.norm(right_in_left - torch.tensor((left_bbox[:2] + left_bbox[2:4]) / 2).cpu())
                 if dist < minimum_dist:
                     candidate_bbox = left_bbox
                     minimum_dist = dist

@@ -15,7 +15,7 @@ import json
 import torch
 from torchmetrics.detection import MeanAveragePrecision
 
-def calculate_mAP(preds, targets):
+def calculate_mAP(preds, targets, max_det_thresholds):
     ''' this function calculates the mean average precision of the predictions made by the model
 
     The input data should be in the following format:
@@ -37,6 +37,7 @@ def calculate_mAP(preds, targets):
     Returns:
         mAP (float): mean average precision of the model
     '''
-    metric = MeanAveragePrecision(box_format='xyxy', iou_type='bbox', extended_summary=True)
+    metric = MeanAveragePrecision(box_format='xyxy', iou_type='bbox', extended_summary=True, \
+        max_detection_thresholds=max_det_thresholds)
     metric.update(preds, targets)
-    return metric.compute()
+    return metric
