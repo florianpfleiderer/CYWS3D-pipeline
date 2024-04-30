@@ -10,6 +10,7 @@ import yaml
 import logging
 from importlib.metadata import version
 from easydict import EasyDict
+from PIL import image
 try:
     from src.modules.model import Model
     from src.modules.utils import create_batch_from_metadata, fill_in_the_missing_information, \
@@ -69,6 +70,7 @@ def main(
 
     batch_metadata = get_easy_dict_from_yaml_file(input_metadata)
     full_batch = create_batch_from_metadata(batch_metadata, "cpu")
+    print(full_batch)
     batch_size = configs.batch_size
     if len(full_batch["image1"]) % batch_size != 0:
         number_of_batches = len(full_batch["image1"]) // batch_size + 1
@@ -93,7 +95,7 @@ def main(
         batch = fill_in_the_missing_information(batch, depth_predictor, correspondence_extractor, device=device)
         logger.info(f"Time taken to fill in the missing information: {time.time() - start_time:.2f} seconds")
         start_time = time.time()
-        batch = prepare_batch_for_model(batch)
+        batch = prepare_batch_for_model(batch, device=device)
         logger.info(f"Time taken to prepare the batch for the model: {time.time() - start_time:.2f} seconds")
         start_time = time.time()
         batch_image1_predicted_bboxes, batch_image2_predicted_bboxes = model.predict(batch)
@@ -102,9 +104,9 @@ def main(
         for i, (image1_bboxes, image2_bboxes) in enumerate(zip(batch_image1_predicted_bboxes,
                                                                 batch_image2_predicted_bboxes)):
             logger.info(f"Processing image pair {img_cntr}")
-            plot_correspondences(batch["image1"][i].cpu(), batch["image2"][i].cpu(), 
-                                batch["points1"][i].cpu(), batch["points2"][i].cpu(), 
-                                save_path=f"{save_path}/correspondences_{img_cntr}.png")
+            # plot_correspondences(batch["image1"][i].cpu(), batch["image2"][i].cpu(), 
+            #                     batch["points1"][i].cpu(), batch["points2"][i].cpu(), 
+            #                     save_path=f"{save_path}/correspondences_{img_cntr}.png")
             image1_bboxes, image2_bboxes = \
                 image1_bboxes[0].cpu().numpy(), image2_bboxes[0].cpu().numpy()
             image1_bboxes = remove_bboxes_with_area_less_than(
@@ -138,7 +140,7 @@ def main(
                                         scores1[:max_predictions_to_display],
                                         scores2[:max_predictions_to_display],
                                             save_path=f"{save_path}/prediction_{img_cntr}.png")
-            
+
             image1_predictions.append(dict(
                 boxes=torch.round(torch.as_tensor(image1_bboxes[:max_predictions_to_display], dtype=torch.float32)),
                 scores=torch.as_tensor(scores1[:max_predictions_to_display], dtype=torch.float32),
