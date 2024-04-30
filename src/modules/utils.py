@@ -47,7 +47,7 @@ def create_batch_from_metadata(metadata, device="cpu"):
                 value = read_depth_as_tensor(value).to(device)
             for k in ["position","rotation","intrinsics","transfm2d"]:
                 if k in key:
-                    value = torch.tensor(np.load(value))
+                    value = torch.tensor(np.load(value), dtype=torch.float32)
             batch[key].append(value)
     _sanity_test_batch(batch, list_of_items)
     return batch
@@ -79,7 +79,7 @@ def fill_in_the_missing_information(batch, depth_predictor, correspondence_extra
     batch = correspondence_extractor(batch, device)
     return batch
 
-def prepare_batch_for_model(batch):
+def prepare_batch_for_model(batch, device="cpu"):
     nearest_resize = K.augmentation.Resize((224,224), resample=0, align_corners=None, keepdim=True)
     bicubic_resize = K.augmentation.Resize((224,224), resample=2, keepdim=True)
     for i in range(len(batch["image1"])):
@@ -95,15 +95,16 @@ def prepare_batch_for_model(batch):
             batch["depth2"][i] = nearest_resize(batch["depth2"][i])
         if batch["intrinsics1"][i] is not None:
             assert original_hw1 == original_depth_hw1
-            logger.debug("Transforming intrinsics for image 1.")
+            logger.debug(f"Transforming intrinsics for image pair {i}")
             transformation = nearest_resize.transform_matrix.squeeze()
-            transformation = convert_kornia_transformation_matrix_to_normalised_coordinates(transformation, original_hw1, (224, 224))
+            transformation = convert_kornia_transformation_matrix_to_normalised_coordinates(
+                transformation, original_hw1, (224, 224)).to(device)
             batch["intrinsics1"][i] = transformation @ batch["intrinsics1"][i]
         if batch["intrinsics2"][i] is not None:
             assert original_hw2 == original_depth_hw2
-            logger.debug("Transforming intrinsics for image 2.")
             transformation = nearest_resize.transform_matrix.squeeze()
-            transformation = convert_kornia_transformation_matrix_to_normalised_coordinates(transformation, original_hw2, (224, 224))
+            transformation = convert_kornia_transformation_matrix_to_normalised_coordinates(
+                transformation, original_hw2, (224, 224)).to(device)
             batch["intrinsics2"][i] = transformation @ batch["intrinsics2"][i]
     for keys in ["image1", "image2"]:
         batch[keys] = torch.stack(batch[keys])
