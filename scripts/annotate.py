@@ -27,7 +27,7 @@ from src.annotation_pipeline.projection \
 from src.annotation_pipeline import utils
 from src.globals \
     import DATASET_FOLDER, IMAGE_FOLDER, ROOM, SCENE, PLANE, PCD_PATH, ANNO_PATH, \
-        CAMERA_INFO_JSON_PATH, GT_COLOR
+        CAMERA_INFO_JSON_PATH, GT_COLOR, MODEL_IMAGE_SIZE
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -95,6 +95,7 @@ for folder in sorted(os.listdir(DATASET_FOLDER)):
 
             # iterate over ground truth objects and extract bboxes for visible objects
             img_bboxes = []
+            img_resized_bboxes = []
             anno_dict = copy.deepcopy(base_anno_dict)
             for anno_key, anno_value in base_anno_dict.items():
                 logger.info("Annotating object: %s", anno_key)
@@ -119,12 +120,16 @@ for folder in sorted(os.listdir(DATASET_FOLDER)):
                 gt_u, gt_v = project_to_2d(gt_points_pos, intrinsics.homogenous_matrix(), \
                     intrinsics.width, intrinsics.height)
 
+                resized_u, resized_v = utils.resize_coordinates(gt_u, gt_v, \
+                    (MODEL_IMAGE_SIZE, MODEL_IMAGE_SIZE))
+
+                img_resized_bboxes.append(utils.extract_bboxes(resized_u, resized_v))
                 img_bboxes.append(utils.extract_bboxes(gt_u, gt_v))
 
             all_target_bboxes.append(dict(
                 # image_name=img_path+value['file_name'],
-                boxes=torch.as_tensor(img_bboxes, dtype=torch.float32),
-                labels=torch.zeros((len(img_bboxes),), dtype=torch.int32)
+                boxes=torch.as_tensor(img_resized_bboxes, dtype=torch.float32),
+                labels=torch.zeros((len(img_resized_bboxes),), dtype=torch.int32)
             ))
 
             final_image = utils.draw_2d_bboxes_on_img(final_image, img_bboxes)
