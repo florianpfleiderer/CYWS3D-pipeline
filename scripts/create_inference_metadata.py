@@ -38,14 +38,19 @@ from src.globals \
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
-logger.setLevel(logging.DEBUG)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--room", required=True, help = "name of room (e.g. Office)")
 parser.add_argument("--depth", required=False, help = "add depth images to metadata")
 parser.add_argument("--transformations", required=False, help = "add transformations to metadata")
+parser.add_argument("--debug", required=False, help = "set log level to debug")
 args = vars(parser.parse_args())
+
 ROOM_DIR = f"data/GH30_{args['room']}"
+DEPTH = True if args["depth"] is not None else False
+TRANSFORMATIONS = True if args["transformations"] is not None else False
+if args["debug"] is not None:
+    logger.setLevel(logging.DEBUG)
 
 batch = []
 
@@ -65,6 +70,9 @@ for root, dirnames, files in os.walk(ROOM_DIR):
     if "scene" not in root:
         logger.debug("Skipping %s", root)
         continue
+    if "ground_truth" in root or "predictions" in root:
+        logger.debug("Skipping %s", root)
+        continue
     logger.debug(f"root: {root}")
     transformations = utils.load_transformations(f"{root}/{root.split('/')[-1]}_transformations.yaml")
     logger.debug(f"transformations: {transformations}")
@@ -75,25 +83,25 @@ for root, dirnames, files in os.walk(ROOM_DIR):
         logger.debug(f"extrinsics: {extrinsics}")
         np.save(f"{root}/{value['file_name'][:-4]}_position.npy", extrinsics.position)
         np.save(f"{root}/{value['file_name'][:-4]}_rotation.npy", extrinsics.rotation)
-    if True:
-        exit()
-
+    intrinsics = Intrinsic()
+    intrinsics.from_json(f"data/ObChange/{CAMERA_INFO_JSON_PATH}")
+    np.save(f"data/ObChange/{CAMERA_INFO_JSON_PATH[:-5]}.npy", intrinsics.matrix())
 
 scene1_buffer = sorted([f for f in os.listdir(os.path.join(ROOM_DIR, "scene1")) \
-    if (".yaml" not in f and "ground_truth" not in f)])
+    if (".png" in f)])
 
 for scene in sorted(os.listdir(ROOM_DIR)):
     if "predictions" in scene or "scene1" in scene or "yaml" in scene or ".pt" in scene:
         continue
     scene_buffer = []
-
     for img in os.listdir(os.path.join(ROOM_DIR, scene)):
-        if ".yaml" in img or "ground_truth" in img:
+        if ".yaml" in img or "ground_truth" in img or ".npy" in img:
             continue
         scene_buffer.append(img)
     scene_buffer.sort()
     spacer = len(scene_buffer)//2
-    if args["depth"] is not None:
+    if DEPTH:
+        logger.info("Adding depth images to metadata")
         for i in range(spacer//2):
             batch.append({
                 "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
@@ -110,13 +118,20 @@ for scene in sorted(os.listdir(ROOM_DIR)):
                 "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2+i]),
                 "registration_strategy": "3d"
             })
-    elif args["transformations"] is not None:
+    elif TRANSFORMATIONS:
+        logger.info("Adding transformations to metadata")
         for i in range(spacer//2):
             batch.append({
                 "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
                 "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i]),
                 "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
                 "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[i]),
+                "intrinsics1": DATASET_FOLDER+CAMERA_INFO_JSON_PATH[:-5]+".npy",
+                "intrinsics2": DATASET_FOLDER+CAMERA_INFO_JSON_PATH[:-5]+".npy",
+                "position1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4][:-4]+"_position.npy"),
+                "position2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i][:-4]+"_position.npy"),
+                "rotation1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4][:-4]+"_rotation.npy"),
+                "rotation2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i][:-4]+"_rotation.npy"),
                 "registration_strategy": "3d"
             })
         for i in range(spacer//2):
@@ -125,9 +140,16 @@ for scene in sorted(os.listdir(ROOM_DIR)):
                 "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i]),
                 "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
                 "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2+i]),
+                "intrinsics1": DATASET_FOLDER+CAMERA_INFO_JSON_PATH[:-5]+".npy",
+                "intrinsics2": DATASET_FOLDER+CAMERA_INFO_JSON_PATH[:-5]+".npy",
+                "position1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6][:-4]+"_position.npy"),
+                "position2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i][:-4]+"_position.npy"),
+                "rotation1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6][:-4]+"_rotation.npy"),
+                "rotation2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i][:-4]+"_rotation.npy"),
                 "registration_strategy": "3d"
             })
     else:
+        logger.info("Only RGB images are added to metadata")
         for i in range(spacer//2):
             batch.append({
                 "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
