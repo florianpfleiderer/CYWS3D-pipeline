@@ -254,6 +254,26 @@ def squeeze_coordinates(coords: tuple, intrinsics: Intrinsic, strength: float = 
 
     return stretched_position.astype(int), v_coords
 
+def resize_coordinates(u_coords: np.array, v_coords: np.array, new_size: tuple) -> tuple:
+    """ Resize image coordinates to new size.
+
+    Args:
+        u_coords: u coordinates
+        v_coords: v coordinates
+        new_size: new size of the image
+
+    Returns:
+        resized u and v coordinates
+    """
+    assert isinstance(u_coords, np.ndarray), f"u_coords must be numpy array, but is {type(u_coords)}"
+    assert isinstance(v_coords, np.ndarray), f"v_coords must be numpy array, but is {type(v_coords)}"
+    assert isinstance(new_size, tuple), f"new_size must be tuple, but is {type(new_size)}"
+    
+    u_coords = u_coords / 640 * new_size[0]
+    v_coords = v_coords / 480 * new_size[1]
+
+    return u_coords.astype(int), v_coords.astype(int)
+
 
 if __name__ == "__main__":
     PCD_NAME: str = "../../data/annotation/office/scene4/merged_plane_clouds_ds002.pcd"
