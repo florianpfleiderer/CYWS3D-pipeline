@@ -12,8 +12,6 @@ from matplotlib.patches import ConnectionPatch
 import logging
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
-logger.setLevel(logging.DEBUG)
 
 def create_batch_from_metadata(metadata, device="cpu"):
     list_of_items = metadata["batch"]
