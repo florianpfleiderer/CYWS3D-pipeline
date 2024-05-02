@@ -10,7 +10,6 @@ import yaml
 import logging
 from importlib.metadata import version
 from easydict import EasyDict
-from PIL import image
 try:
     from src.modules.model import Model
     from src.modules.utils import create_batch_from_metadata, fill_in_the_missing_information, \
@@ -36,23 +35,25 @@ required_version = '1.0'
 if version('cyws3d-pipeline') < required_version:
     raise ImportError(f"cyws3d-pipeline must be version {required_version}")
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
-logger.setLevel(logging.DEBUG)
-
 def main(
     config_file: str = "config.yml",
     # input_metadata: str = "data/inference/demo_data/input_metadata.yml",
     input_metadata: str = "data/GH30_Office/input_metadata.yaml",
     load_weights_from: str = "./cyws-3d.ckpt",
     filter_predictions_with_area_under: int = 400,
-    keep_matching_bboxes_only: bool = True,
+    keep_matching_bboxes_only: bool = False,
     max_predictions_to_display: int = 5,
-    minimum_confidence_threshold: float = 0.1,
+    minimum_confidence_threshold: float = 0.20,
+    log_level: str = "INFO"
 ):
     """ 
     runs the inference with cyws3d.
     """
+    logging.basicConfig(level=getattr(logging, log_level.upper()))
+    logger = logging.getLogger(__name__)
+    logger.info(f"Starting the inference with logger level set to {logger.level}.")
+    logger.debug("logger set to DEBUG")
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     torch.cuda.empty_cache()
     
@@ -70,7 +71,6 @@ def main(
 
     batch_metadata = get_easy_dict_from_yaml_file(input_metadata)
     full_batch = create_batch_from_metadata(batch_metadata, "cpu")
-    print(full_batch)
     batch_size = configs.batch_size
     if len(full_batch["image1"]) % batch_size != 0:
         number_of_batches = len(full_batch["image1"]) // batch_size + 1
@@ -113,11 +113,13 @@ def main(
                 image1_bboxes, filter_predictions_with_area_under)
             image2_bboxes = remove_bboxes_with_area_less_than(
                 image2_bboxes, filter_predictions_with_area_under)
+            logger.debug(f"suppressing overlapping bboxes for image pair {img_cntr}")
             image1_bboxes, scores1 = \
                 suppress_overlapping_bboxes(image1_bboxes[:, :4], image1_bboxes[:, 4])
             image2_bboxes, scores2 = \
                 suppress_overlapping_bboxes(image2_bboxes[:, :4], image2_bboxes[:, 4])
-
+            logger.debug(f"img02 bboxes after suppressing overlappping boxes: {image2_bboxes}")
+            logger.debug(f"img02 scores: {scores2}")
             if keep_matching_bboxes_only:
                 image1_bboxes, image2_bboxes = keep_matching_bboxes(
                     batch,
@@ -129,6 +131,8 @@ def main(
                     minimum_confidence_threshold,
                     device=device
                 )
+            logger.debug(f"img02 bboxes after keep matching boxes: {image2_bboxes}")
+            logger.debug(f"img02 scores: {scores2}")
             image1_bboxes, scores1 = filter_low_confidence_bboxes(
                 image1_bboxes, scores1, minimum_confidence_threshold)
             image2_bboxes, scores2 = filter_low_confidence_bboxes(
