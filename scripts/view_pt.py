@@ -1,5 +1,7 @@
 import torch
 import numpy as np
+from pprint import pprint
+from pprint import pp
 
 # position1 = np.load("data/inference/demo_data/position1.npy")
 # position2 = np.load("data/inference/demo_data/position2.npy")
@@ -20,6 +22,8 @@ import numpy as np
 # print(f"\nintrinsics: {intrinsics}")
 
 print("target bboxes:\n")
-print(torch.load("data/GH30_Office/all_target_bboxes.pt"))
+target_bboxes = torch.load("data/GH30_Office/all_target_bboxes.pt")
+pprint(target_bboxes)
 print("\n\npredictions:\n")
-print(torch.load("data/GH30_Office/predictions/batch_image2_predicted_bboxes.pt"))
+predicted_bboxes = torch.load("data/GH30_Office/predictions/batch_image2_predicted_bboxes.pt")
+pprint(predicted_bboxes)
