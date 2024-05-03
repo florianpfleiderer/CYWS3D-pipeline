@@ -35,6 +35,9 @@ required_version = '1.0'
 if version('cyws3d-pipeline') < required_version:
     raise ImportError(f"cyws3d-pipeline must be version {required_version}")
 
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+
 def main(
     config_file: str = "config.yml",
     # input_metadata: str = "data/inference/demo_data/input_metadata.yml",
@@ -49,11 +52,9 @@ def main(
     """ 
     runs the inference with cyws3d.
     """
-    logging.basicConfig(level=getattr(logging, log_level.upper()))
-    logger = logging.getLogger(__name__)
-    logger.info(f"Starting the inference with logger level set to {logger.level}.")
-    logger.debug("logger set to DEBUG")
-
+    logger.setLevel(level=getattr(logging, log_level.upper()))
+    logger.info("logger set to %s", logger.level)
+    
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     torch.cuda.empty_cache()
     
