@@ -29,9 +29,8 @@ from src.globals \
     import DATASET_FOLDER, IMAGE_FOLDER, ROOM, SCENE, PLANE, PCD_PATH, ANNO_PATH, \
         CAMERA_INFO_JSON_PATH, GT_COLOR, MODEL_IMAGE_SIZE
 
-logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
-logger.setLevel(logging.INFO)
+logger = logging.getLogger(__name__)
 
 # intrinsic matrix
 intrinsics = Intrinsic()
