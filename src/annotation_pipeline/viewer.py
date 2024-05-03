@@ -9,14 +9,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 try:
-    from src.globals import DATASET_FOLDER, ROOM, SCENE, PCD_PATH 
+    from src.globals import DATASET_FOLDER, ROOM, SCENE, PLANE, PCD_PATH 
     PREFIX = "../../"
 except ImportError:
-    from ..globals import DATASET_FOLDER, ROOM, SCENE, PCD_PATH
+    from ..globals import DATASET_FOLDER, ROOM, SCENE, PLANE, PCD_PATH
     PREFIX = "../../"
 
 # load pcd file
-pcd = o3d.io.read_point_cloud(PREFIX + DATASET_FOLDER + ROOM + SCENE + PCD_PATH)
+pcd = o3d.io.read_point_cloud(PREFIX + DATASET_FOLDER + ROOM + SCENE + PLANE + PCD_PATH)
 # create mesh for showing the origin
 mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
 
