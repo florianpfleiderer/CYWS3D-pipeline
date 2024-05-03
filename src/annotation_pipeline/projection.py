@@ -6,12 +6,15 @@ function to project a pointcloud onto 2d coordinates given the intrinsics and ex
 to the classes defined below.
 """
 
+import logging
 import xml.etree.ElementTree as ET
 import json
 import yaml
 import open3d as o3d
 import numpy as np
 from scipy.spatial.transform import Rotation as R
+
+logger = logging.getLogger(__name__)
 
 class Intrinsic():
     ''' Class to store intrinsic parameters of a camera
@@ -289,45 +292,6 @@ class Extrinsic():
         self.extrinsic_matrix[:3, :4] = np.column_stack((self.rotation, self.position))
         self.extrinsic_matrix = np.linalg.inv(self.extrinsic_matrix)
 
-    def quat_to_rot(self, Q):
-        '''
-        Covert a quaternion into a full three-dimensional rotation matrix.
-    
-        Input
-        :param Q: a dictionary with four keys: x, y, z, w 
-    
-        Output
-        :return: A 3x3 element matrix representing the full 3D rotation matrix. 
-                This rotation matrix converts a point in the local reference 
-                frame to a point in the global reference frame.
-        '''
-        # Extract the values from Q
-        q0 = Q['w']
-        q1 = Q['x']
-        q2 = Q['y']
-        q3 = Q['z']
-
-        # First row of the rotation matrix
-        r00 = 2 * (q0 * q0 + q1 * q1) - 1
-        r01 = 2 * (q1 * q2 - q0 * q3)
-        r02 = 2 * (q1 * q3 + q0 * q2)
-
-        # Second row of the rotation matrix
-        r10 = 2 * (q1 * q2 + q0 * q3)
-        r11 = 2 * (q0 * q0 + q2 * q2) - 1
-        r12 = 2 * (q2 * q3 - q0 * q1)
-
-        # Third row of the rotation matrix
-        r20 = 2 * (q1 * q3 - q0 * q2)
-        r21 = 2 * (q2 * q3 + q0 * q1)
-        r22 = 2 * (q0 * q0 + q3 * q3) - 1
-
-        # 3x3 rotation matrix
-        rot_matrix = np.array([[r00, r01, r02],
-                            [r10, r11, r12],
-                            [r20, r21, r22]])
-        return rot_matrix
-
     def matrix(self):
         ''' Return the extrinsic matrix of the camera '''
         return self.extrinsic_matrix[:3, :4]
@@ -337,19 +301,19 @@ class Extrinsic():
         return self.extrinsic_matrix
 
 
-def inside_frustum(point, fov, near, far) -> bool:
+def inside_frustum(point, fov_x, fov_y, near, far) -> bool:
     ''' Check if point is inside frustum '''
     x, y, z = point
     if z > near or z < far:
         return False
-    if abs(x) > abs(z * np.tan(np.radians(fov / 2))):
+    if abs(x) > abs(z * np.tan(np.radians(fov_x / 2))):
         return False
-    if abs(y) > abs(z * np.tan(np.radians(fov / 2))):
+    if abs(y) > abs(z * np.tan(np.radians(fov_y / 2))):
         return False
     return True
 
 
-def frustum_culling(points: np.array, fov: int) -> list:
+def frustum_culling(points: np.array, fov_x: float, fov_y: float) -> list:
     ''' Filter points based on frustum culling 
     
     Args:
@@ -363,13 +327,13 @@ def frustum_culling(points: np.array, fov: int) -> list:
     far = min(points[:, 2])
     near = max(points[:, 2])
 
-    indices = [i for i, point in enumerate(points) if inside_frustum(point, fov, near, far)]
+    indices = [i for i, point in enumerate(points) if inside_frustum(point, fov_x, fov_y, near, far)]
     if len(indices) == 0:
         raise ValueError("No points in frustum")
     return indices
 
 
-def project_to_2d(points_pos: np.array, K: np.array, width: int = 640, height: int = 480) \
+def project_to_2d(points_pos: np.array, K: np.array, D: np.array, width: int = 640, height: int = 480) \
                   -> (np.array, np.array):
     ''' use pinhole model to project a pointcloud onto 2d coordinates:
 
@@ -379,6 +343,7 @@ def project_to_2d(points_pos: np.array, K: np.array, width: int = 640, height: i
             | fx 0  cx 0 |
             | 0  fy cy 0 |
             | 0  0  1  0 |
+        D: 1x5 distortion coefficients
         width: width of the image in pixels
         height: height of the image in pixels
     
@@ -388,16 +353,57 @@ def project_to_2d(points_pos: np.array, K: np.array, width: int = 640, height: i
     '''
     assert points_pos.shape[1] == 3, "points_pos must be Nx3"
     assert K.shape == (3, 4), "K must be 3x4"
+    assert D.shape == (5,), "D must be 1x5"
 
     # homogenous coordinates
     hom_coord = np.hstack((points_pos, np.ones((points_pos.shape[0], 1))))
 
     # projection
     proj = K @ hom_coord.T
+    logger.debug(proj[:2, 40:50])
+
+    proj[:2, :] = apply_distortion(proj[:2, :].T, K, D).T
+    logger.debug(proj[:2, 40:50])
+
     u = np.round(proj[0, :] / proj[2, :]).astype(int).clip(0, width-1)
     v = np.round(proj[1, :] / proj[2, :]).astype(int).clip(0, height-1)
 
     return u, v
+
+def apply_distortion(points_2d, K, D):
+    """
+    Applies the radial and tangential distortion to 2D points using the plumb bob model.
+
+    Args:
+        points_2d: Nx2 array of undistorted 2D points.
+        K: 3x4 camera intrinsic matrix.
+        D: 1x5 array of distortion coefficients (k1, k2, p1, p2, k3).
+
+    Returns:
+        distorted_points: Nx2 array of distorted 2D points.
+    """
+    # Extract the focal lengths and principal point from K
+    fx, fy = K[0, 0], K[1, 1]
+    cx, cy = K[0, 2], K[1, 2]
+
+    # Normalize the coordinates
+    x = (points_2d[:, 0] - cx) / fx
+    y = (points_2d[:, 1] - cy) / fy
+
+    # Compute the radial distortion
+    r2 = x**2 + y**2
+    radial_distortion = 1 + D[0] * r2 + D[1] * r2**2 + D[4] * r2**3
+
+    # Compute the tangential distortion
+    xy = x * y
+    x_distorted = x * radial_distortion + 2 * D[2] * xy + D[3] * (r2 + 2 * x**2)
+    y_distorted = y * radial_distortion + D[2] * (r2 + 2 * y**2) + 2 * D[3] * xy
+
+    # Scale back to image coordinates
+    x_final = x_distorted * fx + cx
+    y_final = y_distorted * fy + cy
+
+    return np.vstack((x_final, y_final)).T
 
 
 if __name__ == "__main__":
@@ -410,11 +416,11 @@ if __name__ == "__main__":
     intrinsics.from_xml("./testmodel/model1_cameras.xml")
 
     K = intrinsics.homogenous_matrix()
-    print(K)
+    logger.debug(K)
 
     # extrinsic matrix
     extrinsics = Extrinsic()
     extrinsics.from_json("./testmodel/model1_viewpoint_00.json", scale = 10)
     M = extrinsics.homogenous_matrix()
 
-    print(M)
+    logger.debug(M)
