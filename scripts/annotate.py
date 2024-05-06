@@ -59,7 +59,7 @@ def main(log_level: str = "INFO"):
                 continue
             if not 'merged_plane_clouds_ds002_GT.anno' in files:
                 continue
-            if 'scene2' in root:
+            if 'LivingArea' in root:
                 continue
 
             logger.info("Processing folder: %s", root)
@@ -160,9 +160,12 @@ def main(log_level: str = "INFO"):
                     if not key in scene_annotation_buffer:
                         scene_annotation_buffer[key] = []
                     scene_annotation_buffer[key].append(anno_key)
-
+                for bboxes in all_target_bboxes:
+                    if bboxes['image'] == img_path+value['file_name'] and bboxes['boxes'].shape[0] > 0:
+                        logger.warning("Image %s already annotated, skipping", value['file_name'])
+                        continue
                 all_target_bboxes.append(dict(
-                    # image_name=img_path+value['file_name'],
+                    image=img_path+value['file_name'],
                     boxes=torch.as_tensor(img_resized_bboxes, dtype=torch.float32),
                     labels=torch.zeros((len(img_resized_bboxes),), dtype=torch.int32)
                 ))
