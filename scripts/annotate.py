@@ -48,6 +48,7 @@ def main(log_level: str = "INFO"):
     # create mesh for showing the origin
     mesh_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=1, origin=[0, 0, 0])
     tfs_temp = "BigRoom"
+    scene_buffer = None
     # traverse dataset by scene
     for folder in sorted(os.listdir(DATASET_FOLDER)):
         if "Store" in folder or "readme" in folder or "camera_info" in folder:
@@ -58,6 +59,9 @@ def main(log_level: str = "INFO"):
                 continue
             if not 'merged_plane_clouds_ds002_GT.anno' in files:
                 continue
+            if 'scene2' in root:
+                continue
+
             logger.info("Processing folder: %s", root)
             logger.debug("Files: %s", files)
             target_bboxes = []
@@ -75,6 +79,11 @@ def main(log_level: str = "INFO"):
             
             # ground truth
             logger.debug("loading ground truth from %s", "./"+root+"/"+ANNO_PATH)
+            if scene_buffer != tfs[3]:
+                scene_buffer = tfs[3]
+                logger.info("New scene: %s", scene_buffer)
+                scene_annotation_buffer = {}
+            
             _, base_anno_dict = utils.annotate_pcd(base_pcd, f"./{root}/{ANNO_PATH}", GT_COLOR)
 
             if logger.level == logging.DEBUG:
@@ -93,8 +102,12 @@ def main(log_level: str = "INFO"):
                 base_gt_pcd = copy.deepcopy(pcd)
                 points_pos = np.asarray(pcd.points)
                 points_color = np.asarray(pcd.colors)
-
-                pcd = pcd.select_by_index(frustum_culling(points_pos, FOV_X, FOV_Y))
+                try:
+                    pcd = pcd.select_by_index(frustum_culling(points_pos, FOV_X, FOV_Y))
+                except ValueError:
+                    logger.warning("No points in frustum for plane %s, skipping", tfs[5])
+                    continue
+                
                 if logger.level == logging.DEBUG:
                     o3d.visualization.draw_geometries([pcd, mesh_frame])
 
@@ -113,6 +126,10 @@ def main(log_level: str = "INFO"):
                 anno_dict = copy.deepcopy(base_anno_dict)
                 for anno_key, anno_value in base_anno_dict.items():
                     logger.info("Annotating object: %s", anno_key)
+                    if key in scene_annotation_buffer:
+                        if anno_key in scene_annotation_buffer[key]:
+                            logger.info("Object %s already annotated on image %s", anno_key, key)
+                            continue
 
                     gt_pcd = base_gt_pcd.select_by_index(anno_value)
                     if logger.level == logging.DEBUG:
@@ -139,6 +156,10 @@ def main(log_level: str = "INFO"):
 
                     img_resized_bboxes.append(utils.extract_bboxes(resized_u, resized_v))
                     img_bboxes.append(utils.extract_bboxes(gt_u, gt_v))
+                    logger.info("Object %s annotated on image %s", anno_key, key)
+                    if not key in scene_annotation_buffer:
+                        scene_annotation_buffer[key] = []
+                    scene_annotation_buffer[key].append(anno_key)
 
                 all_target_bboxes.append(dict(
                     # image_name=img_path+value['file_name'],
