@@ -92,95 +92,95 @@ logger.info("Converted all depth images to greyscale")
 scene1_buffer = sorted([f for f in os.listdir(os.path.join(ROOM_DIR, "scene1")) \
     if (".png" in f)])
 
-transformations = None
+# transformations = None
 
-for i in range(6):
-    for j in range(i, 6):
-        if i == j:
-            continue
-        transformations_1 = utils.load_transformations(os.path.join(ROOM_DIR, f"scene{i+1}", f"scene{i+1}_transformations.yaml"))
-        logger.debug(f"transformations: {transformations_1}")
-        transformations_2 = utils.load_transformations(os.path.join(ROOM_DIR, f"scene{j+1}", f"scene{j+1}_transformations.yaml"))
-        logger.debug(f"transformations: {transformations_2}")
-        for p in range(len(transformations_1)):
-            batch.append(dict(
-                image1=os.path.join(ROOM_DIR, f"scene{i+1}", transformations_1[p]["file_name"]),
-                image2=os.path.join(ROOM_DIR, f"scene{j+1}", transformations_2[p]["file_name"]),
-                registration_strategy="3d"
-            ))
-
-# for scene in sorted(os.listdir(ROOM_DIR)):
-#     if "predictions" in scene or "scene1" in scene or "yaml" in scene or ".pt" in scene:
-#         continue
-#     scene_buffer = []
-#     for img in os.listdir(os.path.join(ROOM_DIR, scene)):
-#         if ".yaml" in img or "ground_truth" in img or ".npy" in img:
+# for i in range(6):
+#     for j in range(i, 6):
+#         if i == j:
 #             continue
-#         scene_buffer.append(img)
-#     scene_buffer.sort()
-#     spacer = len(scene_buffer)//2
-#     if DEPTH:
-#         logger.info("Adding depth images to metadata")
-#         for i in range(spacer//2):
-#             batch.append({
-#                 "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
-#                 "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i]),
-#                 "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
-#                 "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[i]),
-#                 "registration_strategy": "3d"
-#             })
-#         for i in range(spacer//2):
-#             batch.append({
-#                 "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
-#                 "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i]),
-#                 "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
-#                 "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2+i]),
-#                 "registration_strategy": "3d"
-#             })
-#     elif TRANSFORMATIONS:
-#         logger.info("Adding transformations to metadata")
-#         for i in range(spacer//2):
-#             batch.append({
-#                 "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
-#                 "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i]),
-#                 "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
-#                 "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[i]),
-#                 "intrinsics1": DATASET_FOLDER+CAMERA_INFO_JSON_PATH[:-5]+".npy",
-#                 "intrinsics2": DATASET_FOLDER+CAMERA_INFO_JSON_PATH[:-5]+".npy",
-#                 "position1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4][:-4]+"_position.npy"),
-#                 "position2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i][:-4]+"_position.npy"),
-#                 "rotation1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4][:-4]+"_rotation.npy"),
-#                 "rotation2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i][:-4]+"_rotation.npy"),
-#                 "registration_strategy": "3d"
-#             })
-#         for i in range(spacer//2):
-#             batch.append({
-#                 "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
-#                 "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i]),
-#                 "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
-#                 "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2+i]),
-#                 "intrinsics1": DATASET_FOLDER+CAMERA_INFO_JSON_PATH[:-5]+".npy",
-#                 "intrinsics2": DATASET_FOLDER+CAMERA_INFO_JSON_PATH[:-5]+".npy",
-#                 "position1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6][:-4]+"_position.npy"),
-#                 "position2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i][:-4]+"_position.npy"),
-#                 "rotation1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6][:-4]+"_rotation.npy"),
-#                 "rotation2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i][:-4]+"_rotation.npy"),
-#                 "registration_strategy": "3d"
-#             })
-#     else:
-#         logger.info("Only RGB images are added to metadata")
-#         for i in range(spacer//2):
-#             batch.append({
-#                 "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
-#                 "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i]),
-#                 "registration_strategy": "3d"
-#             })
-#         for i in range(spacer//2):
-#             batch.append({
-#                 "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
-#                 "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i]),
-#                 "registration_strategy": "3d"
-#             })
+#         transformations_1 = utils.load_transformations(os.path.join(ROOM_DIR, f"scene{i+1}", f"scene{i+1}_transformations.yaml"))
+#         logger.debug(f"transformations: {transformations_1}")
+#         transformations_2 = utils.load_transformations(os.path.join(ROOM_DIR, f"scene{j+1}", f"scene{j+1}_transformations.yaml"))
+#         logger.debug(f"transformations: {transformations_2}")
+#         for p in range(len(transformations_1)):
+#             batch.append(dict(
+#                 image1=os.path.join(ROOM_DIR, f"scene{i+1}", transformations_1[p]["file_name"]),
+#                 image2=os.path.join(ROOM_DIR, f"scene{j+1}", transformations_2[p]["file_name"]),
+#                 registration_strategy="3d"
+#             ))
+
+for scene in sorted(os.listdir(ROOM_DIR)):
+    if "predictions" in scene or "scene1" in scene or "yaml" in scene or ".pt" in scene:
+        continue
+    scene_buffer = []
+    for img in os.listdir(os.path.join(ROOM_DIR, scene)):
+        if ".yaml" in img or "ground_truth" in img or ".npy" in img:
+            continue
+        scene_buffer.append(img)
+    scene_buffer.sort()
+    spacer = len(scene_buffer)//2
+    if DEPTH:
+        logger.info("Adding depth images to metadata")
+        for i in range(spacer//2):
+            batch.append({
+                "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
+                "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i]),
+                "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
+                "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[i]),
+                "registration_strategy": "3d"
+            })
+        for i in range(spacer//2):
+            batch.append({
+                "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
+                "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i]),
+                "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
+                "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2+i]),
+                "registration_strategy": "3d"
+            })
+    elif TRANSFORMATIONS:
+        logger.info("Adding transformations to metadata")
+        for i in range(spacer//2):
+            batch.append({
+                "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
+                "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i]),
+                "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
+                "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[i]),
+                "intrinsics1": DATASET_FOLDER+CAMERA_INFO_JSON_PATH[:-5]+".npy",
+                "intrinsics2": DATASET_FOLDER+CAMERA_INFO_JSON_PATH[:-5]+".npy",
+                "position1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4][:-4]+"_position.npy"),
+                "position2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i][:-4]+"_position.npy"),
+                "rotation1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4][:-4]+"_rotation.npy"),
+                "rotation2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i][:-4]+"_rotation.npy"),
+                "registration_strategy": "3d"
+            })
+        for i in range(spacer//2):
+            batch.append({
+                "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
+                "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i]),
+                "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
+                "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2+i]),
+                "intrinsics1": DATASET_FOLDER+CAMERA_INFO_JSON_PATH[:-5]+".npy",
+                "intrinsics2": DATASET_FOLDER+CAMERA_INFO_JSON_PATH[:-5]+".npy",
+                "position1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6][:-4]+"_position.npy"),
+                "position2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i][:-4]+"_position.npy"),
+                "rotation1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6][:-4]+"_rotation.npy"),
+                "rotation2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i][:-4]+"_rotation.npy"),
+                "registration_strategy": "3d"
+            })
+    else:
+        logger.info("Only RGB images are added to metadata")
+        for i in range(spacer//2):
+            batch.append({
+                "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
+                "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i]),
+                "registration_strategy": "3d"
+            })
+        for i in range(spacer//2):
+            batch.append({
+                "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
+                "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i]),
+                "registration_strategy": "3d"
+            })
 
 with open(os.path.join(ROOM_DIR, "input_metadata.yaml"), "w") as f:
     yaml.safe_dump({"batch": batch}, f)

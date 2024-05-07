@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 def main(
     config_file: str = "config.yml",
     # input_metadata: str = "data/inference/demo_data/input_metadata.yml",
-    input_metadata: str = "data/GH30_Office/input_metadata.yaml",
+    input_metadata: str = "data/GH30_LivingArea/input_metadata.yaml",
     load_weights_from: str = "./cyws-3d.ckpt",
     filter_predictions_with_area_under: int = 400,
     keep_matching_bboxes_only: bool = False,
@@ -114,6 +114,7 @@ def main(
                 image1_bboxes, filter_predictions_with_area_under)
             image2_bboxes = remove_bboxes_with_area_less_than(
                 image2_bboxes, filter_predictions_with_area_under)
+            print(image2_bboxes)
             logger.debug(f"suppressing overlapping bboxes for image pair {img_cntr}")
             image1_bboxes, scores1 = \
                 suppress_overlapping_bboxes(image1_bboxes[:, :4], image1_bboxes[:, 4])
