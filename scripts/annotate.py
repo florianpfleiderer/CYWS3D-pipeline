@@ -97,10 +97,21 @@ def main(log_level: str = "INFO", room: str = "ALL"):
             # iterate over images in each scene
             for key, value in transformations.items():
                 logger.info("Processing image: %s", key)
-                skip_loop = False
+                dict_entry_missing = True
+                skip_loop = True
+                for image_bboxes in all_target_bboxes:
+                    if image_bboxes['image'] == img_path+value['file_name']:
+                        dict_entry_missing = False
+                        break
+                if dict_entry_missing:
+                    logger.info("Creating new dict entry for image %s", key)
+                    all_target_bboxes.append(dict(
+                        image=img_path+value['file_name'],
+                        boxes=torch.as_tensor([], dtype=torch.float32),
+                        labels=torch.zeros((0,), dtype=torch.int32)
+                    ))
                 extrinsics = Extrinsic()
                 extrinsics.from_dict(value)
-
                 pcd = copy.deepcopy(base_pcd)
                 pcd.transform(extrinsics.homogenous_matrix())
                 base_gt_pcd = copy.deepcopy(pcd)
@@ -111,17 +122,14 @@ def main(log_level: str = "INFO", room: str = "ALL"):
                 except ValueError:
                     logger.warning("No points in frustum for plane %s, skipping", tfs[5])
                     continue
-                
                 if logger.level == logging.DEBUG:
                     o3d.visualization.draw_geometries([pcd, mesh_frame])
-
                 points_pos = np.asarray(pcd.points)
                 points_color = np.asarray(pcd.colors)
 
                 u_coords, v_coords = project_to_2d(
                     points_pos, intrinsics.homogenous_matrix(), intrinsics.distortion_coeffs(), \
                         intrinsics.width, intrinsics.height)
-
                 final_image = utils.draw_image((u_coords, v_coords), points_color, intrinsics)
 
                 # iterate over ground truth objects and extract bboxes for visible objects
@@ -134,14 +142,11 @@ def main(log_level: str = "INFO", room: str = "ALL"):
                         if anno_key in scene_annotation_buffer[key]:
                             logger.info("Object %s already annotated on image %s", anno_key, key)
                             continue
-
                     gt_pcd = base_gt_pcd.select_by_index(anno_value)
                     if logger.level == logging.DEBUG:
                         o3d.visualization.draw_geometries([gt_pcd])
                     gt_points_pos = np.asarray(gt_pcd.points)
                     gt_points_color = np.asarray(gt_pcd.colors)
-
-                    # frustum culling
                     try:
                         gt_pcd = gt_pcd.select_by_index(frustum_culling(gt_points_pos, FOV_X, FOV_Y))
                     except ValueError:
@@ -160,27 +165,21 @@ def main(log_level: str = "INFO", room: str = "ALL"):
 
                     img_resized_bboxes.append(utils.extract_bboxes(resized_u, resized_v))
                     img_bboxes.append(utils.extract_bboxes(gt_u, gt_v))
-                    logger.info("Object %s annotated on image %s", anno_key, key)
                     if not key in scene_annotation_buffer:
                         scene_annotation_buffer[key] = []
                     scene_annotation_buffer[key].append(anno_key)
-                for bboxes in all_target_bboxes:
-                    if bboxes['image'] == img_path+value['file_name']:
-                        if len(bboxes['boxes']) == 0:
-                            bboxes['boxes'] = torch.as_tensor(img_resized_bboxes, dtype=torch.float32)
-                            bboxes['labels'] = torch.zeros((len(img_resized_bboxes),), dtype=torch.int32)
-                            skip_loop = True
-                        else:
-                            skip_loop = True
-                        break
+                    skip_loop = False
+                    logger.info("Object %s annotated on image %s", anno_key, key)
+
                 if skip_loop:
-                    logger.warning("Image %s already annotated, skipping", value['file_name'])
+                    logger.info("Skipping annotation for image %s", value['file_name'])
                     continue
-                all_target_bboxes.append(dict(
-                    image=img_path+value['file_name'],
-                    boxes=torch.as_tensor(img_resized_bboxes, dtype=torch.float32),
-                    labels=torch.zeros((len(img_resized_bboxes),), dtype=torch.int32)
-                ))
+                for all_img_bboxes in all_target_bboxes:
+                    if all_img_bboxes['image'] == img_path+value['file_name']:
+                        all_img_bboxes['boxes'] = torch.cat((all_img_bboxes['boxes'], \
+                            torch.as_tensor(img_resized_bboxes, dtype=torch.float32)))
+                        all_img_bboxes['labels'] = torch.cat((all_img_bboxes['labels'], \
+                            torch.zeros((len(img_resized_bboxes),), dtype=torch.int32)))
 
                 final_image = utils.draw_2d_bboxes_on_img(final_image, img_bboxes)
                 if not path.exists(f"{img_path}ground_truth"):
