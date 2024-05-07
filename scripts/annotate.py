@@ -34,9 +34,13 @@ from src.modules.geometry import convert_world_to_image_coordinates
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 
-def main(log_level: str = "INFO"):
+def main(log_level: str = "INFO", room: str = "ALL"):
     """
     main function for annotation pipeline
+
+    Args:
+        log_level (str): logging level
+        room (str): room to process, default is all rooms
     """
     logger.setLevel(getattr(logging, log_level.upper()))
     logger.warning("logger set to %s", logger.level)
@@ -59,7 +63,7 @@ def main(log_level: str = "INFO"):
                 continue
             if not 'merged_plane_clouds_ds002_GT.anno' in files:
                 continue
-            if 'LivingArea' in root:
+            if not room == "ALL" and not room in root:
                 continue
 
             logger.info("Processing folder: %s", root)
@@ -93,7 +97,7 @@ def main(log_level: str = "INFO"):
             # iterate over images in each scene
             for key, value in transformations.items():
                 logger.info("Processing image: %s", key)
-                
+                skip_loop = False
                 extrinsics = Extrinsic()
                 extrinsics.from_dict(value)
 
@@ -161,9 +165,17 @@ def main(log_level: str = "INFO"):
                         scene_annotation_buffer[key] = []
                     scene_annotation_buffer[key].append(anno_key)
                 for bboxes in all_target_bboxes:
-                    if bboxes['image'] == img_path+value['file_name'] and bboxes['boxes'].shape[0] > 0:
-                        logger.warning("Image %s already annotated, skipping", value['file_name'])
-                        continue
+                    if bboxes['image'] == img_path+value['file_name']:
+                        if len(bboxes['boxes']) == 0:
+                            bboxes['boxes'] = torch.as_tensor(img_resized_bboxes, dtype=torch.float32)
+                            bboxes['labels'] = torch.zeros((len(img_resized_bboxes),), dtype=torch.int32)
+                            skip_loop = True
+                        else:
+                            skip_loop = True
+                        break
+                if skip_loop:
+                    logger.warning("Image %s already annotated, skipping", value['file_name'])
+                    continue
                 all_target_bboxes.append(dict(
                     image=img_path+value['file_name'],
                     boxes=torch.as_tensor(img_resized_bboxes, dtype=torch.float32),
