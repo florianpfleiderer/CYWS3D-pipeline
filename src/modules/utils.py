@@ -198,6 +198,7 @@ def visualise_predictions(
             plot[1].text(bbox[0], bbox[1], f"{score:.2f}", color=PREDICTED_COLOUR)
     plot[1].axis("off")
     figure.savefig(save_path, bbox_inches="tight")
+    plt.close(figure)
     
 
 def plot_correspondences(source_image, target_image, source_points, target_points, save_path="./correspondences.png"):

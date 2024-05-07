@@ -210,6 +210,8 @@ def remove_invalid_bboxes(bboxes_as_tensor, image_side, add_dummuy_if_empty=True
 
 
 def suppress_overlapping_bboxes(bboxes, scores, iou_threshold=0.2):
+    if bboxes.size == 0 or scores.size == 0:
+        return bboxes, scores
     convert_to_np = False
     if isinstance(bboxes, np.ndarray):
         bboxes = torch.from_numpy(bboxes)
@@ -256,7 +258,7 @@ def remove_bboxes_with_area_less_than(bboxes_as_np_array, threshold):
         if shapely.geometry.box(*bbox[:4]).area < threshold:
             continue
         bboxes.append(bbox)
-    bboxes = np.array(bboxes)
+    bboxes = np.array(bboxes, dtype=float).reshape(-1, bboxes_as_np_array.shape[1] if bboxes_as_np_array.size else 0)
     return bboxes
 
 def keep_matching_bboxes(batch, image_index, left_predictions, right_predictions, left_scores, right_scores, confidence_threshold=0.2, device="cpu"):

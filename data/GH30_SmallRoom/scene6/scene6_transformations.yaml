@@ -1,0 +1,112 @@
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1564428048-712017767.png
+  id: 0
+  origin_frame: /map
+  rotation:
+    w: 0.33706975777082854
+    x: -0.648195678715587
+    y: -0.6093405690968028
+    z: 0.3081077917605116
+  target_frame: /head_rgbd_sensor_rgb_frame
+  timestamp: 1564428048.7120178
+  translation:
+    x: -0.679130437549013
+    y: -0.3198103111089108
+    z: 1.0897597687410783
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1564428059-671502583.png
+  id: 1
+  origin_frame: /map
+  rotation:
+    w: 0.4474010618985843
+    x: -0.8690113938217751
+    y: -0.19045943348092345
+    z: 0.09152426682623707
+  target_frame: /head_rgbd_sensor_rgb_frame
+  timestamp: 1564428059.6715026
+  translation:
+    x: -0.5886721101616534
+    y: 0.1273746142616181
+    z: 1.0897597886109414
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1564428078-741029255.png
+  id: 2
+  origin_frame: /map
+  rotation:
+    w: 0.021271131939786303
+    x: -0.02901830518316867
+    y: -0.8891633736367421
+    z: 0.45617318190926587
+  target_frame: /head_rgbd_sensor_rgb_frame
+  timestamp: 1564428078.7410293
+  translation:
+    x: -1.3549765193752403
+    y: 0.23272804641533495
+    z: 1.0897597687410787
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1564428139-805332415.png
+  id: 3
+  origin_frame: /map
+  rotation:
+    w: 0.39842904226388776
+    x: -0.7700349733485252
+    y: -0.44553533890598906
+    z: 0.22315622305179456
+  target_frame: /head_rgbd_sensor_rgb_frame
+  timestamp: 1564428139.8053324
+  translation:
+    x: 0.6526946221983213
+    y: 0.10208122545052967
+    z: 1.0897599307214678
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1564428199-461302988.png
+  id: 4
+  origin_frame: /map
+  rotation:
+    w: 0.17829750488909243
+    x: -0.3358645938746498
+    y: -0.823801275572084
+    z: 0.4204241105093141
+  target_frame: /head_rgbd_sensor_rgb_frame
+  timestamp: 1564428199.461303
+  translation:
+    x: 1.0728407777691442
+    y: -1.4841068076564534
+    z: 1.0897597687410785
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1564428216-956363670.png
+  id: 5
+  origin_frame: /map
+  rotation:
+    w: 0.44178502423639915
+    x: -0.8574101592988235
+    y: -0.23727913052761818
+    z: 0.11563920316081458
+  target_frame: /head_rgbd_sensor_rgb_frame
+  timestamp: 1564428216.9563637
+  translation:
+    x: 0.8548413685263399
+    y: -1.307198506951159
+    z: 1.0897601001905604
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1564428225-736818783.png
+  id: 6
+  origin_frame: /map
+  rotation:
+    w: 0.45652750883847354
+    x: -0.8895838336063097
+    y: 0.009704124848607866
+    z: -0.011360749137329297
+  target_frame: /head_rgbd_sensor_rgb_frame
+  timestamp: 1564428225.7368188
+  translation:
+    x: 0.591936562748316
+    y: -1.3700133892506594
+    z: 1.0897597687410785
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1564428254-526561968.png
+  id: 7
+  origin_frame: /map
+  rotation:
+    w: -0.09099412356700341
+    x: 0.18942858684409739
+    y: -0.8692355132753291
+    z: 0.44751145507517115
+  target_frame: /head_rgbd_sensor_rgb_frame
+  timestamp: 1564428254.526562
+  translation:
+    x: -0.3423500327432961
+    y: -0.944653319451893
+    z: 1.0897601743110104

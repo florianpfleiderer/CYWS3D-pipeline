@@ -27,7 +27,7 @@ PREDICTIONS_DIR = ROOM_DIR+"/predictions/batch_image2_predicted_bboxes.pt"
 TARGET_BBOXES_DIR = ROOM_DIR+"/all_target_bboxes.pt"
 preds = torch.load(PREDICTIONS_DIR)
 targets = torch.load(TARGET_BBOXES_DIR)
-iou_thresholds = np.arange(0.2, 0.95, 0.05).tolist()
+iou_thresholds = np.arange(0.3, 0.95, 0.05).tolist()
 rec_thresholds = np.arange(0.1, 1.0, 0.1).tolist()
 max_detection_thresholds = [1, 3, 5]
 
@@ -115,17 +115,25 @@ axs[1].legend()
 plt.tight_layout()
 fig2.savefig(f"{ROOM_DIR}/recall_{args['room']}.png")
 
-# print(f"mAP: {mAP['map']}")
-# print(f"mAP_50: {mAP['map_50']}")
-# print(f"mAP_75: {mAP['map_75']}")
-# print(f"mAP_small: {mAP['map_small']}")
-# print(f"mAP_medium: {mAP['map_medium']}")
-# print(f"mAP_large: {mAP['map_large']}")
+for key, value in mAP.items():
+    if isinstance(value, np.ndarray):
+        mAP[key] = value.tolist()
 
-# print(f"mAR_1: {mAP['mar_1']}")
-# print(f"mAR_3: {mAP['mar_3']}")
-# print(f"mAR_5: {mAP['mar_5']}")
-# print(f"mAR_small: {mAP['mar_small']}")
-# print(f"mAR_medium: {mAP['mar_medium']}")
-# print(f"mAR_large: {mAP['mar_large']}")
+mAP_json = dict(
+    map=mAP['map'],
+    map_50=mAP['map_50'],
+    map_75=mAP['map_75'],
+    map_small=mAP['map_small'],
+    map_medium=mAP['map_medium'],
+    map_large=mAP['map_large'],
+    mar_1=mAP['mar_1'],
+    mar_3=mAP['mar_3'],
+    mar_5=mAP['mar_5'],
+    mar_small=mAP['mar_small'],
+    mar_medium=mAP['mar_medium'],
+    mar_large=mAP['mar_large']
+)
+
+with open(f"{ROOM_DIR}/mAP_{args['room']}.json", 'w') as f:
+    json.dump(mAP_json, f)
 

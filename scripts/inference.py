@@ -35,10 +35,13 @@ required_version = '1.0'
 if version('cyws3d-pipeline') < required_version:
     raise ImportError(f"cyws3d-pipeline must be version {required_version}")
 
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+
 def main(
     config_file: str = "config.yml",
     # input_metadata: str = "data/inference/demo_data/input_metadata.yml",
-    input_metadata: str = "data/GH30_Office/input_metadata.yaml",
+    room : str = None,
     load_weights_from: str = "./cyws-3d.ckpt",
     filter_predictions_with_area_under: int = 400,
     keep_matching_bboxes_only: bool = False,
@@ -49,13 +52,15 @@ def main(
     """ 
     runs the inference with cyws3d.
     """
-    logging.basicConfig(level=getattr(logging, log_level.upper()))
-    logger = logging.getLogger(__name__)
-    logger.info(f"Starting the inference with logger level set to {logger.level}.")
-    logger.debug("logger set to DEBUG")
-
+    logger.setLevel(level=getattr(logging, log_level.upper()))
+    logger.info("logger set to %s", logger.level)
+    
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     torch.cuda.empty_cache()
+
+    if room is None:
+        raise ValueError("Please provide the room name as command line argument")
+    input_metadata = f"data/GH30_{room}/input_metadata.yaml"
     
     save_path = os.path.join(input_metadata.split("/")[0], input_metadata.split("/")[1], "predictions")
     if not os.path.exists(save_path):
@@ -146,12 +151,13 @@ def main(
                                             save_path=f"{save_path}/prediction_{img_cntr}.png")
 
             image1_predictions.append(dict(
+                image=f"prediction_{img_cntr}", 
                 boxes=torch.round(torch.as_tensor(image1_bboxes[:max_predictions_to_display], dtype=torch.float32)),
                 scores=torch.as_tensor(scores1[:max_predictions_to_display], dtype=torch.float32),
                 labels=torch.zeros(len(image1_bboxes[:max_predictions_to_display]), dtype=torch.int32))
                 )
             image2_predictions.append(dict(
-                # image=f"prediction_{img_cntr}", 
+                image=f"prediction_{img_cntr}", 
                 boxes=torch.round(torch.as_tensor(image2_bboxes[:max_predictions_to_display], dtype=torch.float32)),
                 scores=torch.as_tensor(scores2[:max_predictions_to_display], dtype=torch.float32),
                 labels=torch.zeros(len(image2_bboxes[:max_predictions_to_display]), dtype=torch.int32))
