@@ -45,10 +45,20 @@ def save_map_as_json(mAP, filepath) -> None:
         mar_5=mAP['mar_5'],
         mar_small=mAP['mar_small'],
         mar_medium=mAP['mar_medium'],
-        mar_large=mAP['mar_large']
+        mar_large=mAP['mar_large'],
+        ious=dict(),
+        precison=mAP['precision'],
+        recall=mAP['recall'],
+        scores=mAP['scores']
     )
+    for key, value in mAP['ious'].items():
+        if isinstance(value, torch.Tensor):
+            mAP['ious'][key] = value.squeeze().cpu().tolist()
+            logger.debug(f"converted {key} from tensor to list")
+        mAP_json['ious'][int(key[0])] = mAP['ious'][key]
+
     with open(filepath, 'w') as f:
-        json.dump(mAP_json, f)
+        json.dump(mAP_json, f, indent=2)
 
 def prepare_target_bboxes(target_bboxes, metadata_path) -> list:
     """ 

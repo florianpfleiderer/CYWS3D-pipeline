@@ -108,3 +108,9 @@ def plot_recall(mAP, thresholds, room_name, room_path):
 
     plt.tight_layout()
     fig2.savefig(f"{room_path}/recall_{room_name}.png")
+
+def plot_ious():
+    """
+    TODO: implement
+    """
+    pass
