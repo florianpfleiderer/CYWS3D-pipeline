@@ -1,61 +1,81 @@
 batch:
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879848-463321678.png
   image2: data/GH30_Office/scene2/hsrb_head_rgbd_sensor_rgb_image_raw-1567880062-488732569.png
+  prediction_number: 0
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879848-463321678.png
   image2: data/GH30_Office/scene2/hsrb_head_rgbd_sensor_rgb_image_raw-1567880067-146791689.png
+  prediction_number: 1
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879885-329181902.png
   image2: data/GH30_Office/scene2/hsrb_head_rgbd_sensor_rgb_image_raw-1567880100-628837578.png
+  prediction_number: 2
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879885-329181902.png
   image2: data/GH30_Office/scene2/hsrb_head_rgbd_sensor_rgb_image_raw-1567880107-432143442.png
+  prediction_number: 3
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879848-463321678.png
   image2: data/GH30_Office/scene3/hsrb_head_rgbd_sensor_rgb_image_raw-1567880440-401866428.png
+  prediction_number: 4
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879848-463321678.png
   image2: data/GH30_Office/scene3/hsrb_head_rgbd_sensor_rgb_image_raw-1567880443-987939589.png
+  prediction_number: 5
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879885-329181902.png
   image2: data/GH30_Office/scene3/hsrb_head_rgbd_sensor_rgb_image_raw-1567880481-625181906.png
+  prediction_number: 6
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879885-329181902.png
   image2: data/GH30_Office/scene3/hsrb_head_rgbd_sensor_rgb_image_raw-1567880485-814556829.png
+  prediction_number: 7
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879848-463321678.png
   image2: data/GH30_Office/scene4/hsrb_head_rgbd_sensor_rgb_image_raw-1567880809-567333214.png
+  prediction_number: 8
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879848-463321678.png
   image2: data/GH30_Office/scene4/hsrb_head_rgbd_sensor_rgb_image_raw-1567880810-372160427.png
+  prediction_number: 9
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879885-329181902.png
   image2: data/GH30_Office/scene4/hsrb_head_rgbd_sensor_rgb_image_raw-1567880851-897504084.png
+  prediction_number: 10
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879885-329181902.png
   image2: data/GH30_Office/scene4/hsrb_head_rgbd_sensor_rgb_image_raw-1567880855-483176224.png
+  prediction_number: 11
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879848-463321678.png
   image2: data/GH30_Office/scene5/hsrb_head_rgbd_sensor_rgb_image_raw-1567881047-455967180.png
+  prediction_number: 12
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879848-463321678.png
   image2: data/GH30_Office/scene5/hsrb_head_rgbd_sensor_rgb_image_raw-1567881051-880107872.png
+  prediction_number: 13
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879885-329181902.png
   image2: data/GH30_Office/scene5/hsrb_head_rgbd_sensor_rgb_image_raw-1567881088-846904747.png
+  prediction_number: 14
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879885-329181902.png
   image2: data/GH30_Office/scene5/hsrb_head_rgbd_sensor_rgb_image_raw-1567881094-745264999.png
+  prediction_number: 15
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879848-463321678.png
   image2: data/GH30_Office/scene6/hsrb_head_rgbd_sensor_rgb_image_raw-1567881361-456752293.png
+  prediction_number: 16
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879848-463321678.png
   image2: data/GH30_Office/scene6/hsrb_head_rgbd_sensor_rgb_image_raw-1567881369-868663780.png
+  prediction_number: 17
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879885-329181902.png
   image2: data/GH30_Office/scene6/hsrb_head_rgbd_sensor_rgb_image_raw-1567881400-769627087.png
+  prediction_number: 18
   registration_strategy: 3d
 - image1: data/GH30_Office/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567879885-329181902.png
   image2: data/GH30_Office/scene6/hsrb_head_rgbd_sensor_rgb_image_raw-1567881408-478163712.png
+  prediction_number: 19
   registration_strategy: 3d
