@@ -47,7 +47,7 @@ def save_map_as_json(mAP, filepath) -> None:
         mar_medium=mAP['mar_medium'],
         mar_large=mAP['mar_large'],
         ious=dict(),
-        precison=mAP['precision'],
+        precision=mAP['precision'],
         recall=mAP['recall'],
         scores=mAP['scores']
     )
@@ -59,6 +59,35 @@ def save_map_as_json(mAP, filepath) -> None:
 
     with open(filepath, 'w') as f:
         json.dump(mAP_json, f, indent=2)
+
+def load_map_from_json(filepath) -> dict:
+    """ This functions loads teh file saved by save_map_as_json() and converts it to 
+    original format, hvaing tensors as values.
+    """
+    with open(filepath, 'r') as f:
+        mAP_json = json.load(f)
+
+    mAP = dict(
+        map=torch.tensor(mAP_json['map']),
+        map_50=torch.tensor(mAP_json['map_50']),
+        map_75=torch.tensor(mAP_json['map_75']),
+        map_small=torch.tensor(mAP_json['map_small']),
+        map_medium=torch.tensor(mAP_json['map_medium']),
+        map_large=torch.tensor(mAP_json['map_large']),
+        mar_1=torch.tensor(mAP_json['mar_1']),
+        mar_3=torch.tensor(mAP_json['mar_3']),
+        mar_5=torch.tensor(mAP_json['mar_5']),
+        mar_small=torch.tensor(mAP_json['mar_small']),
+        mar_medium=torch.tensor(mAP_json['mar_medium']),
+        mar_large=torch.tensor(mAP_json['mar_large']),
+        ious=dict(),
+        precision=torch.tensor(mAP_json['precision']),
+        recall=torch.tensor(mAP_json['recall']),
+        scores=torch.tensor(mAP_json['scores'])
+    )
+    for key, value in mAP_json['ious'].items():
+        mAP['ious'][(key, 0)] = torch.tensor(value)
+    return mAP
 
 def prepare_target_bboxes(target_bboxes, metadata_path) -> list:
     """ 
