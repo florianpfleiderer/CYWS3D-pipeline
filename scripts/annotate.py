@@ -28,7 +28,6 @@ from src.annotation_pipeline import utils
 from src.globals \
     import DATASET_FOLDER, IMAGE_FOLDER, ROOM, SCENE, PLANE, PCD_PATH, ANNO_PATH, \
         CAMERA_INFO_JSON_PATH, GT_COLOR, MODEL_IMAGE_SIZE, FOV_X, FOV_Y
-
 from src.modules.geometry import convert_world_to_image_coordinates
 
 logging.basicConfig()
@@ -70,7 +69,7 @@ def main(log_level: str = "INFO", room: str = "ALL"):
             logger.debug("Files: %s", files)
             target_bboxes = []
             tfs = root.split("/")
-            img_path = "./data/GH30_"+tfs[2]+"/"+tfs[3]+"/"
+            img_path = "data/GH30_"+tfs[2]+"/"+tfs[3]+"/"
             logger.debug("Image path: %s", img_path)
             try:
                 transformations = utils.load_transformations(f"{img_path}{tfs[3]}_transformations.yaml")
@@ -203,6 +202,7 @@ def main(log_level: str = "INFO", room: str = "ALL"):
         torch.save(all_target_bboxes, f"./data/GH30_{folder}/all_target_bboxes.pt")
         logger.info("all_target_bboxes.pt saved in %s", \
             f"./data/GH30_{folder}/all_target_bboxes.pt")
+
 
 if __name__ == "__main__":
     from jsonargparse import CLI

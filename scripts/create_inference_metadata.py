@@ -187,6 +187,7 @@ if ROOM == "LivingArea":
             })
     
 if ROOM == "Office":
+    img_number = 0
     for scene in sorted(os.listdir(ROOM_DIR)):
         if any(substring in scene for substring in substrings):
             continue
@@ -250,16 +251,20 @@ if ROOM == "Office":
             logger.info("Only RGB images are added to metadata")
             for i in range(spacer//2):
                 batch.append({
+                    "prediction_number": img_number,
                     "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
                     "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i]),
                     "registration_strategy": "3d"
                 })
+                img_number += 1
             for i in range(spacer//2):
                 batch.append({
+                    "prediction_number": img_number,
                     "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
                     "image2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i]),
                     "registration_strategy": "3d"
                 })
+                img_number += 1
 
 if ROOM == "SmallRoom":
     for scene in sorted(os.listdir(ROOM_DIR)):
