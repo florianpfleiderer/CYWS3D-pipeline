@@ -2,15 +2,11 @@
 # Created on Thu Apr 18 2024 by Florian Pfleiderer
 # Copyright (c) 2024 TU Wien
 """
-module for office dataset 
+Annotate images with ground truth bounding boxes.
 
-    - load point cloud
-    - load annotation
-    - load camera info
-    - load viewpoint info
-    - project to 2d
-    - draw 2d bboxes
-    - show image
+This script loads the ground truth annotations from the merged_plane_clouds_ds002_GT.anno file
+and projects the 3D bounding boxes to 2D image space. The 2D bounding boxes are then resized
+to the model image size and saved in the ground_truth folder of the image folder.
 """
 import os
 from os import path
@@ -27,7 +23,7 @@ from src.annotation_pipeline.projection \
 from src.annotation_pipeline import utils
 from src.globals \
     import DATASET_FOLDER, IMAGE_FOLDER, ROOM, SCENE, PLANE, PCD_PATH, ANNO_PATH, \
-        CAMERA_INFO_JSON_PATH, GT_COLOR, MODEL_IMAGE_SIZE, FOV_X, FOV_Y
+        CAMERA_INFO_JSON_PATH, GT_COLOR, MODEL_IMAGE_SIZE, FOV_X, FOV_Y, BBOX_AREA
 from src.modules.geometry import remove_bboxes_with_area_less_than
 
 logging.basicConfig()
@@ -36,7 +32,7 @@ logger = logging.getLogger(__name__)
 def main(
     log_level: str = "INFO", 
     room: str = "ALL",
-    bbox_area: int=400):
+    bbox_area: int=BBOX_AREA):
     """
     main function for annotation pipeline
 
@@ -87,7 +83,7 @@ def main(
             logger.debug("loading ground truth from %s", "./"+root+"/"+ANNO_PATH)
             if scene_buffer != tfs[3]:
                 scene_buffer = tfs[3]
-                logger.info("#####################################################\n\n")
+                logger.info("\n#####################################################\n")
                 logger.info("New scene: %s", scene_buffer)
                 scene_annotation_buffer = {}
             
