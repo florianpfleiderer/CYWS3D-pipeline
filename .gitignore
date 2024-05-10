@@ -12,6 +12,7 @@ data/inference/office/*.png
 # predictions
 data/predictions/prediction*
 data/predictions/*.pt
+data/GH30_*/predictions/
 
 # temporary image results in scripts / root folder
 scripts/*png
