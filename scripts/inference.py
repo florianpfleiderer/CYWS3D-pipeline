@@ -29,7 +29,7 @@ try:
 except ImportError:
     from geometry import remove_bboxes_with_area_less_than, suppress_overlapping_bboxes, \
         keep_matching_bboxes, filter_low_confidence_bboxes
-from src.globals import BBOX_AREA
+from src.globals import BBOX_AREA, CONFIDENCE_THRESHOLD
 
 # check required version of cyws3d-pipeline (defined in setup.py)
 required_version = '1.0'
@@ -47,7 +47,7 @@ def main(
     filter_predictions_with_area_under: int = BBOX_AREA,
     keep_matching_bboxes_only: bool = False,
     max_predictions_to_display: int = 5,
-    minimum_confidence_threshold: float = 0.20,
+    minimum_confidence_threshold: float = CONFIDENCE_THRESHOLD,
     log_level: str = "INFO"
 ):
     """ 
@@ -168,6 +168,21 @@ def main(
     # save the batches for calculating mAP
     torch.save(image1_predictions, f'{save_path}/batch_image1_predicted_bboxes.pt')
     torch.save(image2_predictions, f'{save_path}/batch_image2_predicted_bboxes.pt')
+    # Save configuration parameters to a YAML file
+    configurations = {
+        "filter_predictions_with_area_under": filter_predictions_with_area_under,
+        "keep_matching_bboxes_only": keep_matching_bboxes_only,
+        "max_predictions_to_display": max_predictions_to_display,
+        "minimum_confidence_threshold": minimum_confidence_threshold
+    }
+    existing_configurations = {}
+    existing_file_path = os.path.join(save_path, "metadata_configurations.yaml")
+    if os.path.exists(existing_file_path):
+        with open(existing_file_path, "r") as file:
+            existing_configurations = yaml.safe_load(file)
+    existing_configurations.update(configurations)
+    with open(existing_file_path, "w") as file:
+        yaml.dump(existing_configurations, file)
 
 def get_easy_dict_from_yaml_file(path_to_yaml_file):
     """

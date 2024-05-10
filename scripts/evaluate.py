@@ -33,7 +33,7 @@ def main(
     PREDICTIONS_DIR = ROOM_DIR+"/predictions/batch_image2_predicted_bboxes.pt"
     TARGET_BBOXES_DIR = ROOM_DIR+"/all_target_bboxes.pt"
 
-    iou_thresholds: np.ndarray = np.arange(0.3, 0.95, 0.05).tolist()
+    iou_thresholds: np.ndarray = np.arange(0.5, 0.95, 0.05).tolist()
     rec_thresholds: np.ndarray = np.arange(0.1, 1.0, 0.1).tolist()
     max_detection_thresholds: list = [1, 3, 5]
 

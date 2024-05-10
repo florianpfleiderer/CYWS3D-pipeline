@@ -7,7 +7,6 @@ Dataset_Folder is relative to the project root.
 """
 import numpy as np
 
-# annotate.py
 TEST_FOLDER = "data/annotation/"
 DATASET_FOLDER = "data/ObChange/"
 IMAGE_FOLDER = "data/GH30_Office/"
@@ -23,4 +22,5 @@ FOV_X = 60
 FOV_Y = 46
 GT_COLOR = np.array([0.1, 0.9, 0.1])
 MODEL_IMAGE_SIZE = 224
-BBOX_AREA = 300
+BBOX_AREA = 200
+CONFIDENCE_THRESHOLD = 0.20
