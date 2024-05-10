@@ -45,7 +45,7 @@ def main(
     metric = MeanAveragePrecision(box_format='xyxy', iou_type='bbox', extended_summary=True, \
         iou_thresholds=iou_thresholds, rec_thresholds=rec_thresholds, \
             max_detection_thresholds=max_detection_thresholds)
-    metric.update(preds, targets)
+    metric.update(preds, sorted_targets)
     mAP = metric.compute()
 
     eval_utils.map_to_numpy(mAP)
