@@ -8,6 +8,7 @@ data/ObChange/
 
 # data
 data/inference/office/*.png
+data/GH30_*/scene*/ground_truth/
 
 # predictions
 data/predictions/prediction*
