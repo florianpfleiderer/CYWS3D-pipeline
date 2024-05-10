@@ -23,3 +23,4 @@ FOV_X = 60
 FOV_Y = 46
 GT_COLOR = np.array([0.1, 0.9, 0.1])
 MODEL_IMAGE_SIZE = 224
+BBOX_AREA = 300

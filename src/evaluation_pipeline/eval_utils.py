@@ -8,6 +8,7 @@ import json
 import yaml
 import torch
 import numpy as np
+from pprint import pprint
 
 logger = logging.getLogger(__name__)
 
@@ -106,7 +107,10 @@ def prepare_target_bboxes(target_bboxes, metadata_path) -> list:
         targets_metadata = yaml.safe_load(f)['batch']
 
     image2_set = {entry['image2'] for entry in targets_metadata}
+    # pprint(f"image2_set: {image2_set}")
     filtered_boxes = [entry for entry in target_bboxes if entry['image'] in image2_set]
+    # pprint(f"filtered {len(target_bboxes)-len(filtered_boxes)} target bboxes")
     image2_list = [entry['image2'] for entry in targets_metadata]
     sorted_boxes = sorted(filtered_boxes, key=lambda x: image2_list.index(x['image']))
+    # pprint(sorted_boxes)
     return sorted_boxes

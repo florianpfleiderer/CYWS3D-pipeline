@@ -254,8 +254,10 @@ def sample_depth_for_given_points(depth_map, points):
 
 def remove_bboxes_with_area_less_than(bboxes_as_np_array, threshold):
     bboxes = []
+
     for bbox in bboxes_as_np_array:
         if shapely.geometry.box(*bbox[:4]).area < threshold:
+            print(f"bbox {bbox} removed")
             continue
         bboxes.append(bbox)
     bboxes = np.array(bboxes, dtype=float).reshape(-1, bboxes_as_np_array.shape[1] if bboxes_as_np_array.size else 0)

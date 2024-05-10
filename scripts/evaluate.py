@@ -45,18 +45,18 @@ def main(
     metric = MeanAveragePrecision(box_format='xyxy', iou_type='bbox', extended_summary=True, \
         iou_thresholds=iou_thresholds, rec_thresholds=rec_thresholds, \
             max_detection_thresholds=max_detection_thresholds)
-    metric.update(preds, targets)
+    metric.update(preds, sorted_targets)
     mAP = metric.compute()
 
     eval_utils.map_to_numpy(mAP)
 
     eval_plotter.plot_precision(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
-        room, ROOM_DIR)
+        room, f"{ROOM_DIR}/predictions")
 
     eval_plotter.plot_recall(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
-        room, ROOM_DIR)
+        room, f"{ROOM_DIR}/predictions")
 
-    eval_utils.save_map_as_json(mAP, f"{ROOM_DIR}/mAP_{room}.json")
+    eval_utils.save_map_as_json(mAP, f"{ROOM_DIR}/predictions/mAP_{room}.json")
 
 
 if __name__ == "__main__":
