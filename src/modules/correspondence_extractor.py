@@ -11,8 +11,6 @@ import torch.nn.functional as F
 import logging
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
-logger.setLevel(logging.DEBUG)
 
 class CorrespondenceExtractor(nn.Module):
     def __init__(self, nms_radius=4, keypoint_threshold=0.005, max_keypoints=1024, superglue="indoor", sinkhorn_iterations=20, match_threshold=0.2, resize=640, device="cpu"):

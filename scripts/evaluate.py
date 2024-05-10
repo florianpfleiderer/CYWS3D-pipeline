@@ -4,61 +4,62 @@
 Insert Module Description Here
 """
 import os
-import argparse
 import yaml
 import logging
 import torch
 import json
-from torchmetrics.detection import MeanAveragePrecision
-from src.evaluation_pipeline.calculate_mAP import calculate_mAP
+from pprint import pprint
+import matplotlib.pyplot as plt
+import numpy as np
+from torchmetrics.detection.mean_ap import MeanAveragePrecision
+from src.evaluation_pipeline import eval_utils, eval_plotter
 
+logging.basicConfig()
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
-logger.setLevel(logging.INFO)
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--room", required=True, help = "name of room (e.g. Office)")
-args = vars(parser.parse_args())
-ROOM_DIR = f"data/GH30_{args['room']}"
-PREDICTIONS_DIR = ROOM_DIR+"/predictions/batch_image2_predicted_bboxes.pt"
-TARGET_BBOXES_DIR = ROOM_DIR+"/all_target_bboxes.pt"
-preds = torch.load(PREDICTIONS_DIR)
-targets = torch.load(TARGET_BBOXES_DIR)
+def main(
+    room: str = None,
+    log_level: str = "INFO"
+):
+    """
+    main function for evaluation pipeline
+    """
+    logger.setLevel(getattr(logging, log_level.upper()))
+    logger.warning("logger set to %s", logger.level)
 
-metric = MeanAveragePrecision(box_format='xyxy', iou_type='bbox', extended_summary=True, \
-    max_detection_thresholds=[1, 3, 5])
-metric.update(preds, targets)
-mAP = metric.compute()
+    if room is None:
+        raise ValueError("Please provide a room to evaluate")
+    ROOM_DIR = f"data/GH30_{room}"
+    PREDICTIONS_DIR = ROOM_DIR+"/predictions/batch_image2_predicted_bboxes.pt"
+    TARGET_BBOXES_DIR = ROOM_DIR+"/all_target_bboxes.pt"
 
-mAP_data = {}
-mAP_data_per_image = []
+    iou_thresholds: np.ndarray = np.arange(0.3, 0.95, 0.05).tolist()
+    rec_thresholds: np.ndarray = np.arange(0.1, 1.0, 0.1).tolist()
+    max_detection_thresholds: list = [1, 3, 5]
 
-for key, value in mAP.items():
-    if isinstance(value, torch.Tensor):
-        if value.ndim == 0:
-            mAP[key] = value.item()
-        else:
-            mAP[key] = value.tolist()
-        mAP_data.update({key: mAP[key]})
-    print(f"{key}: {mAP[key]}\n\n#######################################")
+    preds = torch.load(PREDICTIONS_DIR)
+    targets = torch.load(TARGET_BBOXES_DIR)
 
-for i in range(len(preds)):
-    iou = mAP['ious'][i].tolist()
-    precision = mAP['precisions']
+    sorted_targets = eval_utils.prepare_target_bboxes(targets, f"{ROOM_DIR}/input_metadata.yaml")
 
-print(f"mAP: {mAP['map']}")
-print(f"mAP_50: {mAP['map_50']}")
-print(f"mAP_75: {mAP['map_75']}")
-print(f"mAP_small: {mAP['map_small']}")
-print(f"mAP_medium: {mAP['map_medium']}")
-print(f"mAP_large: {mAP['map_large']}")
+    metric = MeanAveragePrecision(box_format='xyxy', iou_type='bbox', extended_summary=True, \
+        iou_thresholds=iou_thresholds, rec_thresholds=rec_thresholds, \
+            max_detection_thresholds=max_detection_thresholds)
+    metric.update(preds, targets)
+    mAP = metric.compute()
 
-print(f"mAR_1: {mAP['mar_1']}")
-print(f"mAR_3: {mAP['mar_3']}")
-print(f"mAR_5: {mAP['mar_5']}")
-print(f"mAR_small: {mAP['mar_small']}")
-print(f"mAR_medium: {mAP['mar_medium']}")
-print(f"mAR_large: {mAP['mar_large']}")
+    eval_utils.map_to_numpy(mAP)
 
-with open(ROOM_DIR+"/predictions/mAP.yaml", "w") as f:
-    yaml.safe_dump(mAP_data, f)
+    eval_plotter.plot_precision(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
+        room, ROOM_DIR)
+
+    eval_plotter.plot_recall(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
+        room, ROOM_DIR)
+
+    eval_utils.save_map_as_json(mAP, f"{ROOM_DIR}/mAP_{room}.json")
+
+
+if __name__ == "__main__":
+    from jsonargparse import CLI
+
+    CLI(main)
