@@ -1,151 +1,61 @@
 batch:
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874700-816550962.png
-  depth2: data/GH30_LivingArea/scene2/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567875027-890741579.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874700-817738287.png
-  image2: data/GH30_LivingArea/scene2/hsrb_head_rgbd_sensor_rgb_image_raw-1567875027-889040462.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874710-660174362.png
-  depth2: data/GH30_LivingArea/scene2/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567875036-900061361.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874710-671371691.png
-  image2: data/GH30_LivingArea/scene2/hsrb_head_rgbd_sensor_rgb_image_raw-1567875036-904751770.png
-  registration_strategy: 3d
 - depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874730-547642939.png
   depth2: data/GH30_LivingArea/scene2/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567875048-111733667.png
   image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874730-545509092.png
   image2: data/GH30_LivingArea/scene2/hsrb_head_rgbd_sensor_rgb_image_raw-1567875048-131858103.png
+  prediction_number: 0
   registration_strategy: 3d
 - depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874720-703989498.png
   depth2: data/GH30_LivingArea/scene2/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567875058-322438948.png
   image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874720-691923372.png
   image2: data/GH30_LivingArea/scene2/hsrb_head_rgbd_sensor_rgb_image_raw-1567875058-320517056.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874740-991817228.png
-  depth2: data/GH30_LivingArea/scene2/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567875068-766567223.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874741-1908533.png
-  image2: data/GH30_LivingArea/scene2/hsrb_head_rgbd_sensor_rgb_image_raw-1567875068-743092768.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874770-122160189.png
-  depth2: data/GH30_LivingArea/scene2/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567875096-395395987.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874770-126611225.png
-  image2: data/GH30_LivingArea/scene2/hsrb_head_rgbd_sensor_rgb_image_raw-1567875096-393264286.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874700-816550962.png
-  depth2: data/GH30_LivingArea/scene3/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567875365-242145292.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874700-817738287.png
-  image2: data/GH30_LivingArea/scene3/hsrb_head_rgbd_sensor_rgb_image_raw-1567875365-216057293.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874710-660174362.png
-  depth2: data/GH30_LivingArea/scene3/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567875375-452775709.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874710-671371691.png
-  image2: data/GH30_LivingArea/scene3/hsrb_head_rgbd_sensor_rgb_image_raw-1567875375-437698833.png
+  prediction_number: 1
   registration_strategy: 3d
 - depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874730-547642939.png
   depth2: data/GH30_LivingArea/scene3/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567875385-696806423.png
   image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874730-545509092.png
   image2: data/GH30_LivingArea/scene3/hsrb_head_rgbd_sensor_rgb_image_raw-1567875385-693199150.png
+  prediction_number: 2
   registration_strategy: 3d
 - depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874720-703989498.png
   depth2: data/GH30_LivingArea/scene3/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567875393-4433863.png
   image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874720-691923372.png
   image2: data/GH30_LivingArea/scene3/hsrb_head_rgbd_sensor_rgb_image_raw-1567875393-124924.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874740-991817228.png
-  depth2: data/GH30_LivingArea/scene3/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567875406-818807594.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874741-1908533.png
-  image2: data/GH30_LivingArea/scene3/hsrb_head_rgbd_sensor_rgb_image_raw-1567875406-808063023.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874770-122160189.png
-  depth2: data/GH30_LivingArea/scene3/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567875435-882375233.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874770-126611225.png
-  image2: data/GH30_LivingArea/scene3/hsrb_head_rgbd_sensor_rgb_image_raw-1567875435-898717396.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874700-816550962.png
-  depth2: data/GH30_LivingArea/scene4/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567875719-177531712.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874700-817738287.png
-  image2: data/GH30_LivingArea/scene4/hsrb_head_rgbd_sensor_rgb_image_raw-1567875719-166116707.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874710-660174362.png
-  depth2: data/GH30_LivingArea/scene4/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567875731-590435497.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874710-671371691.png
-  image2: data/GH30_LivingArea/scene4/hsrb_head_rgbd_sensor_rgb_image_raw-1567875731-566580288.png
+  prediction_number: 3
   registration_strategy: 3d
 - depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874730-547642939.png
   depth2: data/GH30_LivingArea/scene4/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567875742-1321308.png
   image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874730-545509092.png
   image2: data/GH30_LivingArea/scene4/hsrb_head_rgbd_sensor_rgb_image_raw-1567875741-989763729.png
+  prediction_number: 4
   registration_strategy: 3d
 - depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874720-703989498.png
   depth2: data/GH30_LivingArea/scene4/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567875753-212964050.png
   image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874720-691923372.png
   image2: data/GH30_LivingArea/scene4/hsrb_head_rgbd_sensor_rgb_image_raw-1567875753-217382185.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874740-991817228.png
-  depth2: data/GH30_LivingArea/scene4/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567875763-623845808.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874741-1908533.png
-  image2: data/GH30_LivingArea/scene4/hsrb_head_rgbd_sensor_rgb_image_raw-1567875763-607357256.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874770-122160189.png
-  depth2: data/GH30_LivingArea/scene4/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567875794-255743734.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874770-126611225.png
-  image2: data/GH30_LivingArea/scene4/hsrb_head_rgbd_sensor_rgb_image_raw-1567875794-272863619.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874700-816550962.png
-  depth2: data/GH30_LivingArea/scene5/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567876074-214023344.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874700-817738287.png
-  image2: data/GH30_LivingArea/scene5/hsrb_head_rgbd_sensor_rgb_image_raw-1567876074-222568027.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874710-660174362.png
-  depth2: data/GH30_LivingArea/scene5/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567876083-190101616.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874710-671371691.png
-  image2: data/GH30_LivingArea/scene5/hsrb_head_rgbd_sensor_rgb_image_raw-1567876083-204559557.png
+  prediction_number: 5
   registration_strategy: 3d
 - depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874730-547642939.png
   depth2: data/GH30_LivingArea/scene5/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567876095-636288397.png
   image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874730-545509092.png
   image2: data/GH30_LivingArea/scene5/hsrb_head_rgbd_sensor_rgb_image_raw-1567876095-638634197.png
+  prediction_number: 6
   registration_strategy: 3d
 - depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874720-703989498.png
   depth2: data/GH30_LivingArea/scene5/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567876103-77376358.png
   image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874720-691923372.png
   image2: data/GH30_LivingArea/scene5/hsrb_head_rgbd_sensor_rgb_image_raw-1567876103-78518621.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874740-991817228.png
-  depth2: data/GH30_LivingArea/scene5/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567876114-522699825.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874741-1908533.png
-  image2: data/GH30_LivingArea/scene5/hsrb_head_rgbd_sensor_rgb_image_raw-1567876114-507325880.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874770-122160189.png
-  depth2: data/GH30_LivingArea/scene5/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567876144-820973389.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874770-126611225.png
-  image2: data/GH30_LivingArea/scene5/hsrb_head_rgbd_sensor_rgb_image_raw-1567876144-837799541.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874700-816550962.png
-  depth2: data/GH30_LivingArea/scene6/hsrb_head_rgbd_sensor_depth_registered_image_raw-1568025470-554092400.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874700-817738287.png
-  image2: data/GH30_LivingArea/scene6/hsrb_head_rgbd_sensor_rgb_image_raw-1568025470-552825205.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874710-660174362.png
-  depth2: data/GH30_LivingArea/scene6/hsrb_head_rgbd_sensor_depth_registered_image_raw-1568025480-364329330.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874710-671371691.png
-  image2: data/GH30_LivingArea/scene6/hsrb_head_rgbd_sensor_rgb_image_raw-1568025480-372594587.png
+  prediction_number: 7
   registration_strategy: 3d
 - depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874730-547642939.png
   depth2: data/GH30_LivingArea/scene6/hsrb_head_rgbd_sensor_depth_registered_image_raw-1568025492-376855604.png
   image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874730-545509092.png
   image2: data/GH30_LivingArea/scene6/hsrb_head_rgbd_sensor_rgb_image_raw-1568025492-370613329.png
+  prediction_number: 8
   registration_strategy: 3d
 - depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874720-703989498.png
   depth2: data/GH30_LivingArea/scene6/hsrb_head_rgbd_sensor_depth_registered_image_raw-1568025501-786578886.png
   image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874720-691923372.png
   image2: data/GH30_LivingArea/scene6/hsrb_head_rgbd_sensor_rgb_image_raw-1568025501-788620703.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874740-991817228.png
-  depth2: data/GH30_LivingArea/scene6/hsrb_head_rgbd_sensor_depth_registered_image_raw-1568025511-196443789.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874741-1908533.png
-  image2: data/GH30_LivingArea/scene6/hsrb_head_rgbd_sensor_rgb_image_raw-1568025511-205501787.png
-  registration_strategy: 3d
-- depth1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_depth_registered_image_raw-1567874770-122160189.png
-  depth2: data/GH30_LivingArea/scene6/hsrb_head_rgbd_sensor_depth_registered_image_raw-1568025541-828351490.png
-  image1: data/GH30_LivingArea/scene1/hsrb_head_rgbd_sensor_rgb_image_raw-1567874770-126611225.png
-  image2: data/GH30_LivingArea/scene6/hsrb_head_rgbd_sensor_rgb_image_raw-1568025541-838858358.png
+  prediction_number: 9
   registration_strategy: 3d
