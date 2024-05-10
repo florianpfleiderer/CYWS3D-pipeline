@@ -28,12 +28,15 @@ from src.annotation_pipeline import utils
 from src.globals \
     import DATASET_FOLDER, IMAGE_FOLDER, ROOM, SCENE, PLANE, PCD_PATH, ANNO_PATH, \
         CAMERA_INFO_JSON_PATH, GT_COLOR, MODEL_IMAGE_SIZE, FOV_X, FOV_Y
-from src.modules.geometry import convert_world_to_image_coordinates
+from src.modules.geometry import remove_bboxes_with_area_less_than
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 
-def main(log_level: str = "INFO", room: str = "ALL"):
+def main(
+    log_level: str = "INFO", 
+    room: str = "ALL",
+    bbox_area: int=400):
     """
     main function for annotation pipeline
 
@@ -84,6 +87,7 @@ def main(log_level: str = "INFO", room: str = "ALL"):
             logger.debug("loading ground truth from %s", "./"+root+"/"+ANNO_PATH)
             if scene_buffer != tfs[3]:
                 scene_buffer = tfs[3]
+                logger.info("#####################################################\n\n")
                 logger.info("New scene: %s", scene_buffer)
                 scene_annotation_buffer = {}
             
@@ -132,7 +136,7 @@ def main(log_level: str = "INFO", room: str = "ALL"):
                 final_image = utils.draw_image((u_coords, v_coords), points_color, intrinsics)
 
                 # iterate over ground truth objects and extract bboxes for visible objects
-                img_bboxes = []
+                # img_bboxes = []
                 img_resized_bboxes = []
                 anno_dict = copy.deepcopy(base_anno_dict)
                 for anno_key, anno_value in base_anno_dict.items():
@@ -163,7 +167,8 @@ def main(log_level: str = "INFO", room: str = "ALL"):
                         (MODEL_IMAGE_SIZE, MODEL_IMAGE_SIZE))
 
                     img_resized_bboxes.append(utils.extract_bboxes(resized_u, resized_v))
-                    img_bboxes.append(utils.extract_bboxes(gt_u, gt_v))
+                    # img_bboxes.append(utils.extract_bboxes(gt_u, gt_v))
+
                     if not key in scene_annotation_buffer:
                         scene_annotation_buffer[key] = []
                     scene_annotation_buffer[key].append(anno_key)
@@ -173,6 +178,9 @@ def main(log_level: str = "INFO", room: str = "ALL"):
                 if skip_loop:
                     logger.info("Skipping annotation for image %s", value['file_name'])
                     continue
+                img_resized_bboxes = remove_bboxes_with_area_less_than(
+                    np.asarray(img_resized_bboxes), bbox_area)
+
                 for all_img_bboxes in all_target_bboxes:
                     if all_img_bboxes['image'] == img_path+value['file_name']:
                         all_img_bboxes['boxes'] = torch.cat((all_img_bboxes['boxes'], \
@@ -180,15 +188,22 @@ def main(log_level: str = "INFO", room: str = "ALL"):
                         all_img_bboxes['labels'] = torch.cat((all_img_bboxes['labels'], \
                             torch.zeros((len(img_resized_bboxes),), dtype=torch.int32)))
 
-                final_image = utils.draw_2d_bboxes_on_img(final_image, img_bboxes)
+                # img_bboxes = np.asarray(img_bboxes)
+                new_img_bboxes = np.zeros_like(img_resized_bboxes).astype(np.int32)
+                new_img_bboxes[:, 2] = img_resized_bboxes[:, 2] / MODEL_IMAGE_SIZE * intrinsics.width
+                new_img_bboxes[:, 0] = img_resized_bboxes[:, 0] / MODEL_IMAGE_SIZE * intrinsics.width
+                new_img_bboxes[:, 3] = img_resized_bboxes[:, 3] / MODEL_IMAGE_SIZE * intrinsics.height
+                new_img_bboxes[:, 1] = img_resized_bboxes[:, 1] / MODEL_IMAGE_SIZE * intrinsics.height
+
+                final_image = utils.draw_2d_bboxes_on_img(final_image, new_img_bboxes)
                 if not path.exists(f"{img_path}ground_truth"):
                     os.makedirs(f"{img_path}ground_truth")
                 if not path.exists(f"{img_path}ground_truth/{value['file_name']}"):
                     original_image = utils.draw_2d_bboxes_on_img(
-                        f"{img_path}{value['file_name']}", img_bboxes)
+                        f"{img_path}{value['file_name']}", new_img_bboxes)
                 else:
                     original_image = utils.draw_2d_bboxes_on_img(
-                        f"{img_path}ground_truth/{value['file_name']}", img_bboxes)
+                        f"{img_path}ground_truth/{value['file_name']}", new_img_bboxes)
                 plt.imsave(f"{img_path}ground_truth/{value['file_name']}", original_image)
 
                 plt.imsave(
