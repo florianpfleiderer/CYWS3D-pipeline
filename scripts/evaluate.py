@@ -38,18 +38,19 @@ def main(
     max_detection_thresholds: list = [1, 3, 5]
 
     search_terms = ["perspective-3d", "depth-false"]
+    DATAPATH = "data/results/area-100_matching-false_confidence-01/"
 
     all_preds = []
     all_targets = []
 
-    for folder in os.listdir("data/results"):
+    for folder in os.listdir(DATAPATH):
         if all(term in folder for term in search_terms):
             logger.info("processing folder: %s", folder)
-            preds = torch.load(f"data/results/{folder}/predictions/batch_image2_predicted_bboxes.pt")
-            targets = torch.load(f"data/results/{folder}/all_target_bboxes.pt")
+            preds = torch.load(f"{DATAPATH}{folder}/predictions/batch_image2_predicted_bboxes.pt")
+            targets = torch.load(f"{DATAPATH}{folder}/all_target_bboxes.pt")
         else:  
             continue
-        sorted_targets = eval_utils.prepare_target_bboxes(targets, f"data/results/{folder}/input_metadata.yaml")
+        sorted_targets = eval_utils.prepare_target_bboxes(targets, f"{DATAPATH}{folder}/input_metadata.yaml")
         all_preds.extend(preds)
         all_targets.extend(sorted_targets)
 
@@ -58,6 +59,7 @@ def main(
             max_detection_thresholds=max_detection_thresholds)
     metric.update(all_preds, all_targets)
     mAP = metric.compute()
+    print(len(all_targets))
 
     eval_utils.map_to_numpy(mAP)
 

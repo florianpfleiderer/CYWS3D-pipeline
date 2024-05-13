@@ -34,6 +34,11 @@ def plot_precision(mAP, thresholds, room_name, room_path):
         precision_values = [p if p > 0 else 0 for p in precision_values]
         axs[0].plot(iou_thresholds, precision_values, label=area, color=colors[i])
 
+    # Calculate the number of datapoints
+    num_datapoints = len(mAP['precision'][:, 0, 0, 0])
+    # Add the number of datapoints to the plot
+    axs[0].text(0.5, 0.95, f"Number of Datapoints: {num_datapoints}", transform=axs[0].transAxes, ha='center')
+
     axs[0].set_xlabel('IoU Threshold')
     axs[0].set_ylabel('Precision')
     axs[0].set_title('Precision vs IoU Threshold for different bbox sizes')
