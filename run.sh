@@ -12,9 +12,10 @@ depths=("false" "true")
 
 runs=5
 rm -r "data/results/"*
+
 for bbox_area in "${bbox_areas[@]}"; do
-  annotate.py --bbox_area "$bbox_area"
   echo -e "\n#######################################\nBBOX AREA CHANGED TO $bbox_area\n#######################################\n"
+  annotate.py --bbox_area "$bbox_area"
   for keep_matching_bbox in "${keep_matching_bboxes[@]}"; do
     echo -e "\n#######################################\nKEEP MATCHING BBOXES CHANGED TO $keep_matching_bbox\n#######################################\n"
     for minimum_confidence in "${minimum_confidence_threshold[@]}"; do
