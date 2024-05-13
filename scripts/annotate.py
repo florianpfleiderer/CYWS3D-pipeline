@@ -50,6 +50,9 @@ def main(
                 if os.path.exists(f"./data/{folder}/scene{i}/ground_truth"):
                     shutil.rmtree(f"./data/{folder}/scene{i}/ground_truth")
                     logger.info("Removed ground_truth folder in %s", f"./data/{folder}/scene{i}")
+                if os.path.exists(f"./data/{folder}/all_target_bboxes.pt"):
+                    os.remove(f"./data/{folder}/all_target_bboxes.pt")
+                    logger.info("Removed all_target_bboxes.pt in %s", f"./data/{folder}")
     
     # intrinsic matrix
     intrinsics = Intrinsic()
