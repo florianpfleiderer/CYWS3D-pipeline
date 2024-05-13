@@ -64,7 +64,12 @@ def main(
         "transformations": TRANSFORMATIONS,
         "perspective": perspective
     }
+    existing_configurations = {}
     metadata_file = os.path.join(ROOM_DIR, "predictions", "metadata_configurations.yaml")
+    if os.path.exists(metadata_file):
+        with open(metadata_file, "r") as file:
+            existing_configurations = yaml.safe_load(file)
+    existing_configurations.update(metadata_configurations)
     with open(metadata_file, "w") as f:
         yaml.safe_dump(metadata_configurations, f)
 
@@ -86,7 +91,7 @@ def main(
     logger.info("Converted all depth images to greyscale")
 
     if transformations:
-        Logger.info("Adding transformations to metadata")
+        logger.info("Adding transformations to metadata")
         for root, dirnames, files in os.walk(ROOM_DIR):
             if "scene" not in root:
                 logger.debug("Skipping %s", root)

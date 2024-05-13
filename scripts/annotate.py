@@ -17,6 +17,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 import torch
+import shutil
 
 from src.annotation_pipeline.projection \
     import Intrinsic, Extrinsic, project_to_2d, frustum_culling
@@ -43,6 +44,16 @@ def main(
     logger.setLevel(getattr(logging, log_level.upper()))
     logger.warning("logger set to %s", logger.level)
 
+    for folder in sorted(os.listdir("data")):
+        if "GH30" in folder:
+            for i in range(1, 7):
+                if os.path.exists(f"./data/{folder}/scene{i}/ground_truth"):
+                    shutil.rmtree(f"./data/{folder}/scene{i}/ground_truth")
+                    logger.info("Removed ground_truth folder in %s", f"./data/{folder}/scene{i}")
+                if os.path.exists(f"./data/{folder}/all_target_bboxes.pt"):
+                    os.remove(f"./data/{folder}/all_target_bboxes.pt")
+                    logger.info("Removed all_target_bboxes.pt in %s", f"./data/{folder}")
+    
     # intrinsic matrix
     intrinsics = Intrinsic()
     intrinsics.from_json("./" + DATASET_FOLDER + CAMERA_INFO_JSON_PATH)
@@ -83,7 +94,7 @@ def main(
             logger.debug("loading ground truth from %s", "./"+root+"/"+ANNO_PATH)
             if scene_buffer != tfs[3]:
                 scene_buffer = tfs[3]
-                logger.info("\n#####################################################\n")
+                print("\n##################################################################\n")
                 logger.info("New scene: %s", scene_buffer)
                 scene_annotation_buffer = {}
             

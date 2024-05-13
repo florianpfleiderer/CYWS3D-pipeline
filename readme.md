@@ -52,16 +52,29 @@ gzip -d cyws-3d.ckpt.gz
 ```
 
 ## Example Usage
+Make sure you are inside root folder.
 
-Please try running:
+After initializing the project with:
+`pip install -e .`
 
-`inference.py`
+start with annotation for the specific room:
+`annotate.py --room <roomname>`
+
+this annotates the dataset and draws boundingboxes for double checking in ground_truth folder into each scene.
+
+next, create the metadata for inference: 
+`create_inference_metadata.py --room <roomname> --depth <true/false> --transformations <true/false> --perspective <2d/3d>`
+
+For inference please try running:
+`inference.py --room <roomname>`
 
 This should perform a batched inference on a set of example image pairs under various settings (see [this file](data/inference/demo_data/input_metadata.yml)).
 
+The inference create the annotated predictions and saves the bboxes into GH30_*/predictions.
 
-For the annotation pipeline try:
+For evaluation: 
+`evaluate.py --room <roomname>`
 
-`annotate.py`
+This saves the mAP file into predictions folder and some graphs. The mAP file can be loaded later for more data analysis.
 
-This should run scripts/annotate.py as the script gets installed through setup.py.
+
