@@ -37,26 +37,37 @@ def main(
     rec_thresholds: np.ndarray = np.arange(0.1, 1.0, 0.1).tolist()
     max_detection_thresholds: list = [1, 3, 5]
 
-    preds = torch.load(PREDICTIONS_DIR)
-    targets = torch.load(TARGET_BBOXES_DIR)
+    search_terms = ["3d", "false"]
 
-    sorted_targets = eval_utils.prepare_target_bboxes(targets, f"{ROOM_DIR}/input_metadata.yaml")
+    all_preds = []
+    all_targets = []
+
+    for folder in os.listdir("data/results"):
+        if all(term in folder for term in search_terms):
+            logger.info("processing folder: %s", folder)
+            preds = torch.load(f"data/results/{folder}/predictions/batch_image2_predicted_bboxes.pt")
+            targets = torch.load(f"data/results/{folder}/all_target_bboxes.pt")
+        else:  
+            continue
+        sorted_targets = eval_utils.prepare_target_bboxes(targets, f"data/results/{folder}/input_metadata.yaml")
+        all_preds.extend(preds)
+        all_targets.extend(sorted_targets)
 
     metric = MeanAveragePrecision(box_format='xyxy', iou_type='bbox', extended_summary=True, \
         iou_thresholds=iou_thresholds, rec_thresholds=rec_thresholds, \
             max_detection_thresholds=max_detection_thresholds)
-    metric.update(preds, sorted_targets)
+    metric.update(all_preds, all_targets)
     mAP = metric.compute()
 
     eval_utils.map_to_numpy(mAP)
 
     eval_plotter.plot_precision(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
-        room, f"{ROOM_DIR}/predictions")
+        room, f"data/results")
 
     eval_plotter.plot_recall(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
-        room, f"{ROOM_DIR}/predictions")
+        room, f"data/results")
 
-    eval_utils.save_map_as_json(mAP, f"{ROOM_DIR}/predictions/mAP_{room}.json")
+    eval_utils.save_map_as_json(mAP, f"data/results/mAP.json")
 
 
 if __name__ == "__main__":
