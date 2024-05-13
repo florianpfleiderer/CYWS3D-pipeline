@@ -27,17 +27,17 @@ def main(
     logger.setLevel(getattr(logging, log_level.upper()))
     logger.warning("logger set to %s", logger.level)
 
-    if room is None:
-        raise ValueError("Please provide a room to evaluate")
-    ROOM_DIR = f"data/GH30_{room}"
-    PREDICTIONS_DIR = ROOM_DIR+"/predictions/batch_image2_predicted_bboxes.pt"
-    TARGET_BBOXES_DIR = ROOM_DIR+"/all_target_bboxes.pt"
+    # if room is None:
+    #     raise ValueError("Please provide a room to evaluate")
+    # ROOM_DIR = f"data/GH30_{room}"
+    # PREDICTIONS_DIR = ROOM_DIR+"/predictions/batch_image2_predicted_bboxes.pt"
+    # TARGET_BBOXES_DIR = ROOM_DIR+"/all_target_bboxes.pt"
 
     iou_thresholds: np.ndarray = np.arange(0.5, 0.95, 0.05).tolist()
     rec_thresholds: np.ndarray = np.arange(0.1, 1.0, 0.1).tolist()
     max_detection_thresholds: list = [1, 3, 5]
 
-    search_terms = ["3d", "false"]
+    search_terms = ["perspective-3d", "depth-false"]
 
     all_preds = []
     all_targets = []
