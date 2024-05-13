@@ -2,12 +2,11 @@
 # Created on Mon May 13 2024 by Florian Pfleiderer
 # Copyright (c) 2024 TU Wien
 
-# rooms=("GH30_LivingArea" "GH30_Office" "GH30_SmallRoom") 
-rooms=("Office")
+rooms=("LivingArea" "Office" "SmallRoom")
 perspectives=("null" "3d" "2d") # replace with your actual perspectives
 depths=("true" "false") # replace with your actual depths
 
-runs=1
+runs=3
 
 for room in "${rooms[@]}"; do
   if [ ! -d "/data/GH30_${room}/predictions" ]; then
