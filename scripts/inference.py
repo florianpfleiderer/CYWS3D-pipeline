@@ -29,7 +29,7 @@ try:
 except ImportError:
     from geometry import remove_bboxes_with_area_less_than, suppress_overlapping_bboxes, \
         keep_matching_bboxes, filter_low_confidence_bboxes
-from src.globals import BBOX_AREA, CONFIDENCE_THRESHOLD
+from src.globals import BBOX_AREA, CONFIDENCE_THRESHOLD, MAX_PREDICTIONS
 
 # check required version of cyws3d-pipeline (defined in setup.py)
 required_version = '1.0'
@@ -46,7 +46,7 @@ def main(
     load_weights_from: str = "./cyws-3d.ckpt",
     filter_predictions_with_area_under: int = BBOX_AREA,
     keep_matching_bboxes_only: bool = False,
-    max_predictions_to_display: int = 5,
+    max_predictions_to_display: int = MAX_PREDICTIONS,
     minimum_confidence_threshold: float = CONFIDENCE_THRESHOLD,
     log_level: str = "INFO"
 ):

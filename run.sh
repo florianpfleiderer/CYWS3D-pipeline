@@ -2,15 +2,15 @@
 # Created on Mon May 13 2024 by Florian Pfleiderer
 # Copyright (c) 2024 TU Wien
 
-bbox_areas=("200" "300" "400" "500") # done: "100" 
+bbox_areas=("200" "300" "400") # done: "100" 
 keep_matching_bboxes=("false" "true")
-minimum_confidence_threshold=("0.1" "0.15" "0.2" "0.25" "0.3" "0.35" "0.4" "0.45" "0.5")
+minimum_confidence_threshold=("0.2" "0.3" "0.4" "0.5")
 
 rooms=("LivingArea" "Office" "SmallRoom")
 perspectives=("null" "3d" "2d")
 depths=("false" "true")
 
-runs=5
+runs=3
 rm -r "data/results/"*
 
 for bbox_area in "${bbox_areas[@]}"; do
