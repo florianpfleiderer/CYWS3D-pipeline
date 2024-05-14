@@ -53,12 +53,6 @@ def main(
     """ 
     runs the inference with cyws3d.
     """
-    logger.setLevel(level=getattr(logging, log_level.upper()))
-    logger.info("logger set to %s", logger.level)
-    
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    torch.cuda.empty_cache()
-
     if room is None:
         raise ValueError("Please provide the room name as command line argument")
     input_metadata = f"data/GH30_{room}/input_metadata.yaml"
@@ -66,6 +60,19 @@ def main(
     save_path = os.path.join(input_metadata.split("/")[0], input_metadata.split("/")[1], "predictions")
     if not os.path.exists(save_path):
         os.makedirs(save_path)
+    
+    logger.setLevel(level=getattr(logging, log_level.upper()))
+    # add a filehandler
+    # file_handler = logging.FileHandler(f'{save_path}/logfile.log', 'w')
+    # file_handler.setLevel(getattr(logging, log_level.upper()))
+    # logger.addHandler(file_handler)
+    logger.info("logger set to %s", logger.level)
+    logger.info(f"Folder: {save_path}\nParameters: {config_file}, {input_metadata}, {room}, {load_weights_from},\n\
+        {filter_predictions_with_area_under}, {keep_matching_bboxes_only}, {max_predictions_to_display}, \
+            {minimum_confidence_threshold}")
+    
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    torch.cuda.empty_cache()
 
     configs = get_easy_dict_from_yaml_file(config_file)
     model = Model(configs, load_weights_from=load_weights_from).to(device)
