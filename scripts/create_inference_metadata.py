@@ -44,6 +44,7 @@ def main(
     depth: bool=False,
     transformations: bool=False,
     perspective: str=None,
+    registration_strategy: str="3d",
     debug: str="INFO"
 ):
 
@@ -62,7 +63,8 @@ def main(
         "room": ROOM,
         "depth": DEPTH,
         "transformations": TRANSFORMATIONS,
-        "perspective": perspective
+        "perspective": perspective,
+        "registration_strategy": registration_strategy
     }
     existing_configurations = {}
     metadata_file = os.path.join(ROOM_DIR, "predictions", "metadata_configurations.yaml")
@@ -141,7 +143,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[8]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[3]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -150,7 +152,7 @@ def main(
                     "image2": os.path.join(ROOM_DIR, scene, scene_buffer[9]),
                     "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
                     "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[3]),
-                    "registration_strategy": "3d"
+                    "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                 elif perspective=="2d":
@@ -161,7 +163,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[6]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[0]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -170,7 +172,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[7]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[1]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[1]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     batch.append({
                         "prediction_number": img_number,
@@ -178,7 +180,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[8]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     batch.append({
                         "prediction_number": img_number,
@@ -186,7 +188,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[9]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[3]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[3]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -195,7 +197,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[10]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[4]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -204,7 +206,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[11]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[5]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[5]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                 else:
@@ -215,7 +217,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[6]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[0]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -224,7 +226,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[7]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[1]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[1]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -233,7 +235,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[8]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[3]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -242,7 +244,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[9]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[3]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -251,7 +253,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[10]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[4]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -260,7 +262,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[11]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[5]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[5]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
             else:
@@ -271,14 +273,14 @@ def main(
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[9]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[8]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[8]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[9]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                 elif perspective=="2d":
@@ -287,41 +289,41 @@ def main(
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[6]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[7]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[7]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[8]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[8]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[9]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[9]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[10]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[10]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[11]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[11]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                 else:
@@ -330,42 +332,42 @@ def main(
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[6]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[7]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[7]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[9]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[8]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[8]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[9]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[10]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[10]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[11]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[11]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
         
@@ -391,7 +393,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[4]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[1]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[0]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -400,7 +402,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[5]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[1]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -409,7 +411,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[6]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[3]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -418,7 +420,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[7]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[3]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                 elif perspective=="2d":
@@ -429,7 +431,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[4]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[0]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -438,7 +440,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[5]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[0]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -447,7 +449,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[6]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -456,7 +458,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[7]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[3]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[3]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                 else:
@@ -467,7 +469,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[4]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[0]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -476,7 +478,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[5]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[1]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -485,7 +487,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[6]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -494,7 +496,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[7]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[3]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
             # elif TRANSFORMATIONS:
@@ -511,7 +513,7 @@ def main(
             #             "position2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i][:-4]+"_position.npy"),
             #             "rotation1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4][:-4]+"_rotation.npy"),
             #             "rotation2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+i][:-4]+"_rotation.npy"),
-            #             "registration_strategy": "3d"
+            #             "registration_strategy": f"{registration_strategy}"
             #         })
             #     for i in range(spacer//2):
             #         batch.append({
@@ -525,7 +527,7 @@ def main(
             #             "position2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i][:-4]+"_position.npy"),
             #             "rotation1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6][:-4]+"_rotation.npy"),
             #             "rotation2": os.path.join(ROOM_DIR, scene, scene_buffer[spacer+2+i][:-4]+"_rotation.npy"),
-            #             "registration_strategy": "3d"
+            #             "registration_strategy": f"{registration_strategy}"
             #         })
             else:
                 logger.info("Only RGB images are added to metadata")
@@ -535,28 +537,28 @@ def main(
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[5]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[4]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[5]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[7]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[6]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[7]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                 elif perspective=="2d":
@@ -565,28 +567,28 @@ def main(
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[4]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[5]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[5]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[6]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[7]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[7]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                 else:
@@ -595,28 +597,28 @@ def main(
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[4]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[5]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[6]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[7]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
 
@@ -643,7 +645,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[8]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[0]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -652,7 +654,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[9]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[3]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[1]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -661,7 +663,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[10]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -670,7 +672,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[11]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[1]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[3]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -679,7 +681,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[12]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[7]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[4]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -688,7 +690,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[13]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[5]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -697,7 +699,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[14]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[5]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[6]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -706,7 +708,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[15]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[7]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                 elif perspective=="2d":
@@ -717,7 +719,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[8]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[0]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -726,7 +728,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[9]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[1]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[1]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -735,7 +737,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[10]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[2]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -744,7 +746,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[11]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[3]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[3]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -753,7 +755,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[12]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[4]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -762,7 +764,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[13]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[5]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[5]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -771,7 +773,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[14]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[6]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[6]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -780,7 +782,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[15]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[7]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[7]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                 else:
@@ -791,7 +793,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[8]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[0]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -800,7 +802,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[9]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[1]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[1]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -809,7 +811,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[10]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[0]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[2]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -818,7 +820,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[11]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[1]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[3]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -827,7 +829,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[12]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[4]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -836,7 +838,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[13]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[5]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[5]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -845,7 +847,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[14]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[5]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[6]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
@@ -854,7 +856,7 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[15]),
                         "depth1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[4]),
                         "depth2": os.path.join(ROOM_DIR, scene, scene_buffer[7]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
             else:
@@ -865,56 +867,56 @@ def main(
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[10]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[8]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[11]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[9]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[8]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[10]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[9]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[11]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[15]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[12]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[14]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[13]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[13]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[14]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[12]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[15]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                 elif perspective=="2d":
@@ -923,56 +925,56 @@ def main(
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[8]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[8]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[9]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[9]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[10]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[10]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[11]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[11]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[12]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[12]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[13]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[13]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[14]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[14]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[15]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[15]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                 else:
@@ -981,56 +983,56 @@ def main(
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[8]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[8]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[9]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[9]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[8]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[10]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[9]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[11]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[12]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[12]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[13]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[13]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[13]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[14]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
                     batch.append({
                         "prediction_number": img_number,
                         "image1": os.path.join(ROOM_DIR, "scene1", scene1_buffer[12]),
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[15]),
-                        "registration_strategy": "3d"
+                        "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
 
