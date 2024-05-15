@@ -148,7 +148,7 @@ class FeatureRegisterationModule(nn.Module):
         b, c, h, w = image1.shape
         if strategy == "3d":
             visibility = torch.ones((b, 1, h, w), requires_grad=False).type_as(image1)
-            image1_warped_onto_image2, image2_warped_onto_image1, trasform_points_1_to_2, transform_points_2_to_1  = self.register_3d_features(
+            image1_warped_onto_image2, image2_warped_onto_image1, transform_points_1_to_2, transform_points_2_to_1  = self.register_3d_features(
                 batch, torch.cat([image1, visibility], dim=1), torch.cat([image2, visibility], dim=1)
             )
             visibility1 = image1_warped_onto_image2[:, -1:, :, :]
@@ -157,7 +157,7 @@ class FeatureRegisterationModule(nn.Module):
             image2_warped_onto_image1 = image2_warped_onto_image1[:, :-1, :, :]
         elif strategy == "2d":
             visibility = torch.ones((b, 1, h, w), requires_grad=False).type_as(image1)
-            image1_warped_onto_image2, image2_warped_onto_image1, trasform_points_1_to_2, transform_points_2_to_1 = self.register_2d_features(
+            image1_warped_onto_image2, image2_warped_onto_image1, transform_points_1_to_2, transform_points_2_to_1 = self.register_2d_features(
                 batch, torch.cat([image1, visibility], dim=1), torch.cat([image2, visibility], dim=1)
             )
             visibility1 = image1_warped_onto_image2[:, -1:, :, :]
@@ -165,20 +165,20 @@ class FeatureRegisterationModule(nn.Module):
             image1_warped_onto_image2 = image1_warped_onto_image2[:, :-1, :, :]
             image2_warped_onto_image1 = image2_warped_onto_image1[:, :-1, :, :]
         elif strategy == "identity":
-            image1_warped_onto_image2, image2_warped_onto_image1, trasform_points_1_to_2, transform_points_2_to_1 = self.register_identity_features(batch, image1, image2)
+            image1_warped_onto_image2, image2_warped_onto_image1, transform_points_1_to_2, transform_points_2_to_1 = self.register_identity_features(batch, image1, image2)
             visibility1 = torch.ones((b, 1, h, w), requires_grad=False).type_as(image1)
             visibility2 = torch.ones((b, 1, h, w), requires_grad=False).type_as(image1)
         image1 = visibility2 * (image1 - image2_warped_onto_image1)
         image2 = visibility1 * (image2 - image1_warped_onto_image2)
-        return image1, image2, trasform_points_1_to_2, transform_points_2_to_1
+        return image1, image2, transform_points_1_to_2, transform_points_2_to_1
 
     def forward(self, batch, image1, image2):
         reg_3d = [s == "3d" for s in batch["registration_strategy"]]
         reg_2d = [s == "2d" for s in batch["registration_strategy"]]
         reg_id = [s == "identity" for s in batch["registration_strategy"]]
-        image1_3d, image2_3d, trasform_points_1_to_2_3d, transform_points_2_to_1_3d = self.register_features(slice_batch_given_bool_array(batch, reg_3d), image1[reg_3d], image2[reg_3d], "3d")
-        image1_2d, image2_2d, trasform_points_1_to_2_2d, transform_points_2_to_1_2d = self.register_features(slice_batch_given_bool_array(batch, reg_2d), image1[reg_2d], image2[reg_2d], "2d")
-        image1_id, image2_id, trasform_points_1_to_2_id, transform_points_2_to_1_id = self.register_features(slice_batch_given_bool_array(batch, reg_id), image1[reg_id], image2[reg_id], "identity")
+        image1_3d, image2_3d, transform_points_1_to_2_3d, transform_points_2_to_1_3d = self.register_features(slice_batch_given_bool_array(batch, reg_3d), image1[reg_3d], image2[reg_3d], "3d")
+        image1_2d, image2_2d, transform_points_1_to_2_2d, transform_points_2_to_1_2d = self.register_features(slice_batch_given_bool_array(batch, reg_2d), image1[reg_2d], image2[reg_2d], "2d")
+        image1_id, image2_id, transform_points_1_to_2_id, transform_points_2_to_1_id = self.register_features(slice_batch_given_bool_array(batch, reg_id), image1[reg_id], image2[reg_id], "identity")
 
         image1 = torch.zeros_like(image1)
         image2 = torch.zeros_like(image2)
@@ -189,19 +189,19 @@ class FeatureRegisterationModule(nn.Module):
                 for i in range(index_in_batch):
                     if reg_3d[i]:
                         actual_index += 1
-                return trasform_points_1_to_2_3d(points, actual_index)
+                return transform_points_1_to_2_3d(points, actual_index)
             elif reg_2d[index_in_batch]:
                 actual_index = 0
                 for i in range(index_in_batch):
                     if reg_2d[i]:
                         actual_index += 1
-                return trasform_points_1_to_2_2d(points, actual_index)
+                return transform_points_1_to_2_2d(points, actual_index)
             elif reg_id[index_in_batch]:
                 actual_index = 0
                 for i in range(index_in_batch):
                     if reg_id[i]:
                         actual_index += 1
-                return trasform_points_1_to_2_id(points, actual_index)
+                return transform_points_1_to_2_id(points, actual_index)
         
         def transform_points_2_to_1(points, index_in_batch):
             if reg_3d[index_in_batch]:

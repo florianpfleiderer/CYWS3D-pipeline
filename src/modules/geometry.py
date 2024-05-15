@@ -263,7 +263,8 @@ def remove_bboxes_with_area_less_than(bboxes_as_np_array, threshold):
     bboxes = np.array(bboxes, dtype=float).reshape(-1, bboxes_as_np_array.shape[1] if bboxes_as_np_array.size else 0)
     return bboxes
 
-def keep_matching_bboxes(batch, image_index, left_predictions, right_predictions, left_scores, right_scores, confidence_threshold=0.2, device="cpu"):
+def keep_matching_bboxes(batch, image_index, left_predictions, right_predictions, left_scores, \
+    right_scores, confidence_threshold=0.2, device="cpu"):
     """
     The idea is that each change bbox must have a corresponding bbox in the other image.
     However, the model itself doesn't enforce this directly. In this post-processing function
@@ -273,8 +274,10 @@ def keep_matching_bboxes(batch, image_index, left_predictions, right_predictions
     
     left_high_confidence_bboxes = left_predictions[left_scores > confidence_threshold]
     right_high_confidence_bboxes = right_predictions[right_scores > confidence_threshold]
-    left_centers = torch.tensor((left_high_confidence_bboxes[:, :2] + left_high_confidence_bboxes[:, 2:4]) / 2) / 224
-    right_centers = torch.tensor((right_high_confidence_bboxes[:, :2] + right_high_confidence_bboxes[:, 2:4]) / 2) / 224
+    left_centers = torch.tensor((left_high_confidence_bboxes[:, :2] \
+        + left_high_confidence_bboxes[:, 2:4]) / 2, dtype=torch.float32) / 224
+    right_centers = torch.tensor((right_high_confidence_bboxes[:, :2] \
+        + right_high_confidence_bboxes[:, 2:4]) / 2, dtype=torch.float32) / 224
     left_centers_in_right = batch["transform_points_1_to_2"](left_centers.to(device), image_index) * 224
     right_centers_in_left = batch["transform_points_2_to_1"](right_centers.to(device), image_index) * 224
     
