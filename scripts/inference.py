@@ -29,7 +29,7 @@ try:
 except ImportError:
     from geometry import remove_bboxes_with_area_less_than, suppress_overlapping_bboxes, \
         keep_matching_bboxes, filter_low_confidence_bboxes
-from src.globals import BBOX_AREA, CONFIDENCE_THRESHOLD
+from src.globals import BBOX_AREA, CONFIDENCE_THRESHOLD, MAX_PREDICTIONS
 
 # check required version of cyws3d-pipeline (defined in setup.py)
 required_version = '1.0'
@@ -46,19 +46,13 @@ def main(
     load_weights_from: str = "./cyws-3d.ckpt",
     filter_predictions_with_area_under: int = BBOX_AREA,
     keep_matching_bboxes_only: bool = False,
-    max_predictions_to_display: int = 5,
+    max_predictions_to_display: int = MAX_PREDICTIONS,
     minimum_confidence_threshold: float = CONFIDENCE_THRESHOLD,
     log_level: str = "INFO"
 ):
     """ 
     runs the inference with cyws3d.
     """
-    logger.setLevel(level=getattr(logging, log_level.upper()))
-    logger.info("logger set to %s", logger.level)
-    
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    torch.cuda.empty_cache()
-
     if room is None:
         raise ValueError("Please provide the room name as command line argument")
     input_metadata = f"data/GH30_{room}/input_metadata.yaml"
@@ -66,6 +60,19 @@ def main(
     save_path = os.path.join(input_metadata.split("/")[0], input_metadata.split("/")[1], "predictions")
     if not os.path.exists(save_path):
         os.makedirs(save_path)
+    
+    logger.setLevel(level=getattr(logging, log_level.upper()))
+    # add a filehandler
+    # file_handler = logging.FileHandler(f'{save_path}/logfile.log', 'w')
+    # file_handler.setLevel(getattr(logging, log_level.upper()))
+    # logger.addHandler(file_handler)
+    logger.info("logger set to %s", logger.level)
+    logger.info(f"Folder: {save_path}\nParameters: {config_file}, {input_metadata}, {room}, {load_weights_from},\n\
+        {filter_predictions_with_area_under}, {keep_matching_bboxes_only}, {max_predictions_to_display}, \
+            {minimum_confidence_threshold}")
+    
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    torch.cuda.empty_cache()
 
     configs = get_easy_dict_from_yaml_file(config_file)
     model = Model(configs, load_weights_from=load_weights_from).to(device)
