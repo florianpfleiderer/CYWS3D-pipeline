@@ -2,8 +2,8 @@
 # Created on Mon May 13 2024 by Florian Pfleiderer
 # Copyright (c) 2024 TU Wien
 
-bbox_areas=("200" "300" "400") # done: "100" 
-keep_matching_bboxes=("false" "true")
+bbox_areas=("200" "300" "400") 
+keep_matching_bboxes=("true") # done: "false" 
 minimum_confidence_threshold=("0.2" "0.3" "0.4" "0.5")
 
 rooms=("LivingArea" "Office" "SmallRoom")
