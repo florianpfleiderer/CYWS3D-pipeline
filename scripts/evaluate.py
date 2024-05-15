@@ -33,17 +33,17 @@ def main(
     # PREDICTIONS_DIR = ROOM_DIR+"/predictions/batch_image2_predicted_bboxes.pt"
     # TARGET_BBOXES_DIR = ROOM_DIR+"/all_target_bboxes.pt"
 
-    iou_thresholds: np.ndarray = np.arange(0.5, 0.95, 0.05).tolist()
-    rec_thresholds: np.ndarray = np.arange(0.1, 1.0, 0.1).tolist()
+    iou_thresholds: np.ndarray = np.around(np.arange(0.3, 0.95, 0.05), 2).tolist()
+    rec_thresholds: np.ndarray = np.around(np.arange(0, 1.0, 0.1), 1).tolist()
     max_detection_thresholds: list = [1, 3, 5]
 
     search_terms = ["perspective-3d", "depth-false"]
-    DATAPATH = "data/results/area-100_matching-false_confidence-01/"
+    DATAPATH = "data/results/area-400_matching-false_confidence-03/"
 
     all_preds = []
     all_targets = []
 
-    for folder in os.listdir(DATAPATH):
+    for folder in sorted(os.listdir(DATAPATH)):
         if all(term in folder for term in search_terms):
             logger.info("processing folder: %s", folder)
             preds = torch.load(f"{DATAPATH}{folder}/predictions/batch_image2_predicted_bboxes.pt")
@@ -63,11 +63,15 @@ def main(
 
     eval_utils.map_to_numpy(mAP)
 
+    pprint(mAP['ious'])
+
     eval_plotter.plot_precision(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
         room, f"data/results")
 
     eval_plotter.plot_recall(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
         room, f"data/results")
+    
+    # eval_plotter.plot_ious(mAP, room, f"data/results")
 
     eval_utils.save_map_as_json(mAP, f"data/results/mAP.json")
 

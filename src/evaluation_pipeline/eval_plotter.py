@@ -34,11 +34,6 @@ def plot_precision(mAP, thresholds, room_name, room_path):
         precision_values = [p if p > 0 else 0 for p in precision_values]
         axs[0].plot(iou_thresholds, precision_values, label=area, color=colors[i])
 
-    # Calculate the number of datapoints
-    num_datapoints = len(mAP['precision'][:, 0, 0, 0])
-    # Add the number of datapoints to the plot
-    axs[0].text(0.5, 0.95, f"Number of Datapoints: {num_datapoints}", transform=axs[0].transAxes, ha='center')
-
     axs[0].set_xlabel('IoU Threshold')
     axs[0].set_ylabel('Precision')
     axs[0].set_title('Precision vs IoU Threshold for different bbox sizes')
@@ -114,8 +109,49 @@ def plot_recall(mAP, thresholds, room_name, room_path):
     plt.tight_layout()
     fig2.savefig(f"{room_path}/recall_{room_name}.png")
 
-def plot_ious():
+def plot_ious(ious, room_name, room_path):
     """
-    TODO: implement
+    This should plot the IOU values for each image over the image number in the dataset.
+
+    The Iou Values are given as follows:
+    "ious": {
+    "0": [],
+    "1": [
+      [
+        0.6484149694442749,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.5454545617103577
+      ],
+      [
+        0.0,
+        0.5468354225158691,
+        0.0
+      ]
+    ],
+    "2": [
+      0.0,
+      0.0,
+      0.6436781883239746
+    ], ...
+    where the first index is the image number and Each value is a tensor with shape (n,m) 
+    where n is the number of detections and m is the number of ground truth boxes 
+    for that image/class combination.
     """
-    pass
+    fig3, ax = plt.subplots(figsize=(10, 6))
+    fig3.suptitle("IOU values per image")
+    
+    image_numbers = list(ious.keys())
+    average_iou_values = [np.mean(ious[image]) for image in image_numbers]
+    
+    ax.plot(image_numbers, average_iou_values, marker='o')
+    ax.set_xlabel('Image Number')
+    ax.set_ylabel('Average IOU')
+    ax.set_title('Average IOU values per image')
+    
+    plt.tight_layout()
+    fig3.savefig(f"{room_path}/recall_{room_name}.png")
