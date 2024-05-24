@@ -2,7 +2,7 @@
 # Created on Mon May 13 2024 by Florian Pfleiderer
 # Copyright (c) 2024 TU Wien
 
-bbox_areas=("200" "300" "400" "500")
+bbox_areas=("200" "300" "400" "500") # done: "200" "300" TODO: "400" "500"
 keep_matching_bboxes=("false" "true")
 minimum_confidence_threshold=("0.2" "0.3" "0.4")
 registration_strategies=("2d" "3d")
