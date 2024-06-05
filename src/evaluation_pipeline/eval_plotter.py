@@ -39,16 +39,16 @@ def plot_precision(mAP, thresholds, room_name, room_path):
     axs[0].set_title('Precision vs IoU Threshold for different bbox sizes')
     axs[0].legend()
 
-    # precision vs IoU at different recall thresholds
-    for i, rec in enumerate(rec_thresholds):
-        precision_values = mAP['precision'][:, i, 0, 0]
-        precision_values = [p if p > 0 else 0 for p in precision_values]
-        axs[1].plot(iou_thresholds, precision_values, label=rec)
+    # # precision vs IoU at different recall thresholds
+    # for i, rec in enumerate(rec_thresholds):
+    #     precision_values = mAP['precision'][:, i, 0, 0]
+    #     precision_values = [p if p > 0 else 0 for p in precision_values]
+    #     axs[1].plot(iou_thresholds, precision_values, label=rec)
 
-    axs[1].set_xlabel('IoU Threshold')
-    axs[1].set_ylabel('Precision')
-    axs[1].set_title('Precision vs IoU Threshold for different recall thresholds')
-    axs[1].legend()
+    # axs[1].set_xlabel('IoU Threshold')
+    # axs[1].set_ylabel('Precision')
+    # axs[1].set_title('Precision vs IoU Threshold for different recall thresholds')
+    # axs[1].legend()
 
     # precision over IoU at different max detection thresholds
     for i, max_det in enumerate(max_detection_thresholds):
