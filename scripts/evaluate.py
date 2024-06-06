@@ -35,8 +35,9 @@ def main(
     # TARGET_BBOXES_DIR = ROOM_DIR+"/all_target_bboxes.pt"
 
     iou_thresholds: np.ndarray = np.around(np.arange(0.5, 0.95, 0.05), 2).tolist()
-    rec_thresholds: np.ndarray = np.around(np.arange(0, 1.0, 0.01), 1).tolist()
+    rec_thresholds: np.ndarray = np.around(np.arange(0.01, 1.0, 0.01), 2).tolist()
     max_detection_thresholds: list = [1, 10, 100]
+    areas = ['all', 'small', 'medium', 'large']
 
     search_terms = []
 
@@ -48,16 +49,34 @@ def main(
         file.write("")
 
     for config_folder in sorted(os.listdir(path)):
-        if ".DS" in config_folder or "OLD" in config_folder:
+        if ".DS" in config_folder or "OLD" in config_folder or ".png" in config_folder or ".json" in config_folder or ".yaml" in config_folder:
+            continue
+        if len(os.listdir(f"{path}/{config_folder}")) == 0:
+            logger.warning(f"{config_folder} folder is empty")
             continue
         logger.info("processing config folder: %s", config_folder)
+        all_preds = []
+        all_targets = []
         for folder in sorted(os.listdir(f"{path}/{config_folder}")):
             if ".DS" in folder:
                 continue
             if all(term in folder for term in search_terms):
                 logger.info("processing folder: %s", folder)
-                preds = torch.load(f"{path}/{config_folder}/{folder}/predictions/batch_image2_predicted_bboxes.pt")
-                targets = torch.load(f"{path}/{config_folder}/{folder}/all_target_bboxes.pt")
+                try:
+                    preds = torch.load(f"{path}/{config_folder}/{folder}/predictions/batch_image2_predicted_bboxes.pt")
+                    targets = torch.load(f"{path}/{config_folder}/{folder}/all_target_bboxes.pt")
+                except FileNotFoundError:
+                    logger.warning("File not found")
+                    with open("data/results/metrics.yaml", "a") as file:
+                        yaml.dump({
+                            config_folder: {
+                                "mAP": float(-1),
+                                "mAP_50": float(-1),
+                                "precision": float(-1),
+                                "recall": float(-1)
+                            }
+                        }, file)
+                    continue
             else:  
                 continue
             sorted_targets = eval_utils.prepare_target_bboxes(targets, f"{path}/{config_folder}/{folder}/input_metadata.yaml")
@@ -69,24 +88,23 @@ def main(
                 max_detection_thresholds=max_detection_thresholds)
         metric.update(all_preds, all_targets)
         mAP = metric.compute()
-        # print(len(all_targets))
 
         eval_utils.map_to_numpy(mAP)
-        print(isinstance(mAP["precision"], np.ndarray))
-        print(isinstance(mAP["recall"], np.ndarray))
 
         # Plot precision-recall curve for large objects
         plt.figure(figsize=(10, 6))
-        for idx, iou_threshold in enumerate(iou_thresholds):
-            recall = mAP["recall"][idx, 0, 0]
-            precision = mAP["precision"][idx, 0, 0, 2]
-            plt.plot(recall, label=f'IoU={iou_threshold:.2f}')
+        for idx, area in enumerate(areas):
+            precision = mAP["precision"][0, :, idx, 2]
+            plt.plot(rec_thresholds, precision, label=f'IoU={area}')
+        plt.xlim([0, 1])
+        plt.ylim([0, 1])
         plt.xlabel('Recall')
         plt.ylabel('Precision')
         plt.title('Precision-Recall Curve for all Objects')
         plt.legend()
         plt.tight_layout()
         plt.savefig(f"data/results/precision_recall_curve.png")
+        plt.close()
 
         eval_plotter.plot_precision(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
             room, f"data/results")
@@ -99,12 +117,17 @@ def main(
             # Write the mAP, precision, and recall to the file
             yaml.dump({
                 config_folder: {
-                    "mAP": float(mAP["map_50"]),
-                    "precision": float(mAP["precision"][1, 0, 0, 0]),
-                    "recall": float(mAP["recall"][1, 0, 0])
+                    "mAP": float(mAP["map"]),
+                    "mAP_50": float(mAP["map_50"]),
+                    "precision": float(mAP["precision"][1, 6, 2, 2]),
+                    "recall": float(mAP["recall"][1, 2, 2])
                 }
             }, file)
             logger.info("mAP written to file")
+        
+        # with open(f"data/results/metrics.yaml", "r") as file:
+        #     metrics = yaml.load(file, Loader=yaml.FullLoader)
+        #     pprint(metrics)
 
         eval_utils.save_map_as_json(mAP, f"data/results/mAP.json")
 

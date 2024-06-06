@@ -7,6 +7,7 @@ Helper functions to plot results from torchmetrics.MeanaveragePrecision
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 def plot_precision(mAP, thresholds, room_name, room_path):
     """
     Plots the precision values for different configurations of the MeanAveragePrecision class
@@ -29,7 +30,7 @@ def plot_precision(mAP, thresholds, room_name, room_path):
     colors = ['blue', 'green', 'orange', 'red']
 
     for i, area in enumerate(areas):
-        precision_values = mAP['precision'][:, 0, i, 0]
+        precision_values = mAP['precision'][:, 6, i, 0]
         # print(precision_values)
         precision_values = [p if p > 0 else 0 for p in precision_values]
         axs[0].plot(iou_thresholds, precision_values, label=area, color=colors[i])
@@ -39,20 +40,20 @@ def plot_precision(mAP, thresholds, room_name, room_path):
     axs[0].set_title('Precision vs IoU Threshold for different bbox sizes')
     axs[0].legend()
 
-    # # precision vs IoU at different recall thresholds
-    # for i, rec in enumerate(rec_thresholds):
-    #     precision_values = mAP['precision'][:, i, 0, 0]
-    #     precision_values = [p if p > 0 else 0 for p in precision_values]
-    #     axs[1].plot(iou_thresholds, precision_values, label=rec)
+    # precision vs IoU at different recall thresholds
+    for i, rec in enumerate(rec_thresholds):
+        precision_values = mAP['precision'][:, i, 0, 0]
+        precision_values = [p if p > 0 else 0 for p in precision_values]
+        axs[1].plot(iou_thresholds, precision_values, label=rec)
 
-    # axs[1].set_xlabel('IoU Threshold')
-    # axs[1].set_ylabel('Precision')
-    # axs[1].set_title('Precision vs IoU Threshold for different recall thresholds')
-    # axs[1].legend()
+    axs[1].set_xlabel('IoU Threshold')
+    axs[1].set_ylabel('Precision')
+    axs[1].set_title('Precision vs IoU Threshold for different recall thresholds')
+    axs[1].legend()
 
     # precision over IoU at different max detection thresholds
     for i, max_det in enumerate(max_detection_thresholds):
-        precision_values = mAP['precision'][:, 0, 0, i]
+        precision_values = mAP['precision'][:, 6, 0, i]
         precision_values = [p if p > 0 else 0 for p in precision_values]
         axs[2].plot(iou_thresholds, precision_values, label=max_det)
 
@@ -108,6 +109,12 @@ def plot_recall(mAP, thresholds, room_name, room_path):
 
     plt.tight_layout()
     fig2.savefig(f"{room_path}/recall_{room_name}.png")
+
+def plot_precision_recall_curve(preds, targets, path):
+    """
+    This should plot the precision recall curve for the given predictions and targets.
+    """
+    pass
 
 def plot_ious(ious, room_name, room_path):
     """
