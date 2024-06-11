@@ -35,21 +35,23 @@ def main(
     # TARGET_BBOXES_DIR = ROOM_DIR+"/all_target_bboxes.pt"
 
     iou_thresholds: np.ndarray = np.around(np.arange(0.5, 0.95, 0.05), 2).tolist()
-    rec_thresholds: np.ndarray = np.around(np.arange(0.01, 1.0, 0.01), 2).tolist()
+    # rec_thresholds: np.ndarray = np.around(np.arange(0, 1.0, 0.01), 2).tolist()
+    rec_thresholds: np.ndarray = np.around(np.arange(0.05, 0.1, 0.01), 2).tolist()
     max_detection_thresholds: list = [1, 10, 100]
     areas = ['all', 'small', 'medium', 'large']
 
-    search_terms = []
+    config_search_terms =["area", "3d"] #["3d"]
+    search_terms = ["GH30", "depth-true"] #["3d", "depth-false"]
 
     all_preds = []
     all_targets = []
 
     # Wipe the metrics.yaml file
-    with open("data/results/metrics.yaml", "w") as file:
-        file.write("")
+    # with open("data/results/metrics.yaml", "w") as file:
+    #     file.write("")
 
     for config_folder in sorted(os.listdir(path)):
-        if ".DS" in config_folder or "OLD" in config_folder or ".png" in config_folder or ".json" in config_folder or ".yaml" in config_folder:
+        if not all(term in config_folder for term in config_search_terms):
             continue
         if len(os.listdir(f"{path}/{config_folder}")) == 0:
             logger.warning(f"{config_folder} folder is empty")
@@ -91,7 +93,7 @@ def main(
 
         eval_utils.map_to_numpy(mAP)
 
-        # Plot precision-recall curve for large objects
+        # Plot precision-recall curve
         plt.figure(figsize=(10, 6))
         for idx, area in enumerate(areas):
             precision = mAP["precision"][0, :, idx, 2]
@@ -104,7 +106,6 @@ def main(
         plt.legend()
         plt.tight_layout()
         plt.savefig(f"data/results/precision_recall_curve.png")
-        plt.close()
 
         eval_plotter.plot_precision(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
             room, f"data/results")
@@ -112,20 +113,21 @@ def main(
             room, f"data/results")
         # eval_plotter.plot_ious(mAP, room, f"data/results")
 
+        plt.close('all')
+
         # Create or open the YAML file in append mode
         with open("data/results/metrics.yaml", "a") as file:
             # Write the mAP, precision, and recall to the file
             yaml.dump({
-                config_folder: {
+                f"{config_folder}_{search_terms[1]}": {
                     "mAP": float(mAP["map"]),
                     "mAP_50": float(mAP["map_50"]),
-                    "precision": float(mAP["precision"][1, 6, 2, 2]),
-                    "recall": float(mAP["recall"][1, 2, 2])
+                    "precision": float(mAP["precision"][1, 2, 0, 2]),
+                    "recall": float(mAP["recall"][1, 0, 2])
                 }
             }, file)
             logger.info("mAP written to file")
-        
-        # with open(f"data/results/metrics.yaml", "r") as file:
+
         #     metrics = yaml.load(file, Loader=yaml.FullLoader)
         #     pprint(metrics)
 

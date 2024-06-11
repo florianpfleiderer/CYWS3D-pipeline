@@ -30,7 +30,7 @@ def plot_precision(mAP, thresholds, room_name, room_path):
     colors = ['blue', 'green', 'orange', 'red']
 
     for i, area in enumerate(areas):
-        precision_values = mAP['precision'][:, 6, i, 0]
+        precision_values = mAP['precision'][:, 2, i, 0]
         # print(precision_values)
         precision_values = [p if p > 0 else 0 for p in precision_values]
         axs[0].plot(iou_thresholds, precision_values, label=area, color=colors[i])
@@ -53,7 +53,7 @@ def plot_precision(mAP, thresholds, room_name, room_path):
 
     # precision over IoU at different max detection thresholds
     for i, max_det in enumerate(max_detection_thresholds):
-        precision_values = mAP['precision'][:, 6, 0, i]
+        precision_values = mAP['precision'][:, 2, 0, i]
         precision_values = [p if p > 0 else 0 for p in precision_values]
         axs[2].plot(iou_thresholds, precision_values, label=max_det)
 
@@ -64,6 +64,7 @@ def plot_precision(mAP, thresholds, room_name, room_path):
 
     plt.tight_layout()
     fig1.savefig(f"{room_path}/precision_{room_name}.png")
+    
 
 def plot_recall(mAP, thresholds, room_name, room_path):
     """
