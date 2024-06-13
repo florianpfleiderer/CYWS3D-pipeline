@@ -27,7 +27,7 @@ def plot_precision(mAP, thresholds, room_name, room_path):
 
     # precision vs IoU at different bbox sizes
     areas = ['all', 'small', 'medium', 'large']
-    colors = ['blue', 'green', 'orange', 'red']
+    colors = ['blue', 'green', 'orange', 'red', 'yellow']
 
     for i, area in enumerate(areas):
         precision_values = mAP['precision'][:, 2, i, 0]
@@ -44,7 +44,7 @@ def plot_precision(mAP, thresholds, room_name, room_path):
     for i, rec in enumerate(rec_thresholds):
         precision_values = mAP['precision'][:, i, 0, 0]
         precision_values = [p if p > 0 else 0 for p in precision_values]
-        axs[1].plot(iou_thresholds, precision_values, label=rec)
+        axs[1].plot(iou_thresholds, precision_values)#, label=rec, color=colors[i])
 
     axs[1].set_xlabel('IoU Threshold')
     axs[1].set_ylabel('Precision')
