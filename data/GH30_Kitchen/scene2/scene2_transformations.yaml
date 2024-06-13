@@ -1,0 +1,84 @@
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1567959571-383424513.png
+  id: 0
+  origin_frame: /map
+  rotation:
+    w: -0.5109977015342243
+    x: 0.8107515656351767
+    y: -0.23810565139230874
+    z: 0.15769891128950042
+  target_frame: /head_rgbd_sensor_rgb_frame
+  timestamp: 1567959571.3834245
+  translation:
+    x: 0.8013618821123756
+    y: -0.4009822206500713
+    z: 1.275394155502334
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1567959573-997666590.png
+  id: 1
+  origin_frame: /map
+  rotation:
+    w: -0.5110418377438122
+    x: 0.8108138718087964
+    y: -0.23788864678472046
+    z: 0.15756299403346566
+  target_frame: /head_rgbd_sensor_rgb_frame
+  timestamp: 1567959573.9976666
+  translation:
+    x: 0.9290721286523776
+    y: -0.4850373913429631
+    z: 1.2753937854395936
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1567959583-683614962.png
+  id: 2
+  origin_frame: /map
+  rotation:
+    w: -0.5157693107152611
+    x: 0.817936134980785
+    y: -0.21211525522116734
+    z: 0.14131389075196532
+  target_frame: /head_rgbd_sensor_rgb_frame
+  timestamp: 1567959583.683615
+  translation:
+    x: 1.3499408030998084
+    y: -0.7482555209913393
+    z: 1.275394155502334
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1567959592-597908728.png
+  id: 3
+  origin_frame: /map
+  rotation:
+    w: -0.5159841487031853
+    x: 0.8182542060389356
+    y: -0.21087958005987187
+    z: 0.1405354592279539
+  target_frame: /head_rgbd_sensor_rgb_frame
+  timestamp: 1567959592.5979087
+  translation:
+    x: 1.7192721612619353
+    y: -0.9894201391964743
+    z: 1.2753937854395943
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1567959599-703485958.png
+  id: 4
+  origin_frame: /map
+  rotation:
+    w: -0.49133997213940095
+    x: 0.7808445086879822
+    y: -0.3229427135553008
+    z: 0.21112765993923133
+  target_frame: /head_rgbd_sensor_rgb_frame
+  timestamp: 1567959599.703486
+  translation:
+    x: 2.056394077826141
+    y: -1.2847075310963407
+    z: 1.2753937854395954
+- file_name: hsrb_head_rgbd_sensor_rgb_image_raw-1567959610-394485228.png
+  id: 5
+  origin_frame: /map
+  rotation:
+    w: -0.5015490247572371
+    x: 0.7964280812306302
+    y: -0.2823400063914404
+    z: 0.18556672110925887
+  target_frame: /head_rgbd_sensor_rgb_frame
+  timestamp: 1567959610.3944852
+  translation:
+    x: 2.4619412461056793
+    y: -1.6062145243924728
+    z: 1.2753941286547401
