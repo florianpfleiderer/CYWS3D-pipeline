@@ -20,7 +20,9 @@ logger = logging.getLogger(__name__)
 def main(
     room: str = None,
     path: str = "data/results",
-    log_level: str = "INFO"
+    log_level: str = "INFO",
+    depth: str = "depth", # insert depth-true / depth-false as cmd line arg
+    wipe: bool = False
 ):
     """
     main function for evaluation pipeline
@@ -35,20 +37,20 @@ def main(
     # TARGET_BBOXES_DIR = ROOM_DIR+"/all_target_bboxes.pt"
 
     iou_thresholds: np.ndarray = np.around(np.arange(0.5, 0.95, 0.05), 2).tolist()
-    # rec_thresholds: np.ndarray = np.around(np.arange(0, 1.0, 0.01), 2).tolist()
-    rec_thresholds: np.ndarray = np.around(np.arange(0.05, 0.1, 0.01), 2).tolist()
+    pr_curve_thresholds: np.ndarray = np.around(np.arange(0.01, 0.5, 0.01), 2).tolist()
+    rec_thresholds: np.ndarray = np.around(np.arange(0.01, 0.06, 0.01), 2).tolist()
     max_detection_thresholds: list = [1, 10, 100]
     areas = ['all', 'small', 'medium', 'large']
 
-    config_search_terms =["area", "3d"] #["3d"]
-    search_terms = ["GH30", "depth-true"] #["3d", "depth-false"]
+    config_search_terms =["area-400", "matching-false", "3d", "confidence"]
+    search_terms = ["GH30_Office", "depth-true", "perspective-3d"] #["3d", "depth-false"]
 
     all_preds = []
     all_targets = []
 
-    # Wipe the metrics.yaml file
-    # with open("data/results/metrics.yaml", "w") as file:
-    #     file.write("")
+    if wipe:
+        with open("data/results/metrics.yaml", "w") as file:
+            file.write("")
 
     for config_folder in sorted(os.listdir(path)):
         if not all(term in config_folder for term in config_search_terms):
@@ -93,20 +95,6 @@ def main(
 
         eval_utils.map_to_numpy(mAP)
 
-        # Plot precision-recall curve
-        plt.figure(figsize=(10, 6))
-        for idx, area in enumerate(areas):
-            precision = mAP["precision"][0, :, idx, 2]
-            plt.plot(rec_thresholds, precision, label=f'IoU={area}')
-        plt.xlim([0, 1])
-        plt.ylim([0, 1])
-        plt.xlabel('Recall')
-        plt.ylabel('Precision')
-        plt.title('Precision-Recall Curve for all Objects')
-        plt.legend()
-        plt.tight_layout()
-        plt.savefig(f"data/results/precision_recall_curve.png")
-
         eval_plotter.plot_precision(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
             room, f"data/results")
         eval_plotter.plot_recall(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
@@ -122,8 +110,8 @@ def main(
                 f"{config_folder}_{search_terms[1]}": {
                     "mAP": float(mAP["map"]),
                     "mAP_50": float(mAP["map_50"]),
-                    "precision": float(mAP["precision"][1, 2, 0, 2]),
-                    "recall": float(mAP["recall"][1, 0, 2])
+                    "precision": float(mAP["precision"][0, 2, 0, 2]),
+                    "recall": float(mAP["recall"][0, 0, 2])
                 }
             }, file)
             logger.info("mAP written to file")
@@ -132,6 +120,28 @@ def main(
         #     pprint(metrics)
 
         eval_utils.save_map_as_json(mAP, f"data/results/mAP.json")
+
+        # Plot precision-recall curve
+        pr_curve = MeanAveragePrecision(box_format='xyxy', iou_type='bbox', extended_summary=True, \
+            iou_thresholds=iou_thresholds, rec_thresholds=pr_curve_thresholds, \
+                max_detection_thresholds=max_detection_thresholds)
+        pr_curve.update(all_preds, all_targets)
+        pr_curve = pr_curve.compute()
+
+        eval_utils.map_to_numpy(pr_curve)
+
+        plt.figure(figsize=(10, 6))
+        precision = pr_curve["precision"][0, :, 0, 2]
+        print(precision)
+        plt.plot(pr_curve_thresholds, precision)
+        plt.xlim([0, 1])
+        plt.ylim([0, 1])
+        plt.xlabel('Recall')
+        plt.ylabel('Precision')
+        plt.title('Precision-Recall Curve for all Objects')
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig(f"data/results/precision_recall_curve.png")
 
 if __name__ == "__main__":
     from jsonargparse import CLI
