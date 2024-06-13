@@ -2,21 +2,21 @@
 # Created on Mon May 13 2024 by Florian Pfleiderer
 # Copyright (c) 2024 TU Wien
 
-bbox_areas=("200" "300" "400" "500") # done: "200" "300" TODO: "400" "500"
+bbox_areas=("200" "300" "400" "500")
 keep_matching_bboxes=("false" "true")
-minimum_confidence_threshold=("0.2" "0.3" "0.4")
+minimum_confidence_threshold=("0.2" "0.25" "0.3")
 registration_strategies=("2d" "3d")
 
-rooms=("LivingArea" "Office" "SmallRoom")
+rooms=("LivingArea" "Office" "SmallRoom" "Kitchen")
 perspectives=("null" "2d" "3d")
 depths=("false" "true")
 
-runs=3
+runs=5
 rm -r "data/results/"*
 
+annotate.py --bbox_area "200"
 for bbox_area in "${bbox_areas[@]}"; do
   echo -e "\n#######################################\nBBOX AREA CHANGED TO $bbox_area\n#######################################\n"
-  annotate.py --bbox_area "$bbox_area"
   for keep_matching_bbox in "${keep_matching_bboxes[@]}"; do
     echo -e "\n#######################################\nKEEP MATCHING BBOXES CHANGED TO $keep_matching_bbox\n#######################################\n"
     for registration_strategy in "${registration_strategies[@]}"; do
