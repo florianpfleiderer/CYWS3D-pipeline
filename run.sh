@@ -4,7 +4,7 @@
 
 bbox_areas=("200" "300" "400" "500")
 keep_matching_bboxes=("false" "true")
-minimum_confidence_threshold=("0.2" "0.25" "0.3")
+minimum_confidence_threshold=("0.2" "0.25" "0.3" "0.35" "0.4")
 registration_strategies=("2d" "3d")
 
 rooms=("LivingArea" "Office" "SmallRoom" "Kitchen")
@@ -14,7 +14,7 @@ depths=("false" "true")
 runs=5
 rm -r "data/results/"*
 
-annotate.py --bbox_area "200"
+# annotate.py --bbox_area "200"
 for bbox_area in "${bbox_areas[@]}"; do
   echo -e "\n#######################################\nBBOX AREA CHANGED TO $bbox_area\n#######################################\n"
   for keep_matching_bbox in "${keep_matching_bboxes[@]}"; do
