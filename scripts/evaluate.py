@@ -42,8 +42,8 @@ def main(
     max_detection_thresholds: list = [1, 10, 100]
     areas = ['all', 'small', 'medium', 'large']
 
-    config_search_terms =["area-400", "matching-false", "3d", "confidence"]
-    search_terms = ["GH30_Office", "depth-true", "perspective-3d"] #["3d", "depth-false"]
+    config_search_terms =["area-300", "matching-", "strategy-3d", "confidence-"]
+    search_terms = ["GH30_", "depth-", "perspective-3d"] 
 
     all_preds = []
     all_targets = []
@@ -54,6 +54,8 @@ def main(
 
     for config_folder in sorted(os.listdir(path)):
         if not all(term in config_folder for term in config_search_terms):
+            continue
+        if ".png" in config_folder:
             continue
         if len(os.listdir(f"{path}/{config_folder}")) == 0:
             logger.warning(f"{config_folder} folder is empty")
@@ -95,11 +97,14 @@ def main(
 
         eval_utils.map_to_numpy(mAP)
 
-        eval_plotter.plot_precision(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
-            room, f"data/results")
-        eval_plotter.plot_recall(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
-            room, f"data/results")
-        # eval_plotter.plot_ious(mAP, room, f"data/results")
+        # eval_plotter.plot_precision(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
+        #     room, f"data/results")
+        # eval_plotter.plot_recall(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
+        #     room, f"data/results")
+        eval_plotter.plot_precision_areas_only(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
+            config_folder, f"data/results")
+        eval_plotter.plot_recall_areas_only(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
+            config_folder, f"data/results")
 
         plt.close('all')
 
@@ -130,18 +135,18 @@ def main(
 
         eval_utils.map_to_numpy(pr_curve)
 
-        plt.figure(figsize=(10, 6))
-        precision = pr_curve["precision"][0, :, 0, 2]
-        print(precision)
-        plt.plot(pr_curve_thresholds, precision)
-        plt.xlim([0, 1])
-        plt.ylim([0, 1])
-        plt.xlabel('Recall')
-        plt.ylabel('Precision')
-        plt.title('Precision-Recall Curve for all Objects')
-        plt.legend()
-        plt.tight_layout()
-        plt.savefig(f"data/results/precision_recall_curve.png")
+        # plt.figure(figsize=(10, 6))
+        # precision = pr_curve["precision"][0, :, 0, 2]
+        # print(precision)
+        # plt.plot(pr_curve_thresholds, precision)
+        # plt.xlim([0, 1])
+        # plt.ylim([0, 1])
+        # plt.xlabel('Recall')
+        # plt.ylabel('Precision')
+        # plt.title('Precision-Recall Curve for all Objects')
+        # plt.legend()
+        # plt.tight_layout()
+        # plt.savefig(f"data/results/precision_recall_curve.png")
 
 if __name__ == "__main__":
     from jsonargparse import CLI
