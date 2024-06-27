@@ -76,10 +76,10 @@ def main(
         yaml.safe_dump(metadata_configurations, f)
 
     batch = []
-    substrings = ("predictions", "ground_truth", "scene1", "yaml", ".pt", ".npy", ".json", ".png")
+    substrings = ("predictions", "ground_truth", "scene1", "yaml", ".pt", ".npy", ".json", ".DS")
 
     for root, dirnames, files in os.walk(ROOM_DIR):
-        if "ground_truth" in root or "predictions" in root:
+        if "ground_truth" in root or "predictions" in root or "." in root:
             logger.debug("Skipping %s", root)
             continue
         logger.debug("%s, %s, files: %s", root, dirnames, files)

@@ -95,7 +95,10 @@ def main(
     img_cntr = 0
     for n in range(number_of_batches):
         torch.cuda.empty_cache()
-        logger.debug(torch.cuda.memory_summary())
+        try:
+            logger.debug(torch.cuda.memory_summary())
+        except KeyError: # if the GPU is not available
+            logger.debug("GPU not available")
         logger.info(f"Processing batch {n}")
 
         batch = {key: value[n*batch_size:(n+1)*batch_size]\
