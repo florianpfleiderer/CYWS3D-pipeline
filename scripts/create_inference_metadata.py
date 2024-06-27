@@ -55,7 +55,8 @@ def main(
 
     logger.setLevel(getattr(logging, debug.upper()))
     logger.info("Starting to create input metadata for room %s", ROOM)
-    logger.info("Depth: %s, Transformations: %s, Perspective: %s", DEPTH, TRANSFORMATIONS, perspective)
+    logger.info("Depth: %s, Transformations: %s, Perspective: %s", \
+        DEPTH, TRANSFORMATIONS, perspective)
     if perspective == None:
         logger.info("No perspective change specified; other possible values are '3d' or '2d'")
 
@@ -102,7 +103,8 @@ def main(
                 logger.debug("Skipping %s", root)
                 continue
             logger.debug(f"root: {root}")
-            transformations = utils.load_transformations(f"{root}/{root.split('/')[-1]}_transformations.yaml")
+            transformations = utils.load_transformations(
+                f"{root}/{root.split('/')[-1]}_transformations.yaml")
             logger.debug(f"transformations: {transformations}")
             for key, value in transformations.items():
                 logger.debug("dict value %s", value)
@@ -117,7 +119,7 @@ def main(
 
 
     scene1_buffer = sorted([f for f in os.listdir(os.path.join(ROOM_DIR, "scene1")) \
-        if (".png" in f)])
+        if ".png" in f])
 
     if ROOM == "LivingArea":
         img_number = 0
@@ -370,7 +372,7 @@ def main(
                         "registration_strategy": f"{registration_strategy}"
                     })
                     img_number += 1
-        
+
     if ROOM == "Office":
         img_number = 0
         for scene in sorted(os.listdir(ROOM_DIR)):

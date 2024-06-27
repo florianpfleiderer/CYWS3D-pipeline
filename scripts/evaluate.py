@@ -69,11 +69,12 @@ def main(
             if all(term in folder for term in search_terms):
                 logger.info("processing folder: %s", folder)
                 try:
-                    preds = torch.load(f"{path}/{config_folder}/{folder}/predictions/batch_image2_predicted_bboxes.pt")
+                    preds = torch.load(
+                        f"{path}/{config_folder}/{folder}/predictions/batch_image2_predicted_bboxes.pt")
                     targets = torch.load(f"{path}/{config_folder}/{folder}/all_target_bboxes.pt")
                 except FileNotFoundError:
                     logger.warning("File not found")
-                    with open("data/results/metrics.yaml", "a") as file:
+                    with open("data/results/metrics.yaml", "a", encoding="utf-8") as file:
                         yaml.dump({
                             config_folder: {
                                 "mAP": float(-1),
@@ -85,7 +86,8 @@ def main(
                     continue
             else:  
                 continue
-            sorted_targets = eval_utils.prepare_target_bboxes(targets, f"{path}/{config_folder}/{folder}/input_metadata.yaml")
+            sorted_targets = eval_utils.prepare_target_bboxes(targets, \
+                f"{path}/{config_folder}/{folder}/input_metadata.yaml")
             all_preds.extend(preds)
             all_targets.extend(sorted_targets)
 
@@ -101,15 +103,17 @@ def main(
         #     room, f"data/results")
         # eval_plotter.plot_recall(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
         #     room, f"data/results")
-        eval_plotter.plot_precision_areas_only(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
+        eval_plotter.plot_precision_areas_only(
+            mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
             config_folder, f"data/results")
-        eval_plotter.plot_recall_areas_only(mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
+        eval_plotter.plot_recall_areas_only(
+            mAP, (iou_thresholds, rec_thresholds, max_detection_thresholds), \
             config_folder, f"data/results")
 
         plt.close('all')
 
         # Create or open the YAML file in append mode
-        with open("data/results/metrics.yaml", "a") as file:
+        with open("data/results/metrics.yaml", "a", encoding="utf-8") as file:
             # Write the mAP, precision, and recall to the file
             yaml.dump({
                 f"{config_folder}_{search_terms[1]}": {

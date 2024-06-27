@@ -56,28 +56,31 @@ def main(
     if room is None:
         raise ValueError("Please provide the room name as command line argument")
     input_metadata = f"data/GH30_{room}/input_metadata.yaml"
-    
-    save_path = os.path.join(input_metadata.split("/")[0], input_metadata.split("/")[1], "predictions")
+
+    save_path = os.path.join(
+        input_metadata.split("/")[0], input_metadata.split("/")[1], "predictions")
     if not os.path.exists(save_path):
         os.makedirs(save_path)
-    
+
     logger.setLevel(level=getattr(logging, log_level.upper()))
     # add a filehandler
     # file_handler = logging.FileHandler(f'{save_path}/logfile.log', 'w')
     # file_handler.setLevel(getattr(logging, log_level.upper()))
     # logger.addHandler(file_handler)
     logger.info("logger set to %s", logger.level)
-    logger.info(f"Folder: {save_path}\nParameters: {config_file}, {input_metadata}, {room}, {load_weights_from},\n\
-        {filter_predictions_with_area_under}, {keep_matching_bboxes_only}, {max_predictions_to_display}, \
-            {minimum_confidence_threshold}")
-    
+    logger.info("Folder: %s\nParameters: %s, %s, %s, %s, %s, %s, %s, %s",
+                save_path, config_file, input_metadata, room, load_weights_from,
+                filter_predictions_with_area_under, keep_matching_bboxes_only,
+                max_predictions_to_display, minimum_confidence_threshold)
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     torch.cuda.empty_cache()
 
     configs = get_easy_dict_from_yaml_file(config_file)
     model = Model(configs, load_weights_from=load_weights_from).to(device)
     correspondence_extractor = CorrespondenceExtractor(device=device)
-    depth_predictor = torch.hub.load("isl-org/ZoeDepth", "ZoeD_NK", pretrained=True).eval().to(device)
+    depth_predictor = torch.hub.load(
+        "isl-org/ZoeDepth", "ZoeD_NK", pretrained=True).eval().to(device)
 
     image1_predictions = []
     image2_predictions = []
@@ -90,8 +93,8 @@ def main(
     else:
         number_of_batches = len(full_batch["image1"]) // batch_size
 
-    logger.info(f"Batch size: {batch_size}")
-    logger.info(f"Number of batches: {number_of_batches}")
+    logger.info("Batch size: %s", batch_size)
+    logger.info("Number of batches: %s", number_of_batches)
     img_cntr = 0
     for n in range(number_of_batches):
         torch.cuda.empty_cache()
@@ -99,7 +102,7 @@ def main(
             logger.debug(torch.cuda.memory_summary())
         except KeyError: # if the GPU is not available
             logger.debug("GPU not available")
-        logger.info(f"Processing batch {n}")
+        logger.info("Processing batch %s", n)
 
         batch = {key: value[n*batch_size:(n+1)*batch_size]\
              for key, value in full_batch.items()}
@@ -108,20 +111,23 @@ def main(
                 for item in batch[key]]
 
         start_time = time.time()
-        batch = fill_in_the_missing_information(batch, depth_predictor, correspondence_extractor, device=device)
-        logger.info(f"Time taken to fill in the missing information: {time.time() - start_time:.2f} seconds")
+        batch = fill_in_the_missing_information(
+            batch, depth_predictor, correspondence_extractor, device=device)
+        logger.info("Time taken to fill in the missing information: %.2f seconds", \
+            time.time() - start_time)
         start_time = time.time()
         batch = prepare_batch_for_model(batch, device=device)
-        logger.info(f"Time taken to prepare the batch for the model: {time.time() - start_time:.2f} seconds")
+        logger.info("Time taken to prepare the batch for the model: %.2f seconds", \
+            time.time() - start_time)
         start_time = time.time()
         batch_image1_predicted_bboxes, batch_image2_predicted_bboxes = model.predict(batch)
-        logger.info(f"Time taken to predict: {time.time() - start_time:.2f} seconds")
+        logger.info("Time taken to predict: %.2f seconds", time.time() - start_time)
 
         for i, (image1_bboxes, image2_bboxes) in enumerate(zip(batch_image1_predicted_bboxes,
                                                                 batch_image2_predicted_bboxes)):
-            logger.info(f"Processing image pair {img_cntr}")
-            # plot_correspondences(batch["image1"][i].cpu(), batch["image2"][i].cpu(), 
-            #                     batch["points1"][i].cpu(), batch["points2"][i].cpu(), 
+            logger.info("Processing image pair %s", img_cntr)
+            # plot_correspondences(batch["image1"][i].cpu(), batch["image2"][i].cpu(),
+            #                     batch["points1"][i].cpu(), batch["points2"][i].cpu(),
             #                     save_path=f"{save_path}/correspondences_{img_cntr}.png")
             image1_bboxes, image2_bboxes = \
                 image1_bboxes[0].cpu().numpy(), image2_bboxes[0].cpu().numpy()
@@ -129,13 +135,13 @@ def main(
                 image1_bboxes, filter_predictions_with_area_under)
             image2_bboxes = remove_bboxes_with_area_less_than(
                 image2_bboxes, filter_predictions_with_area_under)
-            logger.debug(f"suppressing overlapping bboxes for image pair {img_cntr}")
+            logger.debug("suppressing overlapping bboxes for image pair %s", img_cntr)
             image1_bboxes, scores1 = \
                 suppress_overlapping_bboxes(image1_bboxes[:, :4], image1_bboxes[:, 4])
             image2_bboxes, scores2 = \
                 suppress_overlapping_bboxes(image2_bboxes[:, :4], image2_bboxes[:, 4])
-            logger.debug(f"img02 bboxes after suppressing overlappping boxes: {image2_bboxes}")
-            logger.debug(f"img02 scores: {scores2}")
+            logger.debug("img02 bboxes after suppressing overlapping boxes: %s", image2_bboxes)
+            logger.debug("img02 scores: %s", scores2)
             if keep_matching_bboxes_only:
                 image1_bboxes, image2_bboxes = keep_matching_bboxes(
                     batch,
@@ -147,8 +153,8 @@ def main(
                     minimum_confidence_threshold,
                     device=device
                 )
-            logger.debug(f"img02 bboxes after keep matching boxes: {image2_bboxes}")
-            logger.debug(f"img02 scores: {scores2}")
+            logger.debug("img02 bboxes after keep matching boxes: %s", image2_bboxes)
+            logger.debug("img02 scores: %s", scores2)
             image1_bboxes, scores1 = filter_low_confidence_bboxes(
                 image1_bboxes, scores1, minimum_confidence_threshold)
             image2_bboxes, scores2 = filter_low_confidence_bboxes(
@@ -163,15 +169,19 @@ def main(
 
             image1_predictions.append(dict(
                 image=f"prediction_{img_cntr}", 
-                boxes=torch.round(torch.as_tensor(image1_bboxes[:max_predictions_to_display], dtype=torch.float32)),
+                boxes=torch.round(torch.as_tensor(
+                    image1_bboxes[:max_predictions_to_display], dtype=torch.float32)),
                 scores=torch.as_tensor(scores1[:max_predictions_to_display], dtype=torch.float32),
-                labels=torch.zeros(len(image1_bboxes[:max_predictions_to_display]), dtype=torch.int32))
+                labels=torch.zeros(
+                    len(image1_bboxes[:max_predictions_to_display]), dtype=torch.int32))
                 )
             image2_predictions.append(dict(
                 image=f"prediction_{img_cntr}", 
-                boxes=torch.round(torch.as_tensor(image2_bboxes[:max_predictions_to_display], dtype=torch.float32)),
+                boxes=torch.round(torch.as_tensor(
+                    image2_bboxes[:max_predictions_to_display], dtype=torch.float32)),
                 scores=torch.as_tensor(scores2[:max_predictions_to_display], dtype=torch.float32),
-                labels=torch.zeros(len(image2_bboxes[:max_predictions_to_display]), dtype=torch.int32))
+                labels=torch.zeros(
+                    len(image2_bboxes[:max_predictions_to_display]), dtype=torch.int32))
                 )
             img_cntr += 1
 
@@ -198,7 +208,7 @@ def get_easy_dict_from_yaml_file(path_to_yaml_file):
     """
     Reads a yaml and returns it as an easy dict.
     """
-    with open(path_to_yaml_file, "r") as stream:
+    with open(path_to_yaml_file, "r", encoding="utf-8") as stream:
         yaml_file = yaml.safe_load(stream)
     return EasyDict(yaml_file)
 
