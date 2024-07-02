@@ -1,4 +1,4 @@
-#! usr/bin/env python3
+#! usr/bin/env python3.9
 # Created on Thu Apr 18 2024 by Florian Pfleiderer
 # Copyright (c) 2024 TU Wien
 """

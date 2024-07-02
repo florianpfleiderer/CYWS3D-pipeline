@@ -1,3 +1,9 @@
+#! usr/bin/env python3.9
+# Created on Tue Jul 02 2024 by Florian Pfleiderer
+# Copyright (c) 2024 TU Wien
+"""
+This script is used to view pointclopuds from ObChange Dataset.
+"""
 import torch
 import numpy as np
 from pprint import pprint
