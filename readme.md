@@ -1,5 +1,5 @@
 # CYWS3D Evaluation Pipeline on ObChange Dataset
-The Goal is to perform a batched inference (one Batch per Room) on selected RGB-D
+The Goal is to perform a batched inference on selected RGB-D
 Frames taken from the original Input Data in the ObChange Dataset. The Pipeline is split into
 3 Modules: 
 1. Inference: takes the input images from data/GH30_\<roomname\> performs an inference and saves the images and bboxes in data/Gh30_\<roomname\>/predictions
