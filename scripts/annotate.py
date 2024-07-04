@@ -25,7 +25,7 @@ from src.annotation_pipeline import utils
 from src.globals \
     import DATASET_FOLDER, IMAGE_FOLDER, ROOM, SCENE, PLANE, PCD_PATH, ANNO_PATH, \
         CAMERA_INFO_JSON_PATH, GT_COLOR, MODEL_IMAGE_SIZE, FOV_X, FOV_Y, BBOX_AREA
-from src.modules.geometry import remove_bboxes_with_area_less_than
+from src.inference.geometry import remove_bboxes_with_area_less_than
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)

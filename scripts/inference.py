@@ -12,11 +12,11 @@ import logging
 from importlib.metadata import version
 from easydict import EasyDict
 try:
-    from src.modules.model import Model
-    from src.modules.utils import create_batch_from_metadata, fill_in_the_missing_information, \
+    from src.inference.model import Model
+    from src.inference.utils import create_batch_from_metadata, fill_in_the_missing_information, \
         prepare_batch_for_model, visualise_predictions, plot_correspondences, \
             undo_imagenet_normalization
-    from src.modules.correspondence_extractor import CorrespondenceExtractor
+    from src.inference.correspondence_extractor import CorrespondenceExtractor
 except ImportError:
     from model import Model
     from utils import create_batch_from_metadata, fill_in_the_missing_information, \
@@ -25,7 +25,7 @@ except ImportError:
     from correspondence_extractor import CorrespondenceExtractor
 import torch
 try:
-    from src.modules.geometry import remove_bboxes_with_area_less_than, \
+    from src.inference.geometry import remove_bboxes_with_area_less_than, \
         suppress_overlapping_bboxes, keep_matching_bboxes, filter_low_confidence_bboxes
 except ImportError:
     from geometry import remove_bboxes_with_area_less_than, suppress_overlapping_bboxes, \
