@@ -23,7 +23,7 @@ class TestIntrinsic(unittest.TestCase):
     def test_from_xml(self):
         ''' xml file blablabla 
         '''
-        self.intrinsics.from_xml("testunit/testmodel/model1_cameras.xml")
+        self.intrinsics.from_xml("testunit/projection/resources/model1_cameras.xml")
         self.assertAlmostEqual(self.intrinsics.cx, 0.66374072079057678)
         self.assertAlmostEqual(self.intrinsics.cy, -11.513546135775556)
         self.assertAlmostEqual(self.intrinsics.f, 1658.5404555376736)

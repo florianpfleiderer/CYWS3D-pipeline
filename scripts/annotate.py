@@ -1,4 +1,4 @@
-#! usr/bin/env python3
+#! usr/bin/env python3.9
 # Created on Thu Apr 18 2024 by Florian Pfleiderer
 # Copyright (c) 2024 TU Wien
 """
@@ -31,7 +31,7 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 def main(
-    log_level: str = "INFO", 
+    log_level: str = "INFO",
     room: str = "ALL",
     bbox_area: int=BBOX_AREA):
     """
@@ -53,7 +53,7 @@ def main(
                 if os.path.exists(f"./data/{folder}/all_target_bboxes.pt"):
                     os.remove(f"./data/{folder}/all_target_bboxes.pt")
                     logger.info("Removed all_target_bboxes.pt in %s", f"./data/{folder}")
-    
+
     # intrinsic matrix
     intrinsics = Intrinsic()
     intrinsics.from_json("./" + DATASET_FOLDER + CAMERA_INFO_JSON_PATH)
@@ -89,7 +89,7 @@ def main(
             # load pcd file
             logger.debug("loading pointcloud from %s", "./"+root+"/"+PCD_PATH)
             base_pcd = o3d.io.read_point_cloud(f"./{root}/{PCD_PATH}")
-            
+
             # ground truth
             logger.debug("loading ground truth from %s", "./"+root+"/"+ANNO_PATH)
             if scene_buffer != tfs[3]:
@@ -97,7 +97,7 @@ def main(
                 print("\n##################################################################\n")
                 logger.info("New scene: %s", scene_buffer)
                 scene_annotation_buffer = {}
-            
+
             _, base_anno_dict = utils.annotate_pcd(base_pcd, f"./{root}/{ANNO_PATH}", GT_COLOR)
 
             if logger.level == logging.DEBUG:

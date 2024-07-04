@@ -21,7 +21,7 @@ class TestCalculate_mAP(unittest.TestCase):
     @classmethod
     def setUpClass(self): # TODO: this should say cls instead of self
         self.predictions = torch.load(
-            'testunit/annotated_testdata/batch_image2_predicted_bboxes.pt')
+            'testunit/evaluation/resources/batch_image2_predicted_bboxes.pt')
         self.targets = load_pascal_voc_export('testunit/annotated_testdata/test')
 
     def test_calculate_mAP(self):
