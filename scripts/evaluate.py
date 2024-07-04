@@ -13,7 +13,7 @@ from pprint import pprint
 import matplotlib.pyplot as plt
 import numpy as np
 from torchmetrics.detection.mean_ap import MeanAveragePrecision
-from src.evaluation_pipeline import eval_utils, eval_plotter
+from src.evaluation import eval_utils, eval_plotter
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)

@@ -31,8 +31,8 @@ import yaml
 import logging
 import numpy as np
 from PIL import Image
-from src.annotation_pipeline import utils
-from src.annotation_pipeline.projection import Intrinsic, Extrinsic
+from src.annotation import utils
+from src.annotation.projection import Intrinsic, Extrinsic
 from src.globals \
     import DATASET_FOLDER, IMAGE_FOLDER, ROOM, SCENE, PLANE, PCD_PATH, ANNO_PATH, \
         CAMERA_INFO_JSON_PATH, GT_COLOR

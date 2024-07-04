@@ -19,9 +19,9 @@ import cv2
 import torch
 import shutil
 
-from src.annotation_pipeline.projection \
+from src.annotation.projection \
     import Intrinsic, Extrinsic, project_to_2d, frustum_culling
-from src.annotation_pipeline import utils
+from src.annotation import utils
 from src.globals \
     import DATASET_FOLDER, IMAGE_FOLDER, ROOM, SCENE, PLANE, PCD_PATH, ANNO_PATH, \
         CAMERA_INFO_JSON_PATH, GT_COLOR, MODEL_IMAGE_SIZE, FOV_X, FOV_Y, BBOX_AREA

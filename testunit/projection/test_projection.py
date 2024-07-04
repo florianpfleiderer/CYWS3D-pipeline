@@ -5,7 +5,7 @@ Module for testing the projection module functions.
 """
 import unittest
 import logging
-from src.annotation_pipeline.projection import Intrinsic, Extrinsic
+from src.annotation.projection import Intrinsic, Extrinsic
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

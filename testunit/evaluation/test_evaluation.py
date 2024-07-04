@@ -6,8 +6,8 @@ Module for testing the evaluation module functions.
 import unittest
 import logging
 import torch
-from src.evaluation_pipeline.calculate_mAP import calculate_mAP
-from src.evaluation_pipeline.obchange_dataloader import load_pascal_voc_export
+from src.evaluation.calculate_mAP import calculate_mAP
+from src.evaluation.obchange_dataloader import load_pascal_voc_export
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
