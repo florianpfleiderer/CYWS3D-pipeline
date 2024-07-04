@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 import yaml
 try:
-    from src.annotation_pipeline.projection import Intrinsic  
+    from src.annotation.projection import Intrinsic  
     from src.globals import GT_COLOR
 except ImportError:
     from projection import Intrinsic  # fallback for direct script execution

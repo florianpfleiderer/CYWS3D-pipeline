@@ -4,7 +4,7 @@ import kornia as K
 import numpy as np
 from SuperGluePretrainedNetwork.models.matching import Matching
 try:
-    from src.modules.geometry import transform_points, convert_image_coordinates_to_world, sample_depth_for_given_points
+    from src.inference.geometry import transform_points, convert_image_coordinates_to_world, sample_depth_for_given_points
 except ImportError:
     from geometry import transform_points, convert_image_coordinates_to_world, sample_depth_for_given_points
 import torch.nn.functional as F

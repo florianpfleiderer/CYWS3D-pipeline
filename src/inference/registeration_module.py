@@ -8,7 +8,7 @@ from pytorch3d.renderer import AlphaCompositor, PerspectiveCameras, PointsRaster
     PointsRasterizer, PointsRenderer
 from pytorch3d.structures import Pointclouds
 try:
-    import src.modules.geometry as geometry
+    import src.inference.geometry as geometry
 except ImportError:
     import geometry
 

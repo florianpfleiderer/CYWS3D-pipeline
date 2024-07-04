@@ -1,123 +1,28 @@
-#! usr/bin/env python3.9
-# Created on Tue Apr 23 2024 by Florian Pfleiderer
+# Created on Thu Jul 04 2024 by Florian Pfleiderer
 # Copyright (c) 2024 TU Wien
 """
-This Module creates the input metadata for the inference process.
-
-The script reads images from the specified room (e.g. office) and creates image pairs according
-to the following scheme (compare everything to the first (empty scene)): 
-- image1: image from scene1
-- image2: image from scene2
-- depth1: depth image from scene1
-- depth2: depth image from scene2
-- registration_strategy: 3d
-###
-- image1: image from scene1
-- image2: image from scene3
-...
-###
-- image1: image from scene1
-- image2: image from sceneN
-...
-
-The the foldername for the specified room is always: 'data/GH30_<Roomname>/' with subfolders
-for each scene.
-
-The input_metadata.yaml file is created in the root directory of the room.
+This module contains the functions to create metadata for the inference.
 """
 import os
-import argparse
-import yaml
-import logging
 import numpy as np
-from PIL import Image
+from src.globals import CAMERA_INFO_JSON_PATH
 from src.annotation import utils
 from src.annotation.projection import Intrinsic, Extrinsic
-from src.globals \
-    import DATASET_FOLDER, IMAGE_FOLDER, ROOM, SCENE, PLANE, PCD_PATH, ANNO_PATH, \
-        CAMERA_INFO_JSON_PATH, GT_COLOR
 
-logging.basicConfig()
-logger = logging.getLogger(__name__)
-
-def main(
-    room: str=None,
-    depth: bool=False,
-    transformations: bool=False,
-    perspective: str=None,
-    registration_strategy: str="3d",
-    debug: str="INFO"
+def create_metadata(
+    ROOM, 
+    ROOM_DIR, 
+    DEPTH, 
+    TRANSFORMATIONS,
+    perspective,
+    registration_strategy,
+    substrings, 
+    batch,
+    logger
 ):
-
-    ROOM = room
-    ROOM_DIR = f"data/GH30_{ROOM}"
-    DEPTH = depth
-    TRANSFORMATIONS = transformations
-
-    logger.setLevel(getattr(logging, debug.upper()))
-    logger.info("Starting to create input metadata for room %s", ROOM)
-    logger.info("Depth: %s, Transformations: %s, Perspective: %s", \
-        DEPTH, TRANSFORMATIONS, perspective)
-    if perspective == None:
-        logger.info("No perspective change specified; other possible values are '3d' or '2d'")
-
-    metadata_configurations = {
-        "room": ROOM,
-        "depth": DEPTH,
-        "transformations": TRANSFORMATIONS,
-        "perspective": perspective,
-        "registration_strategy": registration_strategy
-    }
-    existing_configurations = {}
-    metadata_file = os.path.join(ROOM_DIR, "predictions", "metadata_configurations.yaml")
-    if os.path.exists(metadata_file):
-        with open(metadata_file, "r") as file:
-            existing_configurations = yaml.safe_load(file)
-    existing_configurations.update(metadata_configurations)
-    with open(metadata_file, "w") as f:
-        yaml.safe_dump(metadata_configurations, f)
-
-    batch = []
-    substrings = ("predictions", "ground_truth", "scene1", "yaml", ".pt", ".npy", ".json", ".DS")
-
-    for root, dirnames, files in os.walk(ROOM_DIR):
-        if "ground_truth" in root or "predictions" in root or "." in root:
-            logger.debug("Skipping %s", root)
-            continue
-        logger.debug("%s, %s, files: %s", root, dirnames, files)
-        for filename in files:
-            if 'depth' in filename and filename.endswith('.png'):
-                img = Image.open(os.path.join(root, filename))
-                img_gray = img.convert('L')
-                img_gray.save(os.path.join(root, filename))
-                logger.debug("Converted %s in %s to greyscale", filename, root)
-
-    logger.info("Converted all depth images to greyscale")
-
-    if transformations:
-        logger.info("Adding transformations to metadata")
-        for root, dirnames, files in os.walk(ROOM_DIR):
-            if "scene" not in root:
-                logger.debug("Skipping %s", root)
-                continue
-            if "ground_truth" in root or "predictions" in root:
-                logger.debug("Skipping %s", root)
-                continue
-            logger.debug(f"root: {root}")
-            transformations = utils.load_transformations(
-                f"{root}/{root.split('/')[-1]}_transformations.yaml")
-            logger.debug(f"transformations: {transformations}")
-            for key, value in transformations.items():
-                logger.debug("dict value %s", value)
-                extrinsics = Extrinsic()
-                extrinsics.from_dict(value)
-                logger.debug(f"extrinsics: {extrinsics}")
-                np.save(f"{root}/{value['file_name'][:-4]}_position.npy", extrinsics.position)
-                np.save(f"{root}/{value['file_name'][:-4]}_rotation.npy", extrinsics.rotation)
-            intrinsics = Intrinsic()
-            intrinsics.from_json(f"data/ObChange/{CAMERA_INFO_JSON_PATH}")
-            np.save(f"data/ObChange/{CAMERA_INFO_JSON_PATH[:-5]}.npy", intrinsics.matrix())
-
+    """
+    Create metadata for inference.
+    """
 
     scene1_buffer = sorted([f for f in os.listdir(os.path.join(ROOM_DIR, "scene1")) \
         if ".png" in f])
@@ -1224,13 +1129,32 @@ def main(
                         "image2": os.path.join(ROOM_DIR, scene, scene_buffer[11]),
                         "registration_strategy": f"{registration_strategy}"
                     })
-                    img_number += 1   
-
-    with open(os.path.join(ROOM_DIR, "input_metadata.yaml"), "w") as f:
-        yaml.safe_dump({"batch": batch}, f)
+                    img_number += 1  
 
 
-if __name__ == "__main__":
-    from jsonargparse import CLI
-
-    CLI(main)
+def get_transformations(ROOM_DIR, logger):
+    """
+    This function is used to get the transformation matrices for the scenes in the dataset
+    """
+    logger.info("Adding transformations to metadata")
+    for root, dirnames, files in os.walk(ROOM_DIR):
+        if "scene" not in root:
+            logger.debug("Skipping %s", root)
+            continue
+        if "ground_truth" in root or "predictions" in root:
+            logger.debug("Skipping %s", root)
+            continue
+        logger.debug(f"root: {root}")
+        transformations = utils.load_transformations(
+            f"{root}/{root.split('/')[-1]}_transformations.yaml")
+        logger.debug(f"transformations: {transformations}")
+        for key, value in transformations.items():
+            logger.debug("dict value %s", value)
+            extrinsics = Extrinsic()
+            extrinsics.from_dict(value)
+            logger.debug(f"extrinsics: {extrinsics}")
+            np.save(f"{root}/{value['file_name'][:-4]}_position.npy", extrinsics.position)
+            np.save(f"{root}/{value['file_name'][:-4]}_rotation.npy", extrinsics.rotation)
+        intrinsics = Intrinsic()
+        intrinsics.from_json(f"data/ObChange/{CAMERA_INFO_JSON_PATH}")
+        np.save(f"data/ObChange/{CAMERA_INFO_JSON_PATH[:-5]}.npy", intrinsics.matrix())

@@ -16,8 +16,8 @@ from mmdet.models.dense_heads.centernet_head import CenterNetHead
 from segmentation_models_pytorch.unet.model import UnetDecoder
 from einops import rearrange
 try:
-    from src.modules.building_blocks import DownSamplingBlock, FeatureFusionBlock, Sequence2SpatialBlock
-    from src.modules.registeration_module import FeatureRegisterationModule
+    from src.inference.building_blocks import DownSamplingBlock, FeatureFusionBlock, Sequence2SpatialBlock
+    from src.inference.registeration_module import FeatureRegisterationModule
 except ImportError:
     from building_blocks import DownSamplingBlock, FeatureFusionBlock, Sequence2SpatialBlock
     from registeration_module import FeatureRegisterationModule
